@@ -9,6 +9,10 @@
     ],
     "rewrites": [
       {
+        "source": "/googlef0aac9a4843c12ca.html",
+        "destination": "/googlef0aac9a4843c12ca.html"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
