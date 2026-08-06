@@ -1,0 +1,25 @@
+# Dependencies
+node_modules
+
+# Build
+dist
+dist-ssr
+
+# Local env (never commit secrets)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Firebase CLI
+.firebase
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+
+# Editor / OS
+.DS_Store
+Thumbs.db

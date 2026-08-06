@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-brand-ink text-stone-300 font-body antialiased;
+}
+
+.container-page {
+  @apply mx-auto max-w-6xl px-4 py-10;
+}
+

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ironprairiefab.com/sitemap.xml
