@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
-import { NavLink, Route, Routes } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import Home from './pages/Home.jsx';
 import About from './pages/About.jsx';
 import Services from './pages/Services.jsx';
 import Projects from './pages/Projects.jsx';
 import WomanOwned from './pages/WomanOwned.jsx';
 import Contact from './pages/Contact.jsx';
+import NotFound from './pages/NotFound.jsx';
 import brandLogo from '../Logo.jpg';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 
 const navItems = [
   { to: '/', label: 'Home' },
@@ -25,6 +34,7 @@ export default function App() {
 
   return (
     <div className="flex min-h-screen flex-col bg-brand-ink">
+      <ScrollToTop />
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-md focus:bg-brand-brown focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-brand-ivory focus:shadow-lg focus:outline-none"
@@ -77,6 +87,8 @@ export default function App() {
 
           <button
             type="button"
+            aria-expanded={mobileOpen}
+            aria-label="Toggle navigation menu"
             className="inline-flex items-center justify-center rounded-md border border-brand-border p-2 text-brand-bone md:hidden"
             onClick={() => setMobileOpen((open) => !open)}
           >
@@ -128,6 +140,7 @@ export default function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/woman-owned" element={<WomanOwned />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
 
@@ -151,4 +164,5 @@ export default function App() {
     </div>
   );
 }
+
 

@@ -56,7 +56,20 @@ const routes = [
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
       { name: 'About Us', url: `${DOMAIN}/about` }
-    ]
+    ],
+    extraSchema: {
+      "@type": "Person",
+      "@id": `${DOMAIN}/about#person`,
+      "name": "Alicia",
+      "jobTitle": "Owner & Principal Executive",
+      "worksFor": { "@id": `${DOMAIN}/#organization` },
+      "knowsAbout": [
+        "Metal Fabrication Management",
+        "Public Agency Procurement",
+        "Structural Steel Projects",
+        "Woman-Owned Business Enterprise"
+      ]
+    }
   },
   {
     path: '/services',
@@ -108,6 +121,16 @@ const routes = [
       { name: 'Home', url: `${DOMAIN}/` },
       { name: 'Contact Us', url: `${DOMAIN}/contact` }
     ]
+  },
+  {
+    path: '/404',
+    title: '404 Page Not Found | Iron Prairie Fabrication Group LLC',
+    description: 'The requested page could not be found. Return to Iron Prairie Fabrication Group LLC for custom metal fabrication services in Texas.',
+    canonical: `${DOMAIN}/404`,
+    breadcrumbs: [
+      { name: 'Home', url: `${DOMAIN}/` },
+      { name: '404 Not Found', url: `${DOMAIN}/404` }
+    ]
   }
 ];
 
@@ -152,7 +175,7 @@ function buildJsonLd(route) {
         { "@type": "State", "name": "Texas" }
       ],
       "sameAs": [
-        "https://maps.app.goo.gl/uDPSYSvFs3xX5isU7",
+        "https://maps.app.goo.gl/ipFsC9qtHyKwZZS39",
         "https://www.facebook.com/ironprairiefabrication",
         "https://www.linkedin.com/company/iron-prairie-fabrication-group",
         "https://universal-dynamic.com"
@@ -245,21 +268,25 @@ for (const route of routes) {
     jsonLdScript
   );
 
-  // Write output file
-  let targetFile;
+  // Write output file(s)
   if (route.path === '/') {
-    targetFile = templatePath;
+    fs.writeFileSync(templatePath, html, 'utf8');
+    console.log(`[SSG Prerender] Generated static pre-render HTML: ${templatePath}`);
   } else {
-    const routeFolder = path.resolve(distDir, route.path.slice(1));
+    const routeName = route.path.slice(1);
+    const htmlFilePath = path.resolve(distDir, `${routeName}.html`);
+    const routeFolder = path.resolve(distDir, routeName);
     if (!fs.existsSync(routeFolder)) {
       fs.mkdirSync(routeFolder, { recursive: true });
     }
-    targetFile = path.resolve(routeFolder, 'index.html');
+    const indexPath = path.resolve(routeFolder, 'index.html');
+    
+    fs.writeFileSync(htmlFilePath, html, 'utf8');
+    fs.writeFileSync(indexPath, html, 'utf8');
+    console.log(`[SSG Prerender] Generated static pre-render HTML: ${htmlFilePath} & ${indexPath}`);
   }
-
-  fs.writeFileSync(targetFile, html, 'utf8');
-  console.log(`[SSG Prerender] Generated static pre-render HTML: ${targetFile}`);
   generatedCount++;
 }
 
-console.log(`[SSG Prerender] ✅ Successfully generated ${generatedCount} static route files in dist/!`);
+console.log(`[SSG Prerender] ✅ Successfully generated ${generatedCount} static route packages in dist/!`);
+
