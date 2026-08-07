@@ -152,6 +152,7 @@ function buildJsonLd(route) {
         { "@type": "State", "name": "Texas" }
       ],
       "sameAs": [
+        "https://maps.app.goo.gl/uDPSYSvFs3xX5isU7",
         "https://www.facebook.com/ironprairiefabrication",
         "https://www.linkedin.com/company/iron-prairie-fabrication-group",
         "https://universal-dynamic.com"
