@@ -5,9 +5,10 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender.mjs",
     "preview": "vite preview",
-    "deploy:hosting": "npm run build && npx --yes firebase-tools deploy --only hosting"
+    "indexnow": "node scripts/post-deploy-indexnow.mjs",
+    "deploy:hosting": "npm run build && npx --yes firebase-tools deploy --only hosting && npm run indexnow"
   },
   "dependencies": {
     "firebase": "^12.12.0",

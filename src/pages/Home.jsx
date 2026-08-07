@@ -69,6 +69,9 @@ export default function Home() {
           <img
             src={gatePhoto}
             alt="Custom fabricated ranch gate and fence installation"
+            width="800"
+            height="600"
+            fetchpriority="high"
             className="h-[min(52vh,22rem)] w-full min-h-[20rem] flex-1 object-cover object-center sm:h-[min(56vh,26rem)] sm:min-h-[22rem] md:min-h-[28rem] md:h-[min(78vh,40rem)]"
           />
           <div className="space-y-2 bg-white px-5 py-4">
@@ -95,6 +98,9 @@ export default function Home() {
             <h2 className="mt-2 font-display text-2xl font-bold text-brand-brown md:text-3xl">
               Professional delivery for private and public buyers
             </h2>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-700">
+              Iron Prairie Fabrication Group LLC provides structural steel fabrication, high-precision laser plate cutting, custom livestock pens, tornado shelters, custom bunkers, and municipal infrastructure metalwork across Freeport, Lake Jackson, Brazoria County, and statewide Texas with schedule discipline and safety compliance.
+            </p>
           </div>
           <Link
             to="/contact"

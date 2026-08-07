@@ -25,12 +25,20 @@ export default function App() {
 
   return (
     <div className="flex min-h-screen flex-col bg-brand-ink">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-2 focus:rounded-md focus:bg-brand-brown focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-brand-ivory focus:shadow-lg focus:outline-none"
+      >
+        Skip to main content
+      </a>
       <header className="border-b border-brand-border bg-brand-panel">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <div className="flex items-center gap-3 md:gap-4">
             <img
               src={brandLogo}
               alt="Iron Prairie Fabrication Group LLC logo"
+              width="144"
+              height="144"
               className="h-24 w-auto shrink-0 rounded-lg border border-brand-border bg-brand-panel-muted p-1.5 shadow-md sm:h-28 md:h-32 lg:h-36"
             />
             <div className="leading-tight">
@@ -112,7 +120,7 @@ export default function App() {
         )}
       </header>
 
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
@@ -135,8 +143,8 @@ export default function App() {
             </p>
           </div>
           <div className="text-xs text-stone-400">
-            <div>Phone: 979-248-9266</div>
-            <div>Email: info@ironprairiefabrication.com</div>
+            <div>Phone: <a href="tel:+19792489266" className="underline hover:text-brand-bone">979-248-9266</a></div>
+            <div>Email: <a href="mailto:Alicia@ironprairiefabrication.com" className="underline hover:text-brand-bone">Alicia@ironprairiefabrication.com</a></div>
           </div>
         </div>
       </footer>

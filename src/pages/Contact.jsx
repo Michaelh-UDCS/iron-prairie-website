@@ -131,9 +131,9 @@ export default function Contact() {
 
       <aside className="space-y-4 rounded-2xl bg-white/80 p-5 shadow-sm">
         <h2 className="text-sm font-semibold text-brand-brown">Other ways to reach us</h2>
-        <div className="space-y-1 text-xs text-slate-800">
-          <div>Phone: 979-248-9266</div>
-          <div>Email: info@ironprairiefabrication.com</div>
+        <div className="space-y-2 text-xs text-slate-800">
+          <div>Phone: <a href="tel:+19792489266" className="font-semibold text-brand-brown underline hover:text-brand-brown/80">979-248-9266</a></div>
+          <div>Email: <a href="mailto:Alicia@ironprairiefabrication.com" className="font-semibold text-brand-brown underline hover:text-brand-brown/80">Alicia@ironprairiefabrication.com</a></div>
         </div>
         <p className="text-[11px] text-slate-700">
           We can also publish procurement contact details, SAM.gov profile data, and a capability
