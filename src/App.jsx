@@ -6,6 +6,8 @@ import Services from './pages/Services.jsx';
 import Projects from './pages/Projects.jsx';
 import WomanOwned from './pages/WomanOwned.jsx';
 import Contact from './pages/Contact.jsx';
+import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
+import TermsOfService from './pages/TermsOfService.jsx';
 import NotFound from './pages/NotFound.jsx';
 import brandLogo from '../Logo.jpg';
 
@@ -61,7 +63,7 @@ export default function App() {
             </div>
           </div>
 
-          <nav className="hidden items-center gap-2 md:flex">
+          <nav aria-label="Primary navigation" className="hidden items-center gap-2 md:flex">
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
@@ -102,7 +104,7 @@ export default function App() {
         </div>
 
         {mobileOpen && (
-          <nav className="border-t border-brand-border bg-brand-panel-muted md:hidden">
+          <nav aria-label="Mobile navigation" className="border-t border-brand-border bg-brand-panel-muted md:hidden">
             <div className="space-y-1 px-4 py-3">
               {navItems.map((item) => (
                 <NavLink
@@ -140,22 +142,27 @@ export default function App() {
           <Route path="/projects" element={<Projects />} />
           <Route path="/woman-owned" element={<WomanOwned />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
 
       <footer className="border-t border-brand-border bg-brand-panel">
-        <div className="container-page flex flex-col gap-3 border-none pt-6 pb-8 md:flex-row md:items-center md:justify-between md:pt-4 md:pb-6">
+        <div className="container-page flex flex-col gap-4 border-none pt-6 pb-8 md:flex-row md:items-center md:justify-between md:pt-4 md:pb-6">
           <div>
             <div className="font-display text-sm font-semibold uppercase tracking-[0.25em] text-brand-muted">
               Iron Prairie Fabrication Group LLC
             </div>
             <p className="mt-1 text-xs text-stone-400">
-              Woman-owned fabrication partner for agriculture, industry, and public agencies across
-              Texas.
+              Woman-owned fabrication partner for agriculture, industry, and public agencies across Texas.
             </p>
+            <div className="mt-2 flex gap-4 text-xs text-stone-500">
+              <NavLink to="/privacy-policy" className="hover:text-brand-bone underline">Privacy Policy</NavLink>
+              <NavLink to="/terms-of-service" className="hover:text-brand-bone underline">Terms of Service</NavLink>
+            </div>
           </div>
-          <div className="text-xs text-stone-400">
+          <div className="text-xs text-stone-400 space-y-1">
             <div>Phone: <a href="tel:+19792489266" className="underline hover:text-brand-bone">979-248-9266</a></div>
             <div>Email: <a href="mailto:Alicia@ironprairiefabrication.com" className="underline hover:text-brand-bone">Alicia@ironprairiefabrication.com</a></div>
           </div>

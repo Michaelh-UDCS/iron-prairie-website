@@ -19,8 +19,8 @@ const DOMAIN = 'https://ironprairiefabrication.com';
 const routes = [
   {
     path: '/',
-    title: 'Custom Metal Fabrication in Texas | Iron Prairie Fabrication Group LLC',
-    description: 'Iron Prairie Fabrication Group LLC is a certified woman-owned Texas fabrication partner delivering structural steel, laser plate cutting, welding, and custom ranch equipment across Texas. Request a quote!',
+    title: 'Custom Metal Fabrication in Texas | Iron Prairie',
+    description: 'Certified woman-owned metal fabrication in Texas. Specializing in structural steel, custom gates, tornado shelters, and welding. Request a quote today!',
     canonical: `${DOMAIN}/`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` }
@@ -50,8 +50,8 @@ const routes = [
   },
   {
     path: '/about',
-    title: 'About Iron Prairie Fabrication Group | Woman-Owned Texas Metal Shop',
-    description: 'Learn about Iron Prairie Fabrication Group LLC, a woman-owned metal fabrication shop built for hard-use ranch, industrial, and public-sector work across Texas.',
+    title: 'About Our Texas Metal Fabrication Shop | Iron Prairie',
+    description: 'Learn about Iron Prairie Fabrication Group, a woman-owned Texas metal shop built for durable ranch, industrial, and public-sector work. Contact us today.',
     canonical: `${DOMAIN}/about`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
@@ -73,8 +73,8 @@ const routes = [
   },
   {
     path: '/services',
-    title: 'Metal Fabrication Services in Texas | Structural Steel & Welding | Iron Prairie',
-    description: 'Explore Iron Prairie metal fabrication services: laser plate cutting, structural steel welding, custom ranch gates, livestock pens, tornado shelters, and industrial pipe work.',
+    title: 'Metal Fabrication Services in Texas | Iron Prairie',
+    description: 'Expert Texas metal fabrication: laser plate cutting, structural steel welding, custom ranch gates, animal pens, tornado shelters, and municipal steelwork.',
     canonical: `${DOMAIN}/services`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
@@ -94,8 +94,8 @@ const routes = [
   },
   {
     path: '/projects',
-    title: 'Completed Metal Fabrication Projects | Iron Prairie Fabrication Group LLC',
-    description: 'View field-proven fabrication projects by Iron Prairie: heavy-duty ranch gates, industrial laser-cut components, custom tornado shelter steelwork, and public park fire rings.',
+    title: 'Custom Metal Fabrication Projects in Texas | Iron Prairie',
+    description: 'View proven Texas metal fabrication projects: heavy-duty ranch gates, industrial laser-cut components, tornado shelters, and public park infrastructure.',
     canonical: `${DOMAIN}/projects`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
@@ -104,8 +104,8 @@ const routes = [
   },
   {
     path: '/woman-owned',
-    title: 'Woman-Owned Certified Metal Fabricator in Texas | Iron Prairie',
-    description: 'Iron Prairie Fabrication Group LLC is a certified woman-owned metal fabrication enterprise aligned with state and federal public procurement workflows.',
+    title: 'Woman-Owned Metal Fabricator in Texas | Iron Prairie',
+    description: 'Iron Prairie Fabrication Group LLC is a certified woman-owned metal fabricator in Texas ready for local, state, and federal public procurement contracts.',
     canonical: `${DOMAIN}/woman-owned`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
@@ -114,8 +114,8 @@ const routes = [
   },
   {
     path: '/contact',
-    title: 'Request a Fabrication Quote | Iron Prairie Fabrication Group LLC | Freeport TX',
-    description: 'Contact Iron Prairie Fabrication Group LLC for custom metal fabrication quotes, bid proposals, and project inquiries in Freeport, Brazoria County, and statewide Texas.',
+    title: 'Request a Metal Fabrication Quote | Iron Prairie TX',
+    description: 'Get a quote for custom metal fabrication, structural steel, or public procurement projects across Texas. Contact Iron Prairie in Freeport, TX today.',
     canonical: `${DOMAIN}/contact`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
@@ -123,10 +123,31 @@ const routes = [
     ]
   },
   {
+    path: '/privacy-policy',
+    title: 'Privacy Policy | Iron Prairie Fabrication Group LLC',
+    description: 'Read the privacy policy for Iron Prairie Fabrication Group LLC. Learn how we handle customer project inquiries, contact submissions, and site data.',
+    canonical: `${DOMAIN}/privacy-policy`,
+    breadcrumbs: [
+      { name: 'Home', url: `${DOMAIN}/` },
+      { name: 'Privacy Policy', url: `${DOMAIN}/privacy-policy` }
+    ]
+  },
+  {
+    path: '/terms-of-service',
+    title: 'Terms of Service | Iron Prairie Fabrication Group LLC',
+    description: 'Review the terms of service for Iron Prairie Fabrication Group LLC regarding custom metal fabrication quotes, specifications, and project agreements.',
+    canonical: `${DOMAIN}/terms-of-service`,
+    breadcrumbs: [
+      { name: 'Home', url: `${DOMAIN}/` },
+      { name: 'Terms of Service', url: `${DOMAIN}/terms-of-service` }
+    ]
+  },
+  {
     path: '/404',
-    title: '404 Page Not Found | Iron Prairie Fabrication Group LLC',
-    description: 'The requested page could not be found. Return to Iron Prairie Fabrication Group LLC for custom metal fabrication services in Texas.',
+    title: '404 Page Not Found | Iron Prairie Fabrication Group',
+    description: 'The requested page could not be found. Return to Iron Prairie Fabrication Group LLC for custom metal fabrication, structural steel, and welding in Texas.',
     canonical: `${DOMAIN}/404`,
+    robots: 'noindex, follow',
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
       { name: '404 Not Found', url: `${DOMAIN}/404` }
@@ -258,6 +279,14 @@ for (const route of routes) {
     /<meta\s+name="twitter:description"\s+content=".*?"\s*\/?>/s,
     `<meta name="twitter:description" content="${route.description}" />`
   );
+
+  // Replace Robots meta if custom
+  if (route.robots) {
+    html = html.replace(
+      /<meta\s+name="robots"\s+content=".*?"\s*\/?>/s,
+      `<meta name="robots" content="${route.robots}" />`
+    );
+  }
 
   // Replace JSON-LD
   const jsonLdData = buildJsonLd(route);

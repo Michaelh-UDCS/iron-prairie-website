@@ -11,7 +11,9 @@ const URL_LIST = [
   `https://${HOST}/services`,
   `https://${HOST}/projects`,
   `https://${HOST}/woman-owned`,
-  `https://${HOST}/contact`
+  `https://${HOST}/contact`,
+  `https://${HOST}/privacy-policy`,
+  `https://${HOST}/terms-of-service`
 ];
 
 async function submitIndexNow() {
