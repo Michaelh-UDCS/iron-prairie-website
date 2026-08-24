@@ -11,7 +11,7 @@
 - Implement core pages and navigation: Home, About, Services, Projects, Woman-Owned, Contact.
 - Apply Iron Prairie branding (logo, “Built to Last” tagline, warm country palette).
 - Add a Windows launcher script `Iron-Prairie-Website.bat` that starts the dev server and opens the browser.
-- Refine service positioning around laser cutting, welding, agricultural builds, blinds, O&G support, and public agency work.
+- Refine service positioning around CNC plasma cutting, welding, agricultural builds, blinds, O&G support, and public agency work.
 - Add procurement-oriented messaging for SAM.gov registration path and support for DOE, DOD, TPWD, National Parks, and other agencies.
 - Test the site in the browser and iterate on layout, copy, and visuals.
 - Later, wire up Firebase Hosting and form handling once approved.
@@ -63,7 +63,7 @@
 
 7. **Business scope refinement (current sprint)**
    - [ ] Update Home messaging to include primary capabilities and target buyer groups.
-   - [ ] Expand Services with laser plate cutting, simple welding, agricultural pens/equipment, blinds, and O&G machining support.
+   - [ ] Expand Services with CNC plasma plate cutting, simple welding, agricultural pens/equipment, blinds, and O&G machining support.
    - [ ] Add gates and fences fabrication positioning across agriculture, ranch, and public project scopes.
    - [ ] Add explicit public-sector support messaging for TPWD, National Parks, and broader state/federal agency work.
    - [ ] Add federal procurement readiness messaging (SAM.gov registration path and DOE/DOD support intent).

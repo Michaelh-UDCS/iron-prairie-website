@@ -4267,23 +4267,33 @@ export default function App() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav aria-label="Primary navigation" className="hidden xl:flex items-center gap-0.5 flex-shrink-0">
-            {navLinks.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.to === '/'}
-                className={({ isActive }) =>
-                  `px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
-                    isActive
-                      ? 'bg-slate-100 text-sky-900 font-bold border border-slate-200'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
-                  }`
-                }
-              >
-                {item.label}
-              </NavLink>
-            ))}
+          <nav aria-label="Primary navigation" className="hidden lg:flex items-center gap-1 flex-shrink-0">
+            {navLinks.map((item) => {
+              const isCatalog = item.to === '/storefront' || item.to === '/paddle-blinds';
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.to === '/'}
+                  className={({ isActive }) =>
+                    isCatalog
+                      ? `px-3 py-1.5 text-xs font-black rounded-xl transition-all whitespace-nowrap shadow-sm flex items-center gap-1.5 ${
+                          isActive
+                            ? 'bg-amber-500 text-slate-950 ring-2 ring-amber-400'
+                            : 'bg-amber-400 hover:bg-amber-300 text-slate-950 hover:scale-105'
+                        }`
+                      : `px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
+                          isActive
+                            ? 'bg-slate-100 text-sky-900 font-bold border border-slate-200'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                        }`
+                  }
+                >
+                  {isCatalog && <Zap className="h-3.5 w-3.5 fill-slate-950 text-slate-950" />}
+                  {item.label}
+                </NavLink>
+              );
+            })}
           </nav>
 
           {/* Right Action Icons */}
@@ -4344,7 +4354,7 @@ export default function App() {
             <button
               type="button"
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="p-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 xl:hidden"
+              className="p-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 lg:hidden"
               aria-label="Toggle navigation menu"
             >
               <Menu className="h-5 w-5" />
@@ -4356,21 +4366,27 @@ export default function App() {
         {/* Mobile Navigation Dropdown */}
         {mobileOpen && (
           <nav className="border-t border-slate-200 bg-white p-4 space-y-2 lg:hidden shadow-lg">
-            {navLinks.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.to === '/'}
-                onClick={() => setMobileOpen(false)}
-                className={({ isActive }) =>
-                  `block px-3 py-2 rounded-lg text-xs font-semibold ${
-                    isActive ? 'bg-slate-100 text-sky-900 font-bold' : 'text-slate-700 hover:bg-slate-50'
-                  }`
-                }
-              >
-                {item.label}
-              </NavLink>
-            ))}
+            {navLinks.map((item) => {
+              const isCatalog = item.to === '/storefront' || item.to === '/paddle-blinds';
+              return (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.to === '/'}
+                  onClick={() => setMobileOpen(false)}
+                  className={({ isActive }) =>
+                    isCatalog
+                      ? `block px-3 py-2.5 rounded-xl text-xs font-black bg-amber-400 text-slate-950 flex items-center justify-between shadow-sm`
+                      : `block px-3 py-2 rounded-lg text-xs font-semibold ${
+                          isActive ? 'bg-slate-100 text-sky-900 font-bold' : 'text-slate-700 hover:bg-slate-50'
+                        }`
+                  }
+                >
+                  <span>{item.label}</span>
+                  {isCatalog && <span className="bg-slate-950 text-amber-300 text-[10px] px-2 py-0.5 rounded-full font-black">FAST ORDER</span>}
+                </NavLink>
+              );
+            })}
             <Link
               to="/contact"
               onClick={() => setMobileOpen(false)}

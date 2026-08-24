@@ -1,5 +1,5 @@
 // src/operations/components/HeatMatcherPanel.tsx
-// Laser Table Auto-Matching Heat Number Engine for Order Staging
+// Plasma Table Auto-Matching Heat Number Engine for Order Staging
 
 import React, { useMemo } from 'react';
 import { CustomerOrder, MaterialTestReport } from '../../types';
@@ -37,7 +37,7 @@ export const HeatMatcherPanel: React.FC<HeatMatcherPanelProps> = ({
       <div className="flex items-center justify-between">
         <span className="text-xs font-bold uppercase tracking-wider text-orange-400 flex items-center gap-1.5">
           <Flame className="h-4 w-4 animate-pulse text-orange-400" />
-          Laser Table Heat Auto-Matcher
+          Plasma Table Heat Auto-Matcher
         </span>
         <span className="text-[10px] font-mono bg-orange-500/20 text-orange-300 px-2 py-0.5 rounded font-bold">
           {matchingHeats.length} Certified Heats In Stock

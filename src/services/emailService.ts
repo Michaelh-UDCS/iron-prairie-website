@@ -125,10 +125,10 @@ Total Weight: ${order.totalWeightLbs} lbs
 -------------------------------------------------------
 ⚡ SHOP ACTION REQUIRED:
 ${isRush
-  ? '1. Verify in-stock domestic plate immediately\n2. Queue CNC laser table top priority #1\n3. Stamp heat numbers and stage for dedicated Hot Shot courier.'
+  ? '1. Verify in-stock domestic plate immediately\n2. Queue CNC plasma table top priority #1\n3. Stamp heat numbers and stage for dedicated Hot Shot courier.'
   : isLarge
-  ? '1. Stage master plates with steel supplier\n2. Schedule dedicated laser table burn shift\n3. Prepare MTR compliance packet.'
-  : '1. Pull in-stock domestic plate from rack\n2. Burn, deburr, and laser-stamp heat numbers\n3. Package and stage for carrier pickup.'}
+  ? '1. Stage master plates with steel supplier\n2. Schedule dedicated plasma table burn shift\n3. Prepare MTR compliance packet.'
+  : '1. Pull in-stock domestic plate from rack\n2. Cut, deburr, and hard-stamp heat numbers\n3. Package and stage for carrier pickup.'}
 =======================================================`;
 
   return header;
@@ -206,10 +206,10 @@ export function generateOrderEmailHtml(order: any): string {
           <strong style="color:${isRush ? '#9f1239' : '#0369a1'}; font-size:14px; text-transform:uppercase;">⚡ ACTION REQUIRED FOR SHOP:</strong>
           <p style="margin: 6px 0 0 0; font-size: 13px; color: #334155;">
             ${isRush
-              ? '<strong>EMERGENCY DISPATCH:</strong> Pull plate immediately, assign laser table top priority, burn & deburr, stamp heat number, and notify Champion Logistics Hot Shot truck.'
+              ? '<strong>EMERGENCY DISPATCH:</strong> Pull plate immediately, assign plasma table top priority, burn & deburr, stamp heat number, and notify Champion Logistics Hot Shot truck.'
               : isLarge
               ? '<strong>HIGH-VOLUME ORDER:</strong> Allocate mill master plates from primary supplier, verify table schedules, and prepare comprehensive MTR package.'
-              : '<strong>STANDARD DISPATCH:</strong> Pull certified plate from stock, queue for CNC laser burning, stamp unit IDs & heat numbers, and package for carrier pickup.'}
+              : '<strong>STANDARD DISPATCH:</strong> Pull certified plate from stock, queue for CNC plasma cutting, stamp unit IDs & heat numbers, and package for carrier pickup.'}
           </p>
         </div>
 
@@ -237,7 +237,7 @@ export function generateOrderEmailHtml(order: any): string {
         <!-- Bill of Materials Table -->
         <div style="padding: 24px;">
           <div style="font-size:13px; font-weight:bold; text-transform:uppercase; color:#334155; margin-bottom:10px;">
-            Laser Cut Line Items &amp; BOM:
+            Plasma Cut Line Items &amp; BOM:
           </div>
           <table style="width:100%; border-collapse:collapse; text-align:left;">
             <thead>
@@ -355,7 +355,7 @@ export function generateClientProposalEmailHtml(proposal: ProposalPayload): stri
         <!-- Intro -->
         <div style="padding: 20px 24px 10px 24px; font-size: 13px; color: #334155;">
           Dear <strong>${proposal.buyerName || 'Procurement Lead'}</strong>,<br><br>
-          Thank you for requesting an official fabrication proposal from Iron Prairie Fabrication Group. We have reserved the in-stock domestic plate and laser table capacity for your turnaround bill of materials as specified below:
+          Thank you for requesting an official fabrication proposal from Iron Prairie Fabrication Group. We have reserved the in-stock domestic plate and plasma table capacity for your turnaround bill of materials as specified below:
         </div>
 
         <!-- Item Table -->
@@ -404,7 +404,7 @@ export function generateClientProposalEmailHtml(proposal: ProposalPayload): stri
         <div style="padding: 20px 24px; background: #ffffff; border-top: 1px solid #e2e8f0; font-size: 12px; color: #475569; line-height: 1.6;">
           <strong style="color: #0f172a; text-transform: uppercase; font-size: 11px;">Included Turnaround Standards:</strong><br>
           &bull; 100% ASME B16.48 Standard Geometry &amp; Chemical Compliance<br>
-          &bull; Traceable Mill Heat Numbers permanently laser-stamped on handles<br>
+          &bull; Traceable Mill Heat Numbers permanently stamped on handles<br>
           &bull; Certified Material Test Reports (MTR EN 10204 3.1) packet included<br>
           &bull; Payment Terms: Net 30 Commercial PO / Corporate P-Card / Direct ACH
         </div>
@@ -615,7 +615,7 @@ export async function triggerOrderEmailNotification(order: any): Promise<EmailNo
       ? '⚡ PRIORITY 1: Pull Plate & Call Champion Logistics Hot Shot'
       : isLarge
       ? '🏭 ALLOCATE: Order Raw Mill Master Plates'
-      : '⚡ STAGE: Queue Laser Table & Pull Stock Plate'
+      : '⚡ STAGE: Queue Plasma Table & Pull Stock Plate'
   };
 
   // Persist to local log
@@ -691,7 +691,7 @@ ${cartRecord.items.map((item: any) => `- ${item.quantity}x ${item.nps} Class ${i
 
 Estimated Weight:   ${cartRecord.totalWeightLbs} lbs
 
-Our CNC laser cutting shop in Freeport, TX has the domestic plate in-stock (A516-70, 304L, 316L) ready for same-day burn and dispatch with certified MTR packets.
+Our CNC plasma cutting shop in Freeport, TX has the domestic plate in-stock (A516-70, 304L, 316L) ready for same-day cut and dispatch with certified MTR packets.
 
 Would you like us to formalize this into an active Purchase Order and lock in your production table slot?
 

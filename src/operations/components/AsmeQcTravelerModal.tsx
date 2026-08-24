@@ -183,8 +183,8 @@ export const AsmeQcTravelerModal: React.FC<AsmeQcTravelerModalProps> = ({ order,
                 },
                 {
                   code: 'CUT-QC',
-                  title: 'Hold Point 2: Laser Burn & Cut Edge Profile',
-                  desc: 'Inspect CNC laser kerf tolerance (±0.005"), perpendicularity, and verify zero dross.',
+                  title: 'Hold Point 2: CNC Plasma Cut & Edge Profile',
+                  desc: 'Inspect CNC plasma kerf tolerance (±0.005"), perpendicularity, and verify zero dross.',
                 },
                 {
                   code: 'B16.48',

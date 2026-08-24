@@ -84,7 +84,7 @@ export const FastPOCheckoutModal: React.FC<FastPOCheckoutModalProps> = ({
                 1-Click Industrial Purchase Order Checkout
               </h3>
               <p className="text-xs text-slate-400">
-                Direct CNC Laser Table dispatch &bull; Same-Day Turnaround Processing
+                Direct CNC Plasma Table dispatch &bull; Same-Day Turnaround Processing
               </p>
             </div>
           </div>
@@ -109,7 +109,7 @@ export const FastPOCheckoutModal: React.FC<FastPOCheckoutModalProps> = ({
               <div>
                 <h4 className="text-2xl font-black text-slate-100">Purchase Order Dispatched!</h4>
                 <p className="mt-1 text-sm text-slate-300">
-                  Your order <strong className="font-mono text-amber-400">{submittedJob.poNumber}</strong> has been transmitted straight to the <strong>Iron Prairie Laser Table Queue</strong>.
+                  Your order <strong className="font-mono text-amber-400">{submittedJob.poNumber}</strong> has been transmitted straight to the <strong>Iron Prairie Plasma Table Queue</strong>.
                 </p>
               </div>
 
@@ -301,7 +301,7 @@ export const FastPOCheckoutModal: React.FC<FastPOCheckoutModalProps> = ({
                   className="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-500 py-3 text-sm font-bold text-slate-950 hover:bg-amber-400 transition-all shadow-lg active:scale-95"
                 >
                   <ShieldCheck className="h-4 w-4" />
-                  <span>Submit Purchase Order &amp; Dispatch to Laser Table</span>
+                  <span>Submit Purchase Order &amp; Dispatch to Plasma Table</span>
                 </button>
                 <p className="mt-2 text-center text-[11px] text-slate-400">
                   Instant Shop Routing &bull; Physical MTR Heat Stamping &bull; ASME B16.48 Guaranteed

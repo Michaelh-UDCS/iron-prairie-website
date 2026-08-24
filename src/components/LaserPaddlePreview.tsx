@@ -74,10 +74,10 @@ export const LaserPaddlePreview: React.FC<LaserPaddlePreviewProps> = ({
 
   return (
     <div className="relative flex flex-col items-center justify-center rounded-xl border border-slate-800 bg-slate-950/80 p-5 shadow-2xl backdrop-blur-md">
-      {/* Laser Cut Status Badge */}
+      {/* Plasma Cut Status Badge */}
       <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-mono font-medium text-amber-400">
         <Flame className="h-3.5 w-3.5 animate-pulse text-amber-400" />
-        <span>CNC LASER DIRECT BURN</span>
+        <span>CNC PLASMA DIRECT CUT</span>
       </div>
 
       <div className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-mono font-medium text-emerald-400">
@@ -122,8 +122,8 @@ export const LaserPaddlePreview: React.FC<LaserPaddlePreviewProps> = ({
               <stop offset="100%" stopColor="#94a3b8" />
             </linearGradient>
 
-            {/* Laser Burn Glow */}
-            <filter id="laser-glow" x="-20%" y="-20%" width="140%" height="140%">
+            {/* Plasma Burn Glow */}
+            <filter id="plasma-glow" x="-20%" y="-20%" width="140%" height="140%">
               <feGaussianBlur stdDeviation="3" result="blur" />
               <feComposite in="SourceGraphic" in2="blur" operator="over" />
             </filter>
@@ -195,7 +195,7 @@ export const LaserPaddlePreview: React.FC<LaserPaddlePreviewProps> = ({
           )}
 
           {/* Main Paddle Blind Geometry (Handle + Disc Path) */}
-          <g filter="url(#laser-glow)">
+          <g filter="url(#plasma-glow)">
             {/* Paddle Handle */}
             <path
               d={`

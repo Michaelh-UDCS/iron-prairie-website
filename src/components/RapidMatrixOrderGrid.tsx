@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Flame,
   Plus,
@@ -537,7 +537,7 @@ export const RapidMatrixOrderGrid: React.FC<RapidMatrixOrderGridProps> = ({
               </span>
             </div>
             <p className="text-xs text-slate-300 font-sans">
-              Domestic plate in-stock in Freeport, TX. Ready for same-day CNC laser burning with full certified MTR packets.
+              Domestic plate in-stock in Freeport, TX. Ready for same-day CNC plasma cutting with full certified MTR packets.
             </p>
           </div>
 

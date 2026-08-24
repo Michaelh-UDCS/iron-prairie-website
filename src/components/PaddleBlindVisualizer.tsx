@@ -119,7 +119,7 @@ export const PaddleBlindVisualizer: React.FC<PaddleBlindVisualizerProps> = ({
       <div className="relative bg-slate-50/90 border border-slate-200 rounded-xl p-2 overflow-hidden flex items-center justify-center min-h-[340px]">
         <div className="absolute top-2.5 left-3 text-[10px] font-mono text-slate-600 font-semibold tracking-wider flex items-center gap-1.5 pointer-events-none">
           <FileText className="h-3 w-3 text-slate-600" />
-          <span>IRON PRAIRIE CNC LASER PROFILE &bull; 1:1 CAD GEOMETRY</span>
+          <span>IRON PRAIRIE CNC PLASMA PROFILE &bull; 1:1 CAD GEOMETRY</span>
         </div>
 
         {addTHadle && (
@@ -358,7 +358,7 @@ export const PaddleBlindVisualizer: React.FC<PaddleBlindVisualizerProps> = ({
           {/* Handle text */}
           <g
             transform={`translate(${centerX + 2.5}, ${handleTopY + (addTHadle ? 34 : 26)}) rotate(90)`}
-            id="handle-laser-stamping"
+            id="handle-plasma-stamping"
           >
             <text
               x="0"
@@ -394,7 +394,7 @@ export const PaddleBlindVisualizer: React.FC<PaddleBlindVisualizerProps> = ({
         </div>
         <div className="text-right sm:text-right">
           <span className="text-sky-800 font-bold block">ASME B16.48 Standard</span>
-          <span className="text-[11px] text-slate-500">&plusmn;0.005" CNC Laser Tolerance</span>
+          <span className="text-[11px] text-slate-500">High-Definition CNC Plasma Tolerance</span>
         </div>
       </div>
     </div>

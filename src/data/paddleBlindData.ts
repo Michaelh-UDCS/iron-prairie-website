@@ -453,7 +453,7 @@ export function generateAmazonFlatFileRows(items: ConfiguredBlind[]): AmazonFeed
       manufacturer: 'Iron Prairie Fabrication Group LLC',
       standard_price: item.unitPrice,
       quantity: 50,
-      bullet_point1: `Precision CNC Laser Burned from heavy plate compliant with ASME B16.48 standards.`,
+      bullet_point1: `Precision CNC Plasma Cut from heavy plate compliant with ASME B16.48 standards.`,
       bullet_point2: `Material: ${mat.name} (${mat.astmSpec}) with mill test traceability.`,
       bullet_point3: `Dimensions: ${item.dimensions.od}" OD, ${item.dimensions.nominalThickness}" Nominal Thickness (${item.dimensions.thicknessFraction}).`,
       bullet_point4: `Full handle stamping: Size, Class, Material Grade, and Mill Heat Number.`,

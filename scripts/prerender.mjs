@@ -34,7 +34,7 @@ const routes = [
           "name": "What custom metal fabrication services does Iron Prairie Fabrication Group provide?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Iron Prairie Fabrication Group LLC provides structural steel fabrication, high-precision laser plate cutting, custom agricultural and ranch equipment, pipe welding, municipal infrastructure components, tornado shelters, custom bunkers, and large built-in safes."
+            "text": "Iron Prairie Fabrication Group LLC provides structural steel fabrication, high-precision CNC plasma plate cutting, custom agricultural and ranch equipment, pipe welding, municipal infrastructure components, tornado shelters, custom bunkers, and large built-in safes."
           }
         },
         {
@@ -74,7 +74,7 @@ const routes = [
   {
     path: '/services',
     title: 'Metal Fabrication Services in Texas | Iron Prairie',
-    description: 'Expert Texas metal fabrication: laser plate cutting, structural steel welding, custom ranch gates, animal pens, tornado shelters, and municipal steelwork.',
+    description: 'Expert Texas metal fabrication: CNC plasma plate cutting, structural steel welding, custom ranch gates, animal pens, tornado shelters, and municipal steelwork.',
     canonical: `${DOMAIN}/services`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
@@ -85,7 +85,7 @@ const routes = [
       "name": "Metal Fabrication Services",
       "itemListElement": [
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Structural Steel & Metal Fabrication" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Laser Plate Cutting & Precision Machining" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "CNC Plasma Plate Cutting & Precision Machining" } },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Agricultural & Livestock Equipment Fabrication" } },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Custom Bunkers, Tornado Shelters & Built-In Safes" } },
         { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Public Agency & Municipal Infrastructure Fabrication" } }
@@ -95,7 +95,7 @@ const routes = [
   {
     path: '/projects',
     title: 'Custom Metal Fabrication Projects in Texas | Iron Prairie',
-    description: 'View proven Texas metal fabrication projects: heavy-duty ranch gates, industrial laser-cut components, tornado shelters, and public park infrastructure.',
+    description: 'View proven Texas metal fabrication projects: heavy-duty ranch gates, industrial CNC plasma-cut components, tornado shelters, and public park infrastructure.',
     canonical: `${DOMAIN}/projects`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
@@ -176,7 +176,7 @@ const routes = [
   {
     path: '/shop-floor',
     title: 'Shop Floor Production Whiteboard | Iron Prairie Fabrication',
-    description: 'Owner operations and CNC laser production board for Iron Prairie Fabrication Group LLC in Freeport, TX.',
+    description: 'Owner operations and CNC plasma production board for Iron Prairie Fabrication Group LLC in Freeport, TX.',
     canonical: `${DOMAIN}/shop-floor`,
     robots: 'noindex, nofollow',
     breadcrumbs: [

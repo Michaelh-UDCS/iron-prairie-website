@@ -23,7 +23,7 @@ Use the `Iron-Prairie-Website.bat` file in this folder to start the dev server a
 
 - **Home** - Hero section with capabilities and quick links for agriculture/ranch, industrial/O&G, and public-sector buyers.
 - **About** - Shop story, operating approach, and service area overview.
-- **Services** - Core service groups for laser cutting/welding, gates/fences, custom agricultural fabrication, blinds, and public-sector/O&G support.
+- **Services** - Core service groups for CNC plasma cutting/welding, gates/fences, custom agricultural fabrication, blinds, and public-sector/O&G support.
 - **Projects** - Example project cards aligned to target markets (replace with real project data as jobs are completed).
 - **Woman-Owned** - Highlights woman-owned status, procurement readiness, and certification placeholders.
 - **Contact** - Quote-request form UI (local demo only) with market and agency-oriented intake fields.

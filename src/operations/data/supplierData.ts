@@ -105,7 +105,7 @@ export const INITIAL_GAS_TELEMETRY: GasTankTelemetry[] = [
     dailyConsumptionAvg: '42 Gal / Shift (Stainless/Clean Edge)',
     estimatedDaysRemaining: 18,
     lastFillDate: '2026-08-05',
-    tankLocation: 'Exterior Gas Pad (North Laser Bulkhead)',
+    tankLocation: 'Exterior Gas Pad (North Bulkhead)',
     status: 'Normal',
   },
   {
@@ -118,7 +118,7 @@ export const INITIAL_GAS_TELEMETRY: GasTankTelemetry[] = [
     dailyConsumptionAvg: '3 Cylinders / Week (Thick Carbon Steel)',
     estimatedDaysRemaining: 9,
     lastFillDate: '2026-08-12',
-    tankLocation: 'Laser Assist Manifold Bay (Bay 1)',
+    tankLocation: 'Plasma Assist Manifold Bay (Bay 1)',
     status: 'Normal',
   },
   {
@@ -196,6 +196,6 @@ export const INITIAL_SUPPLIER_POS: SupplierPO[] = [
     status: 'Delivered',
     deliveryStatus: 'Tank Filled & Signed Off by Russell',
     requireMTR: false,
-    destination: 'North Laser Bulkhead Pad, Freeport, TX',
+    destination: 'North Bulkhead Pad, Freeport, TX',
   },
 ];

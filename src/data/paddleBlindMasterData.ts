@@ -416,7 +416,7 @@ export function exportToAmazonFlatFileTSV(records: PaddleBlindMasterRecord[]): s
     const price = r.totalPrice.toFixed(2);
     const weight = r.adjustedWeightLbs.toFixed(2);
     const b1 = `Manufactured in the USA strictly compliant with ASME B16.48 standard line blind specifications.`;
-    const b2 = `Laser-cut from certified domestic plate with laser-etched heat number and full size/class stamping.`;
+    const b2 = `CNC plasma-cut from certified domestic plate with stamped heat number and full size/class stamping.`;
     const b3 = `Precision positive pipeline isolation, turnaround blinding, and hydrostatic pressure testing.`;
     const b4 = `Available with Certified Material Test Reports (MTRs) for full quality assurance and traceability.`;
 

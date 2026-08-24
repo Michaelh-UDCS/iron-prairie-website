@@ -1,5 +1,5 @@
 // src/operations/components/SupplierPoGenerator.tsx
-// Supplier Master Steel Plate & Laser Assist Gas (LN2/O2) Purchase Order Engine
+// Supplier Master Steel Plate & Plasma Assist Gas (LN2/O2) Purchase Order Engine
 
 import React, { useState } from 'react';
 import { SupplierPO, GasTankTelemetry, MaterialCode } from '../../types';
@@ -98,7 +98,7 @@ export const SupplierPoGenerator: React.FC = () => {
         {
           id: `POG-${Date.now()}`,
           materialCode: 'SA-36',
-          asmeSpec: gasType === 'Liquid Nitrogen (LN2)' ? 'Liquid Nitrogen MicroBulk Bulkhead Fill (99.999% Purity)' : 'High-Purity Laser Assist Oxygen Pack (3000 PSI)',
+          asmeSpec: gasType === 'Liquid Nitrogen (LN2)' ? 'Liquid Nitrogen MicroBulk Bulkhead Fill (99.999% Purity)' : 'High-Purity Plasma Assist Oxygen Pack (3000 PSI)',
           thickness: 0,
           thicknessLabel: 'Gas Bulk',
           widthInches: 0,
@@ -114,7 +114,7 @@ export const SupplierPoGenerator: React.FC = () => {
       status: 'Sent to Vendor',
       deliveryStatus: 'Scheduled Delivery to Freeport Gas Pad',
       requireMTR: false,
-      destination: 'North Laser Bulkhead Gas Pad, Freeport, TX',
+      destination: 'North Bulkhead Gas Pad, Freeport, TX',
       specialInstructions: 'Delivery driver must check in with Russell or Shop Foreman prior to fill.',
     };
 
@@ -132,7 +132,7 @@ export const SupplierPoGenerator: React.FC = () => {
           <div className="flex items-center gap-2.5">
             <Factory className="h-6 w-6 text-amber-400" />
             <h1 className="text-2xl font-black text-slate-100 tracking-tight font-display">
-              Supplier Material &amp; Laser Assist Gas Procurement
+              Supplier Material &amp; Plasma Assist Gas Procurement
             </h1>
           </div>
           <p className="text-xs text-slate-400 mt-1 max-w-2xl">
@@ -151,12 +151,12 @@ export const SupplierPoGenerator: React.FC = () => {
         </div>
       </div>
 
-      {/* Laser Assist Gas Telemetry Section */}
+      {/* Plasma Assist Gas Telemetry Section */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-bold uppercase tracking-wider text-slate-300 font-mono flex items-center gap-2">
             <Gauge className="h-4 w-4 text-sky-400" />
-            Laser Assist Gas Bulk Telemetry &amp; Tank Monitoring
+            Plasma Assist Gas Bulk Telemetry &amp; Tank Monitoring
           </h2>
           <span className="text-xs text-slate-500 font-mono">Live Monitoring &bull; Freeport Shop Pad</span>
         </div>
@@ -530,7 +530,7 @@ export const SupplierPoGenerator: React.FC = () => {
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
                 <Flame className="h-4 w-4 text-sky-400" />
-                Order Laser Assist Gas Replenishment
+                Order Plasma Assist Gas Replenishment
               </h3>
               <button onClick={() => setIsGasOrderModalOpen(false)} className="text-slate-400 hover:text-slate-200">
                 <X className="h-5 w-5" />
@@ -539,7 +539,7 @@ export const SupplierPoGenerator: React.FC = () => {
 
             <div className="space-y-3">
               <p className="text-slate-300">
-                Generate immediate replenishment purchase order to <strong>Airgas Freeport Branch</strong> for delivery to North Laser Pad.
+                Generate immediate replenishment purchase order to <strong>Airgas Freeport Branch</strong> for delivery to North Bulkhead Pad.
               </p>
 
               <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">

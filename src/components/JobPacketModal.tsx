@@ -79,7 +79,7 @@ export const JobPacketModal: React.FC<JobPacketModalProps> = ({ job, isOpen, onC
             }`}
           >
             <Flame className="h-4 w-4" />
-            <span>1. Laser Cut Ticket</span>
+            <span>1. Plasma Cut Ticket</span>
           </button>
 
           <button
@@ -109,7 +109,7 @@ export const JobPacketModal: React.FC<JobPacketModalProps> = ({ job, isOpen, onC
 
         {/* Printable Content Body */}
         <div className="flex-1 overflow-auto p-6 space-y-6 print:p-8 print:text-black">
-          {/* TAB 1: LASER CUT TICKET */}
+          {/* TAB 1: PLASMA CUT TICKET */}
           {(activeTab === 'cutTicket' || typeof window === 'undefined') && (
             <div className="space-y-6">
               {/* Shop Header Banner */}
@@ -117,7 +117,7 @@ export const JobPacketModal: React.FC<JobPacketModalProps> = ({ job, isOpen, onC
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
                     <span className="text-[10px] uppercase font-bold tracking-widest text-amber-400 print:text-black">
-                      CNC LASER TABLE ROUTING SLIP
+                      CNC PLASMA TABLE ROUTING SLIP
                     </span>
                     <h2 className="text-xl font-black text-slate-100 print:text-black">
                       IRON PRAIRIE FABRICATION GROUP LLC
@@ -134,7 +134,7 @@ export const JobPacketModal: React.FC<JobPacketModalProps> = ({ job, isOpen, onC
                 </div>
               </div>
 
-              {/* Laser Parameters Grid */}
+              {/* Plasma Parameters Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="rounded-xl border border-slate-800 bg-slate-950 p-3.5 print:border-black print:bg-white">
                   <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 print:text-stone-600">
@@ -218,7 +218,7 @@ export const JobPacketModal: React.FC<JobPacketModalProps> = ({ job, isOpen, onC
               {/* Shop Operator Sign-off */}
               <div className="grid grid-cols-3 gap-4 border-t border-slate-800 pt-4 text-xs font-mono text-slate-400 print:border-black print:text-black">
                 <div className="border border-dashed border-slate-700 p-3 rounded-lg print:border-black">
-                  <div className="text-[10px] text-slate-400 print:text-stone-600">1. Laser Burn Operator</div>
+                  <div className="text-[10px] text-slate-400 print:text-stone-600">1. Plasma Burn Operator</div>
                   <div className="mt-4 border-b border-slate-600 print:border-black"></div>
                   <div className="mt-1 flex justify-between text-[10px]">
                     <span>Initials: _______</span>
@@ -257,7 +257,7 @@ export const JobPacketModal: React.FC<JobPacketModalProps> = ({ job, isOpen, onC
                     IRON PRAIRIE FABRICATION GROUP LLC
                   </h2>
                   <p className="text-xs text-slate-400 print:text-stone-700 mt-1">
-                    Direct CNC Laser Burn &amp; Machining Facility<br />
+                    Direct CNC Plasma &amp; Machining Facility<br />
                     Freeport, TX 77541 &bull; Phone: (979) 248-9266<br />
                     sales@ironprairiefabrication.com
                   </p>

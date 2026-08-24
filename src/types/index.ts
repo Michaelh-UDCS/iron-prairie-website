@@ -5,7 +5,7 @@
 export type PressureClass = 150 | 300 | 600 | 900 | 1500;
 export type MaterialCode = 'SA-36' | 'SA-516-70' | '304' | '304L' | '316L' | 'AL-6061';
 export type FacingType = 'Flat Face (FF) - Standard (No Machining)' | 'Machined Gasket Finish (Special Order)';
-export type ProductionStatus = 'queued' | 'laser_cutting' | 'deburred_stamped' | 'ready_to_ship' | 'shipped';
+export type ProductionStatus = 'queued' | 'plasma_cutting' | 'laser_cutting' | 'deburred_stamped' | 'ready_to_ship' | 'shipped';
 export type PaymentMethodType = 'net30_po' | 'ach' | 'credit_card';
 
 export type NPSSize =
@@ -30,7 +30,7 @@ export type NPSSize =
 
 // Legacy compatibility aliases
 export type MaterialId = 'A516' | '304L' | '316L' | '6061' | MaterialCode;
-export type KanbanStage = 'queued' | 'laser' | 'deburred' | 'ready' | 'shipped' | ProductionStatus;
+export type KanbanStage = 'queued' | 'plasma' | 'laser' | 'deburred' | 'ready' | 'shipped' | ProductionStatus;
 
 // 1. MATERIAL & GEOMETRY CONFIGURATION
 export interface PricingConfig {
@@ -46,6 +46,7 @@ export interface PricingConfig {
   scrapMultiplier: number;
   hotShotEmergencyFee: number;
   laserGasRatePerInch?: number;
+  plasmaGasRatePerInch?: number;
 }
 
 export interface MaterialConfig {
@@ -247,7 +248,7 @@ export interface SupplierPO {
   supplierEmail: string;
   orderDate: string;
   requestedDeliveryDate: string;
-  category: 'Master Steel Plate' | 'Laser Assist Gas' | 'Shop Consumables';
+  category: 'Master Steel Plate' | 'Plasma Assist Gas' | 'Laser Assist Gas' | 'Shop Consumables';
   items: SupplierPOItem[];
   totalAmount: number;
   status: 'Draft' | 'Sent to Vendor' | 'Confirmed' | 'Delivered' | 'Cancelled';
@@ -277,6 +278,7 @@ export interface JobCosting {
   invoicedRevenue: number;
   materialPlateCost: number;
   laserAssistGasCost: number;
+  plasmaAssistGasCost?: number;
   machineLaborCost: number;
   freightCost: number;
   totalCogs: number;

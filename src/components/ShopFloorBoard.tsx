@@ -39,7 +39,7 @@ const STAGES: { key: KanbanStage; label: string; icon: React.ReactNode; color: s
   },
   {
     key: 'laser',
-    label: '2. At Laser Table',
+    label: '2. At Plasma Table',
     icon: <Flame className="h-4 w-4 text-amber-400 animate-pulse" />,
     color: 'border-orange-500/50 bg-orange-500/5',
     badgeBg: 'bg-orange-500 text-slate-950'
@@ -237,7 +237,7 @@ export const ShopFloorBoard: React.FC<ShopFloorBoardProps> = ({ jobs, setJobs, o
             </h1>
           </div>
           <p className="text-xs text-slate-400 mt-1">
-            Real-time visual CNC laser schedule, heat number traceability, and 1-click printable job packets.
+            Real-time visual CNC plasma schedule, heat number traceability, and 1-click printable job packets.
           </p>
         </div>
 
@@ -286,7 +286,7 @@ export const ShopFloorBoard: React.FC<ShopFloorBoardProps> = ({ jobs, setJobs, o
 
         <div className="rounded-2xl border border-slate-800 bg-slate-900/90 p-4 shadow-lg">
           <div className="flex items-center justify-between text-slate-400 text-xs font-semibold">
-            <span>Blinds Queued for Laser</span>
+            <span>Blinds Queued for Plasma</span>
             <Flame className="h-4 w-4 text-orange-400" />
           </div>
           <div className="mt-2 font-mono text-2xl font-black text-orange-400">
@@ -504,7 +504,7 @@ export const ShopFloorBoard: React.FC<ShopFloorBoardProps> = ({ jobs, setJobs, o
                                 onClick={() => advanceJob(job.id)}
                                 className="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-amber-500 py-2 text-xs font-bold text-slate-950 hover:bg-amber-400 transition-all shadow active:scale-95"
                               >
-                                <span>Send to Laser</span>
+                                <span>Send to Plasma Table</span>
                                 <ArrowRight className="h-3.5 w-3.5" />
                               </button>
                             )}

@@ -58,7 +58,7 @@ export const LaserCuttingKanban: React.FC<LaserCuttingKanbanProps> = ({
     },
     {
       key: 'laser_cutting',
-      title: '2. At Laser Table',
+      title: '2. At Plasma Table',
       icon: Flame,
       accentColor: 'text-orange-400',
       borderAccent: 'border-orange-500/40',
@@ -268,7 +268,7 @@ export const LaserCuttingKanban: React.FC<LaserCuttingKanbanProps> = ({
                           )}
                         </div>
 
-                        {/* Auto-Matcher Panel when at Laser Table stage */}
+                        {/* Auto-Matcher Panel when at Plasma Table stage */}
                         {stage.key === 'laser_cutting' && !order.millHeatNumber && (
                           <HeatMatcherPanel
                             order={order}

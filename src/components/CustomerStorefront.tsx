@@ -129,7 +129,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
           <div className="space-y-1">
             <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-0.5 text-xs font-mono font-semibold text-amber-400">
               <Flame className="h-3.5 w-3.5 animate-pulse text-amber-400" />
-              <span>DIRECT CNC LASER BURN SHOP &bull; FREEPORT, TX</span>
+              <span>DIRECT CNC PLASMA CUTTING SHOP &bull; FREEPORT, TX</span>
             </div>
             <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-slate-100 font-display">
               ASME B16.48 Positive Isolation Paddle Blinds

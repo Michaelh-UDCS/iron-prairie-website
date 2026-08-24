@@ -44,13 +44,13 @@ export const JobCostingTracker: React.FC<JobCostingTrackerProps> = ({ orders, pr
         const matCost = item.adjustedWeightLbs * activePricePerLb * item.quantity;
         totalMaterialCost += matCost;
 
-        // Laser assist gas cost (cut perimeter in inches * gas rate)
+        // Plasma assist gas cost (cut perimeter in inches * gas rate)
         const perimeterInches = Math.PI * item.od + (item.od * 0.25 + 6.0) * 2;
         const gasRate = pricingConfig.laserGasRatePerInch || 0.08;
         const gasCost = perimeterInches * gasRate * item.quantity;
         totalLaserGasCost += gasCost;
 
-        // CNC Laser & Deburring shop labor
+        // CNC Plasma & Deburring shop labor
         const laborHrs = (LABOR_HOURS[item.nps] || 0.35) * item.quantity;
         const laborCost = laborHrs * pricingConfig.laborRatePerHour;
         totalMachineLaborCost += laborCost;
@@ -87,27 +87,26 @@ export const JobCostingTracker: React.FC<JobCostingTrackerProps> = ({ orders, pr
     });
   }, [orders, pricingConfig]);
 
-  // Overall Financial Summary
+  // Aggregate shop pipeline metrics
   const summary = useMemo(() => {
     const totalRevenue = costedOrders.reduce((s, o) => s + o.costing.invoicedRevenue, 0);
-    const totalCogs = costedOrders.reduce((s, o) => s + o.costing.totalCogs, 0);
-    const totalGrossProfit = totalRevenue - totalCogs;
-    const avgMarginPct = totalRevenue > 0 ? Math.round((totalGrossProfit / totalRevenue) * 100) : 0;
-
     const totalPlateCost = costedOrders.reduce((s, o) => s + o.costing.materialPlateCost, 0);
     const totalGasCost = costedOrders.reduce((s, o) => s + o.costing.laserAssistGasCost, 0);
     const totalLaborCost = costedOrders.reduce((s, o) => s + o.costing.machineLaborCost, 0);
     const totalFreightCost = costedOrders.reduce((s, o) => s + o.costing.freightCost, 0);
+    const totalCogs = costedOrders.reduce((s, o) => s + o.costing.totalCogs, 0);
+    const totalGrossProfit = costedOrders.reduce((s, o) => s + o.costing.netMarginDollars, 0);
+    const avgMarginPct = totalRevenue > 0 ? Math.round((totalGrossProfit / totalRevenue) * 100) : 0;
 
     return {
       totalRevenue,
-      totalCogs,
-      totalGrossProfit,
-      avgMarginPct,
       totalPlateCost,
       totalGasCost,
       totalLaborCost,
       totalFreightCost,
+      totalCogs,
+      totalGrossProfit,
+      avgMarginPct,
     };
   }, [costedOrders]);
 
@@ -124,7 +123,7 @@ export const JobCostingTracker: React.FC<JobCostingTrackerProps> = ({ orders, pr
             </h1>
           </div>
           <p className="text-xs text-slate-400 mt-1 max-w-2xl font-sans">
-            Real-time margin formula: Net Margin = Invoiced Revenue - (Plate Cost + Laser Assist Gas + Labor + Freight).
+            Real-time margin formula: Net Margin = Invoiced Revenue - (Plate Cost + Plasma Assist Gas + Labor + Freight).
           </p>
         </div>
 
@@ -159,7 +158,7 @@ export const JobCostingTracker: React.FC<JobCostingTrackerProps> = ({ orders, pr
         </div>
 
         <div className="rounded-2xl border border-slate-800 bg-slate-900/90 p-4 shadow-lg">
-          <div className="text-slate-400 text-[10px] font-bold uppercase">Laser Assist Gas Cost</div>
+          <div className="text-slate-400 text-[10px] font-bold uppercase">Plasma Assist Gas Cost</div>
           <div className="text-xl font-black text-sky-400 mt-1">${summary.totalGasCost.toFixed(2)}</div>
           <div className="text-[10px] text-slate-500 mt-0.5">LN2 &amp; O2 Assist</div>
         </div>
@@ -185,7 +184,7 @@ export const JobCostingTracker: React.FC<JobCostingTrackerProps> = ({ orders, pr
           />
           <div
             className="h-full bg-indigo-500"
-            title={`Laser Gas: $${summary.totalGasCost.toFixed(0)}`}
+            title={`Plasma Gas: $${summary.totalGasCost.toFixed(0)}`}
             style={{ width: `${(summary.totalGasCost / (summary.totalCogs || 1)) * 100}%` }}
           />
           <div
@@ -198,7 +197,7 @@ export const JobCostingTracker: React.FC<JobCostingTrackerProps> = ({ orders, pr
         <div className="flex flex-wrap items-center gap-4 text-[11px] text-slate-400 pt-1">
           <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-amber-500"></span> Steel Plate (${summary.totalPlateCost.toFixed(0)})</span>
           <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-sky-500"></span> CNC Shop Labor (${summary.totalLaborCost.toFixed(0)})</span>
-          <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-indigo-500"></span> Laser Assist Gas (${summary.totalGasCost.toFixed(0)})</span>
+          <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-indigo-500"></span> Plasma Assist Gas (${summary.totalGasCost.toFixed(0)})</span>
           <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-emerald-500"></span> Freight Dispatch (${summary.totalFreightCost.toFixed(0)})</span>
         </div>
       </div>

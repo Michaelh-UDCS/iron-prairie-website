@@ -21,6 +21,12 @@ export default function Home() {
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link
+              to="/storefront"
+              className="rounded-full bg-amber-500 px-5 py-2.5 text-sm font-black text-slate-950 shadow-md hover:bg-amber-400 flex items-center gap-1.5 transition-all active:scale-95"
+            >
+              <span>⚡ Paddle Blinds Catalog</span>
+            </Link>
+            <Link
               to="/contact"
               className="rounded-full bg-brand-brown px-5 py-2.5 text-sm font-semibold text-brand-ivory shadow-sm hover:bg-brand-brown/90"
             >
@@ -41,13 +47,15 @@ export default function Home() {
                 fence-line fabrication for daily operations.
               </p>
             </div>
-            <div className="rounded-lg bg-white/70 p-4 shadow-sm">
-              <div className="font-semibold text-brand-brown">O&amp;G &amp; Industrial</div>
-              <p className="mt-1">
-                CNC plasma-cut parts, machining on blind systems, and job-ready support components for
-                plant and field environments.
+            <Link to="/storefront" className="rounded-lg bg-sky-50 border border-sky-200 p-4 shadow-sm block hover:bg-sky-100/70 transition-colors group">
+              <div className="font-bold text-sky-900 flex items-center justify-between">
+                <span>O&amp;G &amp; Paddle Blinds</span>
+                <span className="text-[10px] bg-amber-400 text-slate-950 px-1.5 py-0.5 rounded font-black">FAST ORDER</span>
+              </div>
+              <p className="mt-1 text-slate-700">
+                ASME B16.48 positive isolation paddle blinds &amp; spacers. Fast turnaround grid ordering with instant official proposals.
               </p>
-            </div>
+            </Link>
             <div className="rounded-lg bg-white/70 p-4 shadow-sm">
               <div className="font-semibold text-brand-brown">Public Agencies</div>
               <p className="mt-1">

@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   X,
   FileText,
@@ -148,7 +148,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                 {generatedProposal ? `Official Proposal #${generatedProposal.proposalId}` : 'Generate Instant Official Proposal'}
               </h3>
               <p className="text-xs text-slate-300">
-                {generatedProposal ? '30-Day Guaranteed Price Lock &bull; Sent from Sales@ironprairiefabrication.com' : 'ASME B16.48 Precision Laser Burn &bull; Freeport, TX'}
+                {generatedProposal ? '30-Day Guaranteed Price Lock &bull; Sent from Sales@ironprairiefabrication.com' : 'ASME B16.48 Precision Plasma Cutting &bull; Freeport, TX'}
               </p>
             </div>
           </div>
@@ -206,7 +206,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                       <span className="font-mono text-rose-700">+$250.00</span>
                     </div>
                     <p className="text-slate-600 text-[11px] mt-0.5">
-                      Direct truck courier (e.g. Champion Logistics) dispatched straight to your plant gate upon laser cut completion.
+                      Direct truck courier (e.g. Champion Logistics) dispatched straight to your plant gate upon plasma cut completion.
                     </p>
                   </div>
                 </label>
@@ -336,7 +336,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
               <div>
                 <h4 className="text-2xl font-black text-slate-900">Purchase Order Dispatched!</h4>
                 <p className="text-sm text-slate-600 mt-1 max-w-md mx-auto">
-                  Your order <strong className="font-mono text-sky-800">{poNumberInput}</strong> has been transmitted straight to the <strong>Iron Prairie Laser Table Queue</strong>.
+                  Your order <strong className="font-mono text-sky-800">{poNumberInput}</strong> has been transmitted straight to the <strong>Iron Prairie Plasma Table Queue</strong>.
                 </p>
               </div>
               <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-xs font-mono max-w-md mx-auto space-y-1.5 text-left">
@@ -392,7 +392,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                         Iron Prairie Fabrication Group LLC
                       </h1>
                       <div className="text-xs text-slate-600 font-medium">
-                        ASME B16.48 Paddle Blinds &bull; Precision CNC Laser Cutting &bull; Certified Woman-Owned
+                        ASME B16.48 Paddle Blinds &bull; Precision CNC Plasma Cutting &bull; Certified Woman-Owned
                       </div>
                       <div className="text-xs text-slate-500">
                         Freeport, TX Facility &bull; Phone: (979) 248-9266 &bull; {IPG_SALES_EMAIL}
@@ -464,7 +464,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                   <div className="max-w-md text-slate-500 font-sans space-y-1">
                     <div className="font-bold text-slate-800 uppercase text-[11px]">Quality &amp; Compliance Guarantee:</div>
                     <p className="text-[11px] leading-relaxed">
-                      All paddle blinds manufactured strictly to ASME B16.48 specifications from domestic mill-certified plate. Mill Heat Numbers permanently laser-stamped on handles. Certified MTR packets included with delivery.
+                      All paddle blinds manufactured strictly to ASME B16.48 specifications from domestic mill-certified plate. Mill Heat Numbers permanently stamped on handles. Certified MTR packets included with delivery.
                     </p>
                   </div>
 
@@ -498,7 +498,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                   <div className="space-y-1 text-center sm:text-left">
                     <div className="text-sm font-bold text-white flex items-center justify-center sm:justify-start gap-2">
                       <ShieldCheck className="h-4 w-4 text-amber-400" />
-                      <span>Ready to Dispatch to CNC Laser Table?</span>
+                      <span>Ready to Dispatch to CNC Plasma Table?</span>
                     </div>
                     <p className="text-xs text-slate-300">
                       Enter your Purchase Order number below to authorize production and lock in your scheduled table slot.
