@@ -205,7 +205,7 @@ export const RapidMatrixOrderGrid: React.FC<RapidMatrixOrderGridProps> = ({
       <div className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 shadow-sm space-y-5">
         
         {/* Top Product Type Family Selector */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-slate-200 pb-5">
           <div>
             <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-sky-700 uppercase tracking-wider mb-1">
               <Flame className="h-4 w-4 text-sky-600" /> Turnaround Rapid Matrix Ordering &bull; Freeport, TX
@@ -318,10 +318,10 @@ export const RapidMatrixOrderGrid: React.FC<RapidMatrixOrderGridProps> = ({
         </div>
 
         {/* Filter Strip & MTR Toggle */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-200 text-xs">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-3 border-t border-slate-200 text-xs">
           
           {/* Quick Size Range Filters */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+          <div className="flex flex-wrap items-center gap-1.5">
             <span className="text-slate-500 font-semibold shrink-0">Filter Range:</span>
             <button
               type="button"
@@ -362,7 +362,7 @@ export const RapidMatrixOrderGrid: React.FC<RapidMatrixOrderGridProps> = ({
           </div>
 
           {/* MTR Toggle & Search Input */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
             <div className="relative w-40 sm:w-48">
               <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
               <input
