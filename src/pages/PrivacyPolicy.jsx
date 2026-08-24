@@ -60,7 +60,7 @@ export default function PrivacyPolicy() {
           <div>Iron Prairie Fabrication Group LLC</div>
           <div>Freeport, TX 77541</div>
           <div>Phone: <a href="tel:+19792489266" className="underline hover:text-white">979-248-9266</a></div>
-          <div>Email: <a href="mailto:Alicia@ironprairiefabrication.com" className="underline hover:text-white">Alicia@ironprairiefabrication.com</a></div>
+          <div>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="underline hover:text-white">Sales@ironprairiefabrication.com</a></div>
         </div>
       </section>
     </div>

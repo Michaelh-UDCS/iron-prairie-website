@@ -9,7 +9,7 @@ body,
 }
 
 body {
-  @apply bg-brand-ink text-stone-300 font-body antialiased;
+  @apply bg-slate-100 text-slate-900 font-body antialiased;
 }
 
 .container-page {

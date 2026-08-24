@@ -2,11 +2,11 @@ import React from 'react';
 
 const sections = [
   {
-    title: 'Laser Cutting & Welding',
+    title: 'CNC Plasma Cutting & Welding',
     summary:
       'Fast-turn plate and practical fabrication support for parts, assemblies, and field-ready repairs.',
     items: [
-      'Laser plate cutting for production and one-off jobs',
+      'CNC plasma plate cutting for production and one-off jobs',
       'Simple welding and shop-built assemblies',
       'Custom gates and fence panel fabrication',
       'Custom brackets, plates, and structural supports',
@@ -66,7 +66,7 @@ export default function Services() {
           Fabrication that matches real-world needs.
         </h1>
         <p className="mt-4 text-sm leading-relaxed text-slate-800">
-          Iron Prairie focuses on practical steel work that keeps operations moving. From laser-cut
+          Iron Prairie focuses on practical steel work that keeps operations moving. From CNC plasma-cut
           parts to custom pens, blinds, secure steel builds, and public infrastructure components,
           we support projects that are too specific for off-the-shelf solutions and too important
           to delay.

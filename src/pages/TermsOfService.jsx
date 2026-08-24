@@ -30,7 +30,7 @@ export default function TermsOfService() {
         <div className="rounded-xl bg-white/80 p-5 shadow-sm">
           <h2 className="text-sm font-semibold text-brand-brown">Custom Fabrication &amp; Tolerances</h2>
           <p className="mt-2 text-xs leading-relaxed text-slate-800">
-            All fabrication work—including structural steel, laser plate cutting, agricultural pens, custom bunkers, and shelter steelwork—is executed in accordance with agreed specifications, industry tolerances, and quality standards.
+            All fabrication work—including structural steel, CNC plasma plate cutting, agricultural pens, custom bunkers, and shelter steelwork—is executed in accordance with agreed specifications, industry tolerances, and quality standards.
           </p>
         </div>
 
@@ -60,7 +60,7 @@ export default function TermsOfService() {
           <div>Iron Prairie Fabrication Group LLC</div>
           <div>Freeport, TX 77541</div>
           <div>Phone: <a href="tel:+19792489266" className="underline hover:text-white">979-248-9266</a></div>
-          <div>Email: <a href="mailto:Alicia@ironprairiefabrication.com" className="underline hover:text-white">Alicia@ironprairiefabrication.com</a></div>
+          <div>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="underline hover:text-white">Sales@ironprairiefabrication.com</a></div>
         </div>
       </section>
     </div>

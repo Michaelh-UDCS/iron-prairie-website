@@ -23,7 +23,7 @@ const projects = [
     title: 'O&G Replacement Part Run',
     type: 'Industrial',
     summary:
-      'Laser-cut and finished steel support parts for a time-sensitive oil and gas maintenance window.',
+      'CNC plasma-cut and finished steel support parts for a time-sensitive oil and gas maintenance window.',
   },
   {
     title: 'Park Fire Ring and Handrail Set',

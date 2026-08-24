@@ -93,7 +93,7 @@ export default function Contact() {
               name="projectType"
               className="mt-1 w-full rounded-md border border-brand-brown/30 bg-white/80 px-3 py-2 text-sm shadow-sm outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/40"
             >
-              <option>Laser Cutting / Weldment</option>
+              <option>CNC Plasma Cutting / Weldment</option>
               <option>Agriculture / Ranch Equipment</option>
               <option>Gates / Fences</option>
               <option>Custom Bunker / Tornado Shelter</option>
@@ -162,7 +162,7 @@ export default function Contact() {
         <h2 className="text-sm font-semibold text-brand-brown">Other ways to reach us</h2>
         <div className="space-y-2 text-xs text-slate-800">
           <div>Phone: <a href="tel:+19792489266" className="font-semibold text-brand-brown underline hover:text-brand-brown/80">979-248-9266</a></div>
-          <div>Email: <a href="mailto:Alicia@ironprairiefabrication.com" className="font-semibold text-brand-brown underline hover:text-brand-brown/80">Alicia@ironprairiefabrication.com</a></div>
+          <div>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="font-semibold text-brand-brown underline hover:text-brand-brown/80">Sales@ironprairiefabrication.com</a></div>
           <div>Location: <a href="https://maps.app.goo.gl/uDPSYSvFs3xX5isU7" target="_blank" rel="noopener noreferrer" className="font-semibold text-brand-brown underline hover:text-brand-brown/80">View on Google Maps</a></div>
         </div>
         <p className="text-[11px] text-slate-700">

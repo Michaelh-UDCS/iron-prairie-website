@@ -17,7 +17,7 @@ export default function About() {
           field.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-slate-800">
-          Whether we&apos;re laser-cutting parts, building custom animal pens, fabricating paddle
+          Whether we&apos;re plasma-cutting parts, building custom animal pens, fabricating paddle
           blinds, or supporting agency projects like handrails and fire pits, our promise is the
           same: show up, do it right, and stand behind the work.
         </p>

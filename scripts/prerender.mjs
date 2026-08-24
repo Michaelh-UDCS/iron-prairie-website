@@ -143,6 +143,48 @@ const routes = [
     ]
   },
   {
+    path: '/storefront',
+    title: 'ASME B16.48 Paddle Blind Configurator & Storefront | Iron Prairie',
+    description: 'Configure and order ASME B16.48 paddle blinds with instant pricing, weight calculation, MTR compliance packets, and rapid turnaround dispatch from Iron Prairie in Freeport, TX.',
+    canonical: `${DOMAIN}/storefront`,
+    breadcrumbs: [
+      { name: 'Home', url: `${DOMAIN}/` },
+      { name: 'B2B Storefront', url: `${DOMAIN}/storefront` }
+    ]
+  },
+  {
+    path: '/paddle-blinds',
+    title: 'ASME B16.48 Paddle Blinds & Spacer Rings | Iron Prairie Fabrication',
+    description: 'Turnaround-grade ASME B16.48 paddle blinds in SA-516 Gr. 70, SA-36, 304L, 316L, and 6061-T6 aluminum with certified MTRs and Freeport hot-shot delivery.',
+    canonical: `${DOMAIN}/paddle-blinds`,
+    breadcrumbs: [
+      { name: 'Home', url: `${DOMAIN}/` },
+      { name: 'Paddle Blinds', url: `${DOMAIN}/paddle-blinds` }
+    ]
+  },
+  {
+    path: '/operations',
+    title: 'Shop Operations Workspace | Iron Prairie Fabrication',
+    description: 'Owner and shop floor operations platform for Iron Prairie Fabrication Group LLC in Freeport, TX.',
+    canonical: `${DOMAIN}/operations`,
+    robots: 'noindex, nofollow',
+    breadcrumbs: [
+      { name: 'Home', url: `${DOMAIN}/` },
+      { name: 'Operations', url: `${DOMAIN}/operations` }
+    ]
+  },
+  {
+    path: '/shop-floor',
+    title: 'Shop Floor Production Whiteboard | Iron Prairie Fabrication',
+    description: 'Owner operations and CNC laser production board for Iron Prairie Fabrication Group LLC in Freeport, TX.',
+    canonical: `${DOMAIN}/shop-floor`,
+    robots: 'noindex, nofollow',
+    breadcrumbs: [
+      { name: 'Home', url: `${DOMAIN}/` },
+      { name: 'Shop Floor Operations', url: `${DOMAIN}/shop-floor` }
+    ]
+  },
+  {
     path: '/404',
     title: '404 Page Not Found | Iron Prairie Fabrication Group',
     description: 'The requested page could not be found. Return to Iron Prairie Fabrication Group LLC for custom metal fabrication, structural steel, and welding in Texas.',
@@ -174,7 +216,7 @@ function buildJsonLd(route) {
       "image": `${DOMAIN}/Logo.jpg`,
       "description": "Certified woman-owned metal fabrication business delivering high-precision structural steel, custom sheet metal, pipe fabrication, and industrial welding across Texas.",
       "telephone": "+19792489266",
-      "email": "Alicia@ironprairiefabrication.com",
+      "email": "Sales@ironprairiefabrication.com",
       "address": {
         "@type": "PostalAddress",
         "addressLocality": "Freeport",

@@ -14,7 +14,7 @@ export default function Home() {
             Built-to-last fabrication for ranches, industry, and agencies.
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-brand-muted">
-            Iron Prairie Fabrication Group LLC delivers laser plate cutting, practical welding, and
+            Iron Prairie Fabrication Group LLC delivers CNC plasma plate cutting, practical welding, and
             custom fabrication for agricultural operations, O&amp;G facilities, and public-sector
             projects, including gates, fence systems, custom bunkers, tornado shelters, and large
             built-in safes. We show up, do it right, and stand behind every weld.
@@ -44,7 +44,7 @@ export default function Home() {
             <div className="rounded-lg bg-white/70 p-4 shadow-sm">
               <div className="font-semibold text-brand-brown">O&amp;G &amp; Industrial</div>
               <p className="mt-1">
-                Laser-cut parts, machining on blind systems, and job-ready support components for
+                CNC plasma-cut parts, machining on blind systems, and job-ready support components for
                 plant and field environments.
               </p>
             </div>
@@ -99,7 +99,7 @@ export default function Home() {
               Professional delivery for private and public buyers
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-700">
-              Iron Prairie Fabrication Group LLC provides structural steel fabrication, high-precision laser plate cutting, custom livestock pens, tornado shelters, custom bunkers, and municipal infrastructure metalwork across Freeport, Lake Jackson, Brazoria County, and statewide Texas with schedule discipline and safety compliance.
+              Iron Prairie Fabrication Group LLC provides structural steel fabrication, high-definition CNC plasma plate cutting, custom livestock pens, tornado shelters, custom bunkers, and municipal infrastructure metalwork across Freeport, Lake Jackson, Brazoria County, and statewide Texas with schedule discipline and safety compliance.
             </p>
           </div>
           <Link
@@ -114,7 +114,7 @@ export default function Home() {
           <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
             <h3 className="font-semibold text-slate-900">Quality Fabrication</h3>
             <p className="mt-2 text-xs leading-relaxed text-slate-700">
-              Laser cutting, weldment, gates, fences, bunkers, shelters, safes, and custom steel
+              CNC plasma cutting, weldment, gates, fences, bunkers, shelters, safes, and custom steel
               builds designed for long service life.
             </p>
           </div>
