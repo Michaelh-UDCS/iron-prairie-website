@@ -7,6 +7,8 @@ const KEY_LOCATION = `https://${HOST}/${API_KEY}.txt`;
 
 const URL_LIST = [
   `https://${HOST}/`,
+  `https://${HOST}/storefront`,
+  `https://${HOST}/paddle-blinds`,
   `https://${HOST}/about`,
   `https://${HOST}/services`,
   `https://${HOST}/projects`,
