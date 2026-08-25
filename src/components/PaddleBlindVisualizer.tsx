@@ -13,9 +13,11 @@ interface PaddleBlindVisualizerProps {
   facing: FacingType;
   handleStamp: string;
   addTHadle: boolean;
+  addLockoutHole?: boolean;
   addLiftingLug: boolean;
   od: number;
   thickness: number;
+  blindType?: string;
 }
 
 export const PaddleBlindVisualizer: React.FC<PaddleBlindVisualizerProps> = ({
@@ -26,9 +28,11 @@ export const PaddleBlindVisualizer: React.FC<PaddleBlindVisualizerProps> = ({
   facing,
   handleStamp,
   addTHadle,
+  addLockoutHole = false,
   addLiftingLug,
   od,
-  thickness
+  thickness,
+  blindType = 'Paddle Blind',
 }) => {
   let metalShader = {
     fill: 'url(#metal-sa516)',
@@ -122,11 +126,18 @@ export const PaddleBlindVisualizer: React.FC<PaddleBlindVisualizerProps> = ({
           <span>IRON PRAIRIE CNC PLASMA PROFILE &bull; 1:1 CAD GEOMETRY</span>
         </div>
 
-        {addTHadle && (
-          <div className="absolute top-2.5 right-3 text-[10px] font-mono text-sky-950 font-extrabold bg-sky-100 border border-sky-300 px-2 py-0.5 rounded shadow-sm flex items-center gap-1 pointer-events-none">
-            <span>⚙️ WELDED T-HANDLE ATTACHED</span>
-          </div>
-        )}
+        <div className="absolute top-2.5 right-3 flex flex-col items-end gap-1 pointer-events-none">
+          {addTHadle && (
+            <div className="text-[10px] font-mono text-sky-950 font-extrabold bg-sky-100 border border-sky-300 px-2 py-0.5 rounded shadow-sm flex items-center gap-1">
+              <span>⚙️ INTEGRAL CNC T-HANDLE (1-PIECE NO WELDS)</span>
+            </div>
+          )}
+          {addLockoutHole && (
+            <div className="text-[10px] font-mono text-amber-950 font-extrabold bg-amber-100 border border-amber-300 px-2 py-0.5 rounded shadow-sm flex items-center gap-1">
+              <span>🔒 3/8" CENTER LOCKOUT HOLE</span>
+            </div>
+          )}
+        </div>
 
         <svg viewBox="0 0 400 390" className="w-full max-w-[340px] h-[320px] drop-shadow-md">
           <defs>
@@ -252,28 +263,27 @@ export const PaddleBlindVisualizer: React.FC<PaddleBlindVisualizerProps> = ({
             />
           </g>
 
-          {/* T-Handle */}
+          {/* T-Handle - Integral 1-Piece CNC Plasma Cut Profile */}
           {addTHadle ? (
             <g id="physical-t-handle-assembly" className="transition-all duration-300">
+              {/* Integral Gusset/Bridge transition */}
               <path
-                d={`M ${centerX - handleWidth / 2} ${tHandleY + tHandleThick} L ${centerX - handleWidth / 2 - 14} ${tHandleY + tHandleThick} L ${centerX - handleWidth / 2} ${tHandleY + tHandleThick + 12} Z`}
-                fill="#475569"
-                stroke="#334155"
-                strokeWidth="1"
-              />
-              <path
-                d={`M ${centerX + handleWidth / 2} ${tHandleY + tHandleThick} L ${centerX + handleWidth / 2 + 14} ${tHandleY + tHandleThick} L ${centerX + handleWidth / 2} ${tHandleY + tHandleThick + 12} Z`}
-                fill="#475569"
-                stroke="#334155"
-                strokeWidth="1"
-              />
-
-              <rect
-                x={tHandleLeft}
-                y={tHandleY}
-                width={tHandleSpan}
-                height={tHandleThick}
-                rx="6"
+                d={`
+                  M ${tHandleLeft} ${tHandleY + tHandleThick}
+                  L ${centerX - handleWidth / 2} ${tHandleY + tHandleThick}
+                  L ${centerX - handleWidth / 2} ${tHandleY + tHandleThick + 8}
+                  L ${centerX + handleWidth / 2} ${tHandleY + tHandleThick + 8}
+                  L ${centerX + handleWidth / 2} ${tHandleY + tHandleThick}
+                  L ${tHandleRight} ${tHandleY + tHandleThick}
+                  Q ${tHandleRight + 6} ${tHandleY + tHandleThick} ${tHandleRight + 6} ${tHandleY + tHandleThick - 6}
+                  L ${tHandleRight + 6} ${tHandleY + 6}
+                  Q ${tHandleRight + 6} ${tHandleY} ${tHandleRight} ${tHandleY}
+                  L ${tHandleLeft} ${tHandleY}
+                  Q ${tHandleLeft - 6} ${tHandleY} ${tHandleLeft - 6} ${tHandleY + 6}
+                  L ${tHandleLeft - 6} ${tHandleY + tHandleThick - 6}
+                  Q ${tHandleLeft - 6} ${tHandleY + tHandleThick} ${tHandleLeft} ${tHandleY + tHandleThick}
+                  Z
+                `}
                 fill={metalShader.fill}
                 stroke={metalShader.border}
                 strokeWidth="2.5"
@@ -298,6 +308,38 @@ export const PaddleBlindVisualizer: React.FC<PaddleBlindVisualizerProps> = ({
                 stroke={metalShader.border}
                 strokeWidth="1.8"
               />
+            </g>
+          )}
+
+          {/* 3/8" Center Safety Lockout / Tagout Hole */}
+          {addLockoutHole && (
+            <g id="center-safety-lockout-hole" className="transition-all duration-300">
+              <circle
+                cx={centerX}
+                cy={centerY}
+                r={7.5}
+                fill="#0f172a"
+                stroke="#f59e0b"
+                strokeWidth="2"
+              />
+              <circle
+                cx={centerX}
+                cy={centerY}
+                r={14}
+                fill="none"
+                stroke="#f59e0b"
+                strokeWidth="1"
+                strokeDasharray="2 2"
+                opacity="0.85"
+              />
+              <text
+                x={centerX}
+                y={centerY + 24}
+                textAnchor="middle"
+                className="fill-amber-700 font-mono font-bold text-[8.5px]"
+              >
+                3/8" LOCKOUT
+              </text>
             </g>
           )}
 

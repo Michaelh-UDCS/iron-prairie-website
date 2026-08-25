@@ -1,6 +1,6 @@
-import { calculateDynamicBlindPrice, DEFAULT_PRICING_CONFIG } from './src/data/masterGeometry.ts';
-import { getAllMTRs, getMTRByHeatNumber, getMatchingMTRs } from './src/operations/data/mtrRepository.ts';
-import { STEEL_SUPPLIERS, GAS_SUPPLIERS, INITIAL_GAS_TELEMETRY } from './src/operations/data/supplierData.ts';
+import { calculateDynamicBlindPrice, DEFAULT_PRICING_CONFIG } from '../src/data/masterGeometry.ts';
+import { getAllMTRs, getMTRByHeatNumber, getMatchingMTRs } from '../src/operations/data/mtrRepository.ts';
+import { STEEL_SUPPLIERS, GAS_SUPPLIERS, INITIAL_GAS_TELEMETRY } from '../src/operations/data/supplierData.ts';
 
 console.log('--- 1. Testing Geometry & Dynamic Pricing Engine ---');
 const facingStr = 'Flat Face (FF) - Standard (No Machining)';

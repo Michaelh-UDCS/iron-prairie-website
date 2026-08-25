@@ -2464,6 +2464,7 @@ export default function App() {
 
   // Add Item to Order Cart
   const handleAddToCart = () => {
+    const activeUnitPrice = isClientLoggedIn ? liveSpec.wholesalePrice : liveSpec.listPrice;
     const newItem: ConfiguredItem = {
       id: `ITEM-${Date.now()}`,
       partNumber: liveSpec.partNumber,
@@ -2480,9 +2481,11 @@ export default function App() {
       boltSize: liveSpec.boltSize,
       actualWeightLbs: liveSpec.actualWeightLbs,
       adjustedWeightLbs: liveSpec.adjustedWeightLbs,
-      unitPrice: liveSpec.unitPrice,
+      unitPrice: activeUnitPrice,
+      listPrice: liveSpec.listPrice,
+      wholesalePrice: liveSpec.wholesalePrice,
       quantity,
-      handleStamp: handleStamp.trim(),
+      handleStamp: handleStamp.trim() || 'STANDARD',
       requireMTR,
       addTHadle,
       addLockoutHole,
@@ -2717,6 +2720,13 @@ export default function App() {
             <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded flex items-center gap-1 font-bold">
               <ShieldCheck className="h-3 w-3 text-emerald-600" /> Free 3.1 MTRs
             </span>
+            <a
+              href={`mailto:${IPG_SALES_EMAIL}?subject=Turnaround%20RFP%20/%20Proposal%20Request`}
+              className="bg-sky-50 hover:bg-sky-100 border border-sky-300 text-sky-900 font-bold px-2 py-0.5 rounded flex items-center gap-1 shadow-sm transition-colors"
+            >
+              <Mail className="h-3 w-3 text-sky-700" />
+              <span>{IPG_SALES_EMAIL}</span>
+            </a>
           </div>
         </div>
 
@@ -3453,38 +3463,79 @@ export default function App() {
                     </div>
                   </div>
 
+                  {/* Prominent Official Proposal & Direct Sales RFQ Box */}
+                  <div className="bg-gradient-to-br from-slate-900 via-sky-950 to-slate-900 border border-sky-800/40 rounded-2xl p-4 text-white shadow-md space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-amber-400 shrink-0" />
+                        <span className="text-xs font-bold uppercase tracking-wider text-amber-300 font-mono">
+                          Official B2B Proposal Desk
+                        </span>
+                      </div>
+                      <span className="text-[10px] font-mono bg-amber-400/20 text-amber-300 border border-amber-400/30 px-2 py-0.5 rounded font-bold">
+                        30-Day Price Lock
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                      Need a formal itemized proposal for corporate purchasing approval or Net 30 PO processing? Generate an instant proposal below or contact our sales estimating team directly:
+                    </p>
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800/80 text-xs font-mono">
+                      <a
+                        href={`mailto:${IPG_SALES_EMAIL}?subject=Turnaround%20Proposal%20Request%20-%20${liveSpec.partNumber}`}
+                        className="text-amber-300 hover:text-white underline font-bold flex items-center gap-1.5 transition-colors"
+                      >
+                        <Mail className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+                        <span>{IPG_SALES_EMAIL}</span>
+                      </a>
+                      <a
+                        href="tel:+19792489266"
+                        className="text-slate-300 hover:text-white flex items-center gap-1.5 transition-colors"
+                      >
+                        <Phone className="h-3.5 w-3.5 text-sky-400 shrink-0" />
+                        <span>(979) 248-9266</span>
+                      </a>
+                    </div>
+                  </div>
+
                   {/* Primary Proposal & Cart Actions */}
                   <div className="space-y-3 pt-2">
                     <button
                       type="button"
-                      onClick={() => handleOpenProposalForItems([{
-                        id: `ITEM-${Date.now()}`,
-                        partNumber: liveSpec.partNumber,
-                        sku: liveSpec.partNumber,
-                        nps: selectedNPS,
-                        nominalSizeInches: parseFloat(selectedNPS.replace('"', '')) || 4,
-                        pressureClass: selectedClass,
-                        materialCode: selectedMaterial,
-                        material: selectedMaterial,
-                        materialName: MATERIALS[selectedMaterial].name,
-                        facing: selectedFacing,
-                        thickness: liveSpec.thickness,
-                        thicknessLabel: liveSpec.thicknessLabel,
-                        od: liveSpec.od,
-                        boltCircle: liveSpec.boltCircle,
-                        boltSize: liveSpec.boltSize,
-                        actualWeightLbs: liveSpec.actualWeightLbs,
-                        finishedWeightPerUnit: liveSpec.actualWeightLbs,
-                        adjustedWeightLbs: liveSpec.adjustedWeightLbs,
-                        unitPrice: liveSpec.unitPrice,
-                        quantity,
-                        handleStamp: handleStamp.trim() || 'STANDARD',
-                        requireMTR,
-                        addTHadle,
-                        addLiftingLug,
-                        addPlateDog,
-                        addWedge,
-                      }])}
+                      onClick={() => {
+                        const activeUnitPrice = isClientLoggedIn ? liveSpec.wholesalePrice : liveSpec.listPrice;
+                        handleOpenProposalForItems([{
+                          id: `ITEM-${Date.now()}`,
+                          partNumber: liveSpec.partNumber,
+                          sku: liveSpec.partNumber,
+                          nps: selectedNPS,
+                          nominalSizeInches: parseFloat(selectedNPS.replace('"', '').replace('-1/2', '.5').replace('-1/4', '.25').replace('-3/4', '.75')) || 4.0,
+                          pressureClass: selectedClass,
+                          materialCode: selectedMaterial,
+                          material: selectedMaterial,
+                          materialName: MATERIALS[selectedMaterial].name,
+                          facing: selectedFacing,
+                          thickness: liveSpec.thickness,
+                          thicknessLabel: liveSpec.thicknessLabel,
+                          od: liveSpec.od,
+                          boltCircle: liveSpec.boltCircle,
+                          boltSize: liveSpec.boltSize,
+                          actualWeightLbs: liveSpec.actualWeightLbs,
+                          finishedWeightPerUnit: liveSpec.actualWeightLbs,
+                          adjustedWeightLbs: liveSpec.adjustedWeightLbs,
+                          unitPrice: activeUnitPrice,
+                          listPrice: liveSpec.listPrice,
+                          wholesalePrice: liveSpec.wholesalePrice,
+                          quantity,
+                          handleStamp: handleStamp.trim() || 'STANDARD',
+                          requireMTR,
+                          addTHadle,
+                          addLockoutHole,
+                          addLiftingLug,
+                          addPlateDog,
+                          addWedge,
+                          blindType,
+                        }]);
+                      }}
                       className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg active:scale-98 text-xs sm:text-sm uppercase tracking-wider"
                     >
                       <FileText className="h-4 w-4" /> Generate Instant Official Proposal
@@ -3500,7 +3551,7 @@ export default function App() {
                   </div>
 
                   <div className="text-[11px] text-slate-500 text-center pt-2 border-t border-slate-200">
-                    🔒 Official proposals generated with 30-day price lock and emailed from {IPG_SALES_EMAIL}
+                    🔒 Official proposals generated with 30-day price lock and emailed directly from <strong className="text-slate-700 font-mono">{IPG_SALES_EMAIL}</strong>
                   </div>
 
                 </div>
@@ -4445,7 +4496,7 @@ export default function App() {
             </span>
             <span className="hidden lg:inline text-slate-300 flex-shrink-0">|</span>
             <span className="hidden lg:inline text-slate-700 font-medium text-[11px] truncate">
-              Turnaround Emergency Dispatch &bull; Dedicated Hot-Shot Logistics
+              Texas Fabrication Hub &bull; Daily Nationwide Shipping Across All 50 States &bull; Emergency Hot-Shot Logistics
             </span>
           </div>
 
@@ -4492,7 +4543,7 @@ export default function App() {
                 Iron Prairie
               </span>
               <span className="hidden sm:block text-[10px] text-slate-500 font-sans tracking-wide whitespace-nowrap truncate">
-                Fabrication Group LLC &bull; Texas
+                Fabrication Group LLC &bull; Texas Shop &bull; Nationwide Shipping
               </span>
             </div>
           </Link>
@@ -4672,7 +4723,7 @@ export default function App() {
                 </div>
               </div>
               <p className="text-xs text-slate-400 max-w-md leading-relaxed">
-                Certified woman-owned metal fabrication enterprise in Texas. Precision CNC plasma plate cutting, ASME B16.48 positive isolation paddle blinds, custom ranch gates, animal pens, tornado shelters, custom bunkers, and municipal infrastructure steelwork.
+                Certified woman-owned metal fabrication enterprise based in Texas. Precision CNC plasma plate cutting, ASME B16.48 positive isolation paddle blinds, custom ranch gates, animal pens, tornado shelters, custom bunkers, and municipal infrastructure steelwork. Serving Lake Jackson, Brazoria County, and statewide Texas with rapid site delivery, plus daily nationwide shipping across all 50 states.
               </p>
             </div>
 
@@ -4694,7 +4745,8 @@ export default function App() {
               <div className="space-y-2 text-xs text-slate-400">
                 <div>Phone: <a href="tel:+19792489266" className="text-white hover:text-amber-400 font-bold">(979) 248-9266</a></div>
                 <div>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="text-white hover:text-amber-400 underline">Sales@ironprairiefabrication.com</a></div>
-                <div>Location: Lake Jackson, Brazoria County &amp; Statewide Texas</div>
+                <div>Facility: Lake Jackson, TX (Brazoria County)</div>
+                <div>Service Area: Texas Statewide &bull; <span className="text-amber-400 font-semibold">Nationwide Shipping (All 50 States)</span></div>
                 <div className="pt-2 flex gap-4 text-[11px] text-slate-500">
                   <Link to="/privacy-policy" className="hover:text-slate-400 underline">Privacy Policy</Link>
                   <Link to="/terms-of-service" className="hover:text-slate-400 underline">Terms of Service</Link>

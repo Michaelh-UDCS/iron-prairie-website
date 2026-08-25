@@ -131,15 +131,21 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
       <section className="relative overflow-hidden rounded-2xl border border-amber-500/30 bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/40 p-5 sm:p-6 shadow-xl">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-0.5 text-xs font-mono font-semibold text-amber-400">
-              <Flame className="h-3.5 w-3.5 animate-pulse text-amber-400" />
-              <span>DIRECT CNC PLASMA CUTTING SHOP &bull; TEXAS</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-0.5 text-xs font-mono font-semibold text-amber-400">
+                <Flame className="h-3.5 w-3.5 animate-pulse text-amber-400" />
+                <span>DIRECT CNC PLASMA CUTTING SHOP &bull; TEXAS</span>
+              </div>
+              <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-mono font-semibold text-emerald-400">
+                <Truck className="h-3 w-3 text-emerald-400" />
+                <span>SHIPS NATIONWIDE (ALL 50 STATES)</span>
+              </div>
             </div>
             <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-slate-100 font-display">
               ASME B16.48 Positive Isolation Paddle Blinds
             </h1>
             <p className="text-xs sm:text-sm text-slate-300 max-w-2xl">
-              Turnaround-ready spectacle &amp; paddle blinds burned direct from domestic plate. Same-day emergency burn dispatch with stamped traceable Mill Heat Numbers and MTR compliance packets.
+              Turnaround-ready spectacle &amp; paddle blinds burned direct from domestic plate. Same-day emergency hot-shot courier across Texas and daily UPS parcel / palletized LTL freight shipping across all 50 US states. Stamped Mill Heat Numbers and MTR compliance packets included.
             </p>
           </div>
 
