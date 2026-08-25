@@ -87,18 +87,17 @@ export default function Home() {
           <div className="space-y-2 bg-white px-5 py-4">
             <div className="flex items-center justify-between">
               <div className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-brown/80">
-                Woman-Owned Fabrication Partner
+                Registered Government Contractor
               </div>
-              <span className="text-[10px] font-mono font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded">
-                Texas Hub &bull; US Wide
+              <span className="text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded">
+                UEI: XX7XCMGN9XD5
               </span>
             </div>
             <p className="text-sm leading-relaxed text-slate-700">
-              Field-proven on ranch and industrial jobs, with communication, traceability, and documentation suited
-              for local buyers and public-sector procurement workflows.
+              Certified woman-owned enterprise with verified SAM.gov registration, traceable MTR documentation, and proven schedule discipline for state, municipal, and federal procurement.
             </p>
-            <p className="text-xs text-slate-600">
-              Growing toward SAM.gov registration to support DOE, DOD, and nationwide federal buyers.
+            <p className="text-xs text-slate-600 font-mono">
+              Ready for DOD, DOE, USACE, TPWD, and tier-1 prime contractor supplier diversity goals.
             </p>
           </div>
         </div>

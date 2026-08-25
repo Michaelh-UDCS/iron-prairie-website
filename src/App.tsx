@@ -4747,6 +4747,7 @@ export default function App() {
                 <div>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="text-white hover:text-amber-400 underline">Sales@ironprairiefabrication.com</a></div>
                 <div>Facility: Lake Jackson, TX (Brazoria County)</div>
                 <div>Service Area: Texas Statewide &bull; <span className="text-amber-400 font-semibold">Nationwide Shipping (All 50 States)</span></div>
+                <div>Government Contractor: <span className="text-emerald-400 font-bold">SAM.gov Registered</span> &bull; <span className="font-mono text-slate-300 font-bold">UEI: XX7XCMGN9XD5</span></div>
                 <div className="pt-2 flex gap-4 text-[11px] text-slate-500">
                   <Link to="/privacy-policy" className="hover:text-slate-400 underline">Privacy Policy</Link>
                   <Link to="/terms-of-service" className="hover:text-slate-400 underline">Terms of Service</Link>

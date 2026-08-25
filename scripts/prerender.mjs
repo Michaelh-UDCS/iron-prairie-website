@@ -115,13 +115,22 @@ const routes = [
   },
   {
     path: '/woman-owned',
-    title: 'Woman-Owned Metal Fabricator | Texas & Nationwide Supply | Iron Prairie',
-    description: 'Iron Prairie Fabrication Group LLC is a certified woman-owned metal fabricator in Texas ready for local, state, and nationwide federal public procurement contracts.',
+    title: 'Registered Government Contractor & Woman-Owned Fabricator | UEI: XX7XCMGN9XD5 | Iron Prairie',
+    description: 'Iron Prairie Fabrication Group LLC is a SAM.gov Registered Government Contractor (UEI: XX7XCMGN9XD5) and certified woman-owned metal fabricator in Texas ready for local, state, and federal public procurement contracts.',
     canonical: `${DOMAIN}/woman-owned`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
       { name: 'Woman-Owned & Procurement', url: `${DOMAIN}/woman-owned` }
-    ]
+    ],
+    extraSchema: {
+      "@type": "GovernmentPermit",
+      "name": "SAM.gov Government Contractor Registration",
+      "identifier": "XX7XCMGN9XD5",
+      "issuedBy": {
+        "@type": "GovernmentOrganization",
+        "name": "System for Award Management (SAM.gov)"
+      }
+    }
   },
   {
     path: '/contact',
@@ -256,6 +265,11 @@ function buildJsonLd(route) {
         "https://www.linkedin.com/company/iron-prairie-fabrication-group",
         "https://universal-dynamic.com"
       ],
+      "identifier": {
+        "@type": "PropertyValue",
+        "name": "SAM.gov Unique Entity Identifier (UEI)",
+        "value": "XX7XCMGN9XD5"
+      },
       "knowsAbout": [
         "ASME B16.48 Paddle Blinds",
         "Structural Steel Fabrication",
@@ -265,7 +279,8 @@ function buildJsonLd(route) {
         "Municipal Metalwork",
         "Custom Bunkers and Tornado Shelters",
         "Refinery Fabrication",
-        "Nationwide Freight Logistics"
+        "Nationwide Freight Logistics",
+        "Government Contracting (SAM.gov Registered, UEI: XX7XCMGN9XD5)"
       ]
     }
   ];

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Truck, MapPin, Phone, Mail, Clock, Flame, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { Truck, MapPin, Phone, Mail, Clock, Flame, ShieldCheck, CheckCircle2, Building, Award, BadgeCheck } from 'lucide-react';
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -219,6 +219,28 @@ export default function Contact() {
                 </a>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div className="rounded-2xl bg-amber-500/10 border border-amber-500/30 p-5 shadow-sm space-y-2.5">
+          <div className="flex items-center gap-2 text-amber-900 font-bold text-xs uppercase tracking-wider">
+            <BadgeCheck className="h-4 w-4 text-amber-700" />
+            <span>Government &amp; Agency Procurement</span>
+          </div>
+          <div className="text-xs text-slate-800 space-y-1.5">
+            <div className="flex items-center justify-between">
+              <span className="font-semibold text-slate-700">Contractor Status:</span>
+              <span className="bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded text-[10px] font-bold">SAM.gov Active</span>
+            </div>
+            <div>
+              <span className="text-slate-600 block text-[11px]">Unique Entity Identifier (UEI):</span>
+              <span className="font-mono text-xs font-black text-slate-950 bg-white px-2.5 py-1 rounded-md border border-amber-300 inline-block tracking-wider mt-0.5">
+                XX7XCMGN9XD5
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-600 pt-1 leading-relaxed">
+              Procurement-ready for municipal, state (TPWD, TxDOT), and federal prime/subcontracts nationwide.
+            </p>
           </div>
         </div>
 

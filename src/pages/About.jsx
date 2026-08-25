@@ -49,10 +49,10 @@ export default function About() {
         <div className="rounded-xl bg-white/80 p-5 shadow-sm border border-slate-200/60">
           <h2 className="text-sm font-semibold text-brand-brown flex items-center gap-2">
             <Clock className="h-4 w-4 text-sky-600" />
-            <span>Procurement &amp; Agency Mindset</span>
+            <span>Government &amp; Agency Procurement</span>
           </h2>
           <p className="mt-2 text-xs leading-relaxed text-slate-700">
-            We streamline commercial purchasing with Net 30 PO authorization, ACH debit, credit card checkout, and alignment with municipal, state (TPWD), and federal procurement requirements.
+            Registered Government Contractor on SAM.gov (UEI: <strong className="font-mono text-slate-900">XX7XCMGN9XD5</strong>). Streamlined commercial purchasing with Net 30 PO authorization, ACH debit, credit card checkout, and direct alignment with municipal, state (TPWD), and federal procurement requirements.
           </p>
         </div>
       </section>
