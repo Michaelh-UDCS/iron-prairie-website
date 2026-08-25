@@ -447,7 +447,7 @@ export const AsmeMtrVault: React.FC = () => {
                 <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-[11px] text-slate-400">
                   <div>
                     <div>Certified by: <strong>Iron Prairie Fabrication Group LLC QA/QC</strong></div>
-                    <div>Freeport, TX &bull; ASME BPVC Certificate Holder Compliance</div>
+                    <div>Texas &bull; ASME BPVC Certificate Holder Compliance</div>
                   </div>
                   <div className="text-right sm:text-right">
                     <div>Date Certified: <strong>{selectedMtr.certifiedDate}</strong></div>
@@ -836,7 +836,7 @@ export const AsmeQcTravelerModal: React.FC<AsmeQcTravelerModalProps> = ({ order,
                 ASME SECTION VIII DIV 1 QC TRAVELER &amp; UG-77 STAMPING LOG
               </div>
               <div className="text-[11px] text-slate-400 print:text-gray-600">
-                Facility: 2301 N Brazosport Blvd, Freeport, TX 77541 &bull; (979) 248-9266
+                Facility: Texas &bull; Phone: (979) 248-9266
               </div>
             </div>
 
@@ -1280,7 +1280,7 @@ export default function PublicMtrViewer() {
         <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-[11px] text-slate-600">
           <div>
             <div>Certified QA/QC Record &bull; <strong>Iron Prairie Fabrication Group LLC</strong></div>
-            <div>Freeport, TX 77541 &bull; <a href="mailto:Sales@ironprairiefabrication.com" className="text-sky-700 underline">Sales@ironprairiefabrication.com</a></div>
+            <div>Texas &bull; <a href="mailto:Sales@ironprairiefabrication.com" className="text-sky-700 underline">Sales@ironprairiefabrication.com</a></div>
           </div>
           <div className="text-right">
             <div>Certified Date: <strong>{mtr.certifiedDate}</strong></div>

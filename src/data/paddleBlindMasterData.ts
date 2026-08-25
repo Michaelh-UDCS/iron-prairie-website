@@ -338,7 +338,7 @@ export function calculateJobTraxRecord(params: {
 // 5. SEED MASTER CATALOG GENERATOR
 // --------------------------------------------------------------------------
 export const THICKNESS_SERIES = [
-  { label: '12 Gauge', value: 0.1046 },
+  { label: '11 Gauge', value: 0.1196 },
   { label: '1/8"', value: 0.125 },
   { label: '3/16"', value: 0.1875 },
   { label: '1/4"', value: 0.250 },

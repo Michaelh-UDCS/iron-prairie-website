@@ -94,7 +94,7 @@ export const SupplierPoGenerator: React.FC = () => {
       status: 'Confirmed',
       deliveryStatus: 'Order Transmitted to Steel Service Center',
       requireMTR: true,
-      destination: 'Iron Prairie Fabrication Group LLC, Freeport, TX 77541',
+      destination: 'Iron Prairie Fabrication Group LLC, Texas',
       specialInstructions: 'Mandatory: Full ASME Section VIII Div 1 CMTR certified chemistry/mechanical and Buy American Act compliance required with shipment.',
     };
 
@@ -106,9 +106,9 @@ export const SupplierPoGenerator: React.FC = () => {
   const handleCreateGasPo = (gasType: string) => {
     const newGasPo: SupplierPO = {
       poNumber: \`PO-GAS-2026-\${Math.floor(1000 + Math.random() * 9000)}\`,
-      supplierName: 'Airgas USA LLC (Freeport Branch)',
+      supplierName: 'Airgas USA LLC (Texas Branch)',
       supplierContact: 'Travis Sterling (Bulk Gas Dispatch)',
-      supplierEmail: 'freeport.bulk@airgas.com',
+      supplierEmail: 'texas.bulk@airgas.com',
       orderDate: new Date().toISOString().split('T')[0],
       requestedDeliveryDate: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
       category: 'Laser Assist Gas',
@@ -130,9 +130,9 @@ export const SupplierPoGenerator: React.FC = () => {
       ],
       totalAmount: gasType === 'Liquid Nitrogen (LN2)' ? 1650.00 : 720.00,
       status: 'Sent to Vendor',
-      deliveryStatus: 'Scheduled Delivery to Freeport Gas Pad',
+      deliveryStatus: 'Scheduled Delivery to Shop Gas Pad',
       requireMTR: false,
-      destination: 'North Laser Bulkhead Gas Pad, Freeport, TX',
+      destination: 'North Laser Bulkhead Gas Pad, Texas Shop',
       specialInstructions: 'Delivery driver must check in with Russell or Shop Foreman prior to fill.',
     };
 
@@ -176,7 +176,7 @@ export const SupplierPoGenerator: React.FC = () => {
             <Gauge className="h-4 w-4 text-sky-400" />
             Laser Assist Gas Bulk Telemetry &amp; Tank Monitoring
           </h2>
-          <span className="text-xs text-slate-500 font-mono">Live Monitoring &bull; Freeport Shop Pad</span>
+          <span className="text-xs text-slate-500 font-mono">Live Monitoring &bull; Texas Shop Pad</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -338,7 +338,7 @@ export const SupplierPoGenerator: React.FC = () => {
                     MATERIAL PURCHASE ORDER
                   </div>
                   <div className="text-[11px] text-slate-400 print:text-gray-600">
-                    2301 N Brazosport Blvd, Freeport, TX 77541 &bull; (979) 248-9266
+                    Texas &bull; (979) 248-9266
                   </div>
                 </div>
 
@@ -557,7 +557,7 @@ export const SupplierPoGenerator: React.FC = () => {
 
             <div className="space-y-3">
               <p className="text-slate-300">
-                Generate immediate replenishment purchase order to <strong>Airgas Freeport Branch</strong> for delivery to North Laser Pad.
+                Generate immediate replenishment purchase order to <strong>Airgas Texas Branch</strong> for delivery to North Laser Pad.
               </p>
 
               <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">

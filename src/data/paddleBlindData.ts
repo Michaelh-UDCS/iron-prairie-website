@@ -117,11 +117,19 @@ export const FACING_OPTIONS: { id: FacingType; name: string; description: string
 export const ADD_ON_OPTIONS: AddOnOption[] = [
   {
     id: 'tHandle',
-    name: 'Ergonomic T-Handle Grip',
-    price: 5.75,
+    name: 'Integral CNC Cut-Out T-Handle',
+    price: 5.00,
     unit: 'ea',
-    description: 'Welded cross T-bar on handle for easy glove grip during turnarounds.',
-    weightLbs: 0.8
+    description: 'Integral 1-piece CNC cut T-handle for positive turnaround grip (No Welds).',
+    weightLbs: 0.5
+  },
+  {
+    id: 'lockoutHole',
+    name: '3/8" Lockout Hole in Center of Handle',
+    price: 5.00,
+    unit: 'ea',
+    description: 'Precision CNC-pierced 3/8" (0.375") center lockout / tagout hole for safety lock isolation.',
+    weightLbs: 0.0
   },
   {
     id: 'liftingLug',
@@ -331,43 +339,51 @@ export function calculateBlindConfig(params: {
   handleStamping: string;
   includeMTR: boolean;
   addOns: {
-    tHandle: boolean;
-    liftingLug: boolean;
-    plateDogs: boolean;
-    fitUpWedges: boolean;
+    tHandle?: boolean;
+    lockoutHole?: boolean;
+    liftingLug?: boolean;
+    plateDogs?: boolean;
+    fitUpWedges?: boolean;
   };
   quantity: number;
+  blindType?: 'Paddle Blind' | 'Figure 8 (Spectacle Blind)' | 'Paddle Spacer' | 'Bleeder Blind';
 }): ConfiguredBlind {
-  const { nps, pressureClass, material, facing, handleStamping, includeMTR, addOns, quantity } = params;
+  const { nps, pressureClass, material, facing, handleStamping, includeMTR, addOns, quantity, blindType } = params;
+  const isFigure8 = blindType === 'Figure 8 (Spectacle Blind)';
+  const geometryMultiplier = isFigure8 ? 2.0 : 1.0;
   const dimensions = ASME_B16_48_DIMENSIONS[pressureClass]?.[nps] || ASME_B16_48_DIMENSIONS['150#']['4"'];
   const mat = MATERIALS[material];
 
-  const finishedWeightPerUnit = calculateFinishedWeight(dimensions, material);
+  const finishedWeightPerUnit = Math.round(calculateFinishedWeight(dimensions, material) * geometryMultiplier * 100) / 100;
   const adjustedWeightPerUnit = Math.round(finishedWeightPerUnit * SKELETON_SCRAP_FACTOR * 100) / 100;
 
-  const laborHoursPerUnit = getLaborHours(nps);
+  const laborHoursPerUnit = getLaborHours(nps) * geometryMultiplier;
   const laborCostPerUnit = Math.round(laborHoursPerUnit * LABOR_RATE_PER_HOUR * 100) / 100;
   const materialCostPerUnit = Math.round(adjustedWeightPerUnit * mat.ratePerLb * 100) / 100;
 
   // Base Unit Price = (Adjusted Weight * Material Rate) + (Labor Hours * $83.85) + $5.00 Base Handling
-  const basePricePerUnit = Math.round((materialCostPerUnit + laborCostPerUnit + BASE_HANDLING_FEE) * 100) / 100;
+  const basePricePerUnit = Math.round((materialCostPerUnit + laborCostPerUnit + (BASE_HANDLING_FEE * geometryMultiplier)) * 100) / 100;
 
   // Add-ons total
   let addOnsTotalPerUnit = 0;
   let addOnsWeightPerUnit = 0;
-  if (addOns.tHandle) {
-    addOnsTotalPerUnit += 5.75;
-    addOnsWeightPerUnit += 0.8;
+  if (addOns?.tHandle) {
+    addOnsTotalPerUnit += 5.00;
+    addOnsWeightPerUnit += 0.5;
   }
-  if (addOns.liftingLug) {
+  if (addOns?.lockoutHole) {
+    addOnsTotalPerUnit += 5.00;
+    addOnsWeightPerUnit += 0.0;
+  }
+  if (addOns?.liftingLug) {
     addOnsTotalPerUnit += 34.00;
     addOnsWeightPerUnit += 2.2;
   }
-  if (addOns.plateDogs) {
+  if (addOns?.plateDogs) {
     addOnsTotalPerUnit += 35.00;
     addOnsWeightPerUnit += 3.5;
   }
-  if (addOns.fitUpWedges) {
+  if (addOns?.fitUpWedges) {
     addOnsTotalPerUnit += 34.00;
     addOnsWeightPerUnit += 2.0;
   }
@@ -499,9 +515,9 @@ export const INITIAL_SHOP_JOBS: ShopJob[] = [
   {
     id: 'job-dow-8849',
     poNumber: 'PO-2026-8849',
-    customerName: 'Dow Chemical Freeport',
+    customerName: 'Dow Chemical (Texas Site)',
     buyerEmail: 'procurement@dow.com',
-    deliveryAddress: '2301 N Brazosport Blvd, Gate 4, Freeport, TX 77541',
+    deliveryAddress: 'Plant Gate 4 Receiving, TX 77531',
     orderDate: '2026-08-19',
     scheduledShipDate: '2026-08-21',
     status: 'queued',
@@ -559,9 +575,9 @@ export const INITIAL_SHOP_JOBS: ShopJob[] = [
   {
     id: 'job-basf-8852',
     poNumber: 'PO-2026-8852',
-    customerName: 'BASF Freeport Verbund',
-    buyerEmail: 'orders.freeport@basf.com',
-    deliveryAddress: '602 Copper Rd, Plant Gate 2, Freeport, TX 77541',
+    customerName: 'BASF Texas Verbund',
+    buyerEmail: 'orders.texas@basf.com',
+    deliveryAddress: '602 Copper Rd, Plant Gate 2, TX 77531',
     orderDate: '2026-08-17',
     scheduledShipDate: '2026-08-22',
     status: 'deburred',
@@ -590,7 +606,7 @@ export const INITIAL_SHOP_JOBS: ShopJob[] = [
     poNumber: 'PO-2026-8840',
     customerName: 'Olin Chlor-Alkali',
     buyerEmail: 'mro.receiving@olin.com',
-    deliveryAddress: '2301 N Brazosport Blvd, Freeport, TX 77541',
+    deliveryAddress: 'Brazos River Works, TX 77531',
     orderDate: '2026-08-16',
     scheduledShipDate: '2026-08-20',
     status: 'ready',

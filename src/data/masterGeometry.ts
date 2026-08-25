@@ -13,6 +13,8 @@ import {
 
 export const DEFAULT_PRICING_CONFIG: PricingConfig = {
   globalMarkupPct: 0,
+  publicListBufferPct: 10,
+  commercialDiscountPct: 10,
   sa36PricePerLb: 1.85,
   sa516PricePerLb: 2.15,
   ss304PricePerLb: 5.50,
@@ -23,11 +25,14 @@ export const DEFAULT_PRICING_CONFIG: PricingConfig = {
   baseHandlingFee: 5.00,
   scrapMultiplier: 1.40,
   hotShotEmergencyFee: 250.00,
+  baseMachiningSetupFee: 25.00,
+  machiningRatePerInch: 9.50,
   laserGasRatePerInch: 0.08,
 };
 
 export const ACCESSORY_PRICES = {
-  tHandlePrice: 5.75,
+  tHandlePrice: 5.00,
+  lockoutHolePrice: 5.00,
   liftingLugPrice: 34.00,
   plateDogPrice: 35.00,
   fitUpWedgePrice: 34.00,
@@ -103,8 +108,8 @@ export const MATERIALS: Record<MaterialCode, MaterialConfig> = {
 };
 
 export const THICKNESS_OPTIONS: ThicknessOption[] = [
-  { label: '12 Gauge', thickness: 0.1046, fractionLabel: '12 Ga (0.105")', isDefault: true, description: 'Standard Turnaround Utility Isolation Blind (Default)' },
-  { label: '1/8"', thickness: 0.125, fractionLabel: '1/8" (0.125")', description: '11/10 Gauge Equiv' },
+  { label: '11 Gauge', thickness: 0.1196, fractionLabel: '11 Ga (0.120")', isDefault: true, description: 'Standard Turnaround Utility Isolation Blind (Owner Spec - Default)' },
+  { label: '1/8"', thickness: 0.125, fractionLabel: '1/8" (0.125")', description: '1/8" Nominal Plate' },
   { label: '3/16"', thickness: 0.1875, fractionLabel: '3/16" (0.188")', description: 'Medium Duty Isolation' },
   { label: '1/4"', thickness: 0.250, fractionLabel: '1/4" (0.250")', description: 'Heavy Duty Structural' },
   { label: '5/16"', thickness: 0.3125, fractionLabel: '5/16" (0.313")', description: 'High Pressure Rating' },
@@ -242,6 +247,12 @@ export const LABOR_HOURS: Record<string, number> = {
   '18"': 0.52, '20"': 0.56, '24"': 0.61
 };
 
+export function getVariableMachiningCost(od: number, pricing: PricingConfig): number {
+  const setup = pricing.baseMachiningSetupFee ?? 25.00;
+  const rate = pricing.machiningRatePerInch ?? 9.50;
+  return Math.round(setup + (od * rate));
+}
+
 export function calculateDynamicBlindPrice(
   pClass: PressureClass,
   nps: string,
@@ -253,15 +264,23 @@ export function calculateDynamicBlindPrice(
   addLiftingLug: boolean,
   addPlateDog: boolean,
   addWedge: boolean,
-  pricing: PricingConfig
+  pricing: PricingConfig,
+  addLockoutHole: boolean = false,
+  blindType: 'Paddle Blind' | 'Figure 8 (Spectacle Blind)' | 'Paddle Spacer' | 'Bleeder Blind' = 'Paddle Blind'
 ) {
   const geom = MASTER_GEOMETRY[pClass]?.[nps] || MASTER_GEOMETRY[150]['4"'];
   const mat = MATERIALS[matCode] || MATERIALS['SA-516-70'];
-  const laborHrs = LABOR_HOURS[nps] || 0.35;
+  const isFigure8 = blindType === 'Figure 8 (Spectacle Blind)';
+  const geometryMultiplier = isFigure8 ? 2.0 : 1.0;
+
+  const baseLaborHrs = LABOR_HOURS[nps] || 0.35;
+  const laborHrs = baseLaborHrs * geometryMultiplier;
 
   const handleWidth = Math.max(1.0, geom.od * 0.25);
   const handleLength = Math.max(3.5, geom.boltCircle - geom.od / 2 + 1.5);
-  const totalAreaSqFt = ((Math.PI * Math.pow(geom.od / 2, 2)) + (handleWidth * handleLength)) / 144.0;
+  // Area in sq ft (Figure 8 has dual discs connected by center bridge)
+  const singleDiscArea = (Math.PI * Math.pow(geom.od / 2, 2)) + (handleWidth * handleLength);
+  const totalAreaSqFt = (singleDiscArea * geometryMultiplier) / 144.0;
 
   const actualWt = Math.round(totalAreaSqFt * (mat.density1InchSqFt * thicknessVal) * 100) / 100;
   const adjustedWt = Math.round(actualWt * pricing.scrapMultiplier * 100) / 100;
@@ -276,22 +295,33 @@ export function calculateDynamicBlindPrice(
 
   const matPrice = adjustedWt * activeMatPricePerLb;
   const laborPrice = laborHrs * pricing.laborRatePerHour;
-  const facingAdder = facing === 'Machined Gasket Finish (Special Order)' ? 45.00 : 0;
+  
+  // Variable machining cost based on OD (Figure 8 has dual faces to machine)
+  const singleFacingAdder = facing === 'Machined Gasket Finish (Special Order)'
+    ? getVariableMachiningCost(geom.od, pricing)
+    : 0;
+  const facingAdder = singleFacingAdder * geometryMultiplier;
 
   let extrasTotal = 0;
   if (addTHadle) extrasTotal += ACCESSORY_PRICES.tHandlePrice;
+  if (addLockoutHole) extrasTotal += ACCESSORY_PRICES.lockoutHolePrice;
   if (addLiftingLug) extrasTotal += ACCESSORY_PRICES.liftingLugPrice;
   if (addPlateDog) extrasTotal += ACCESSORY_PRICES.plateDogPrice;
   if (addWedge) extrasTotal += ACCESSORY_PRICES.fitUpWedgePrice;
 
-  const subtotalBeforeMarkup = matPrice + laborPrice + pricing.baseHandlingFee + facingAdder + extrasTotal;
+  const subtotalBeforeMarkup = matPrice + laborPrice + (pricing.baseHandlingFee * geometryMultiplier) + facingAdder + extrasTotal;
   const markupMultiplier = 1 + (pricing.globalMarkupPct / 100);
-  const unitTotal = Math.max(25, Math.ceil(subtotalBeforeMarkup * markupMultiplier));
+  const wholesaleTotal = Math.max(isFigure8 ? 45 : 25, Math.ceil(subtotalBeforeMarkup * markupMultiplier));
+  
+  // Public Catalog & Amazon List Buffer (Default +10% protection margin)
+  const listBuffer = 1 + ((pricing.publicListBufferPct ?? 10) / 100);
+  const listTotal = Math.max(wholesaleTotal, Math.ceil(wholesaleTotal * listBuffer));
 
   const classCode = pClass === 1500 ? 'C1500' : `CX${pClass}`;
   const sizeCode = `S${nps.replace('"', '')}`;
   const thkClean = thicknessLabel.replace(/["\s()]/g, '').replace('Gauge', 'GA');
-  const partNumber = `PB${matCode.replace('-', '')}-${classCode}T${thkClean}${sizeCode}`;
+  const typePrefix = isFigure8 ? 'F8' : blindType === 'Paddle Spacer' ? 'PS' : blindType === 'Bleeder Blind' ? 'PV' : 'PB';
+  const partNumber = `${typePrefix}${matCode.replace('-', '')}-${classCode}T${thkClean}${sizeCode}`;
 
   return {
     partNumber,
@@ -303,6 +333,14 @@ export function calculateDynamicBlindPrice(
     actualWeightLbs: Math.max(0.1, actualWt),
     adjustedWeightLbs: Math.max(0.15, adjustedWt),
     activeMatPricePerLb,
-    unitPrice: unitTotal,
+    facingAdder,
+    singleFacingAdder,
+    unitPrice: wholesaleTotal,
+    wholesalePrice: wholesaleTotal,
+    listPrice: listTotal,
+    discountAmount: listTotal - wholesaleTotal,
+    discountPct: pricing.commercialDiscountPct ?? 10,
+    isFigure8,
+    blindType
   };
 }

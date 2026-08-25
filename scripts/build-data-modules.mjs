@@ -768,13 +768,13 @@ export const STEEL_SUPPLIERS: SupplierProfile[] = [
 
 export const GAS_SUPPLIERS: SupplierProfile[] = [
   {
-    id: 'airgas-freeport',
-    name: 'Airgas USA LLC (Freeport Branch)',
+    id: 'airgas-texas',
+    name: 'Airgas USA LLC (Texas Branch)',
     category: 'Laser Assist Gas',
     contactPerson: 'Travis Sterling (Bulk Gas Dispatch)',
-    email: 'freeport.bulk@airgas.com',
+    email: 'texas.bulk@airgas.com',
     phone: '(979) 233-5524',
-    cityState: 'Freeport, TX',
+    cityState: 'Texas',
     typicalLeadTimeDays: 1,
     paymentTerms: 'Net 30 Direct',
     requiresMtrCert: false,
@@ -796,7 +796,7 @@ export const GAS_SUPPLIERS: SupplierProfile[] = [
 export const INITIAL_GAS_TELEMETRY: GasTankTelemetry[] = [
   {
     gasType: 'Liquid Nitrogen (LN2)',
-    supplier: 'Airgas Freeport',
+    supplier: 'Airgas Texas',
     tankCapacity: '1,500 Gallon MicroBulk Cryogenic Tank',
     currentLevelPct: 68,
     currentPsi: 450,
@@ -809,7 +809,7 @@ export const INITIAL_GAS_TELEMETRY: GasTankTelemetry[] = [
   },
   {
     gasType: 'Oxygen (O2 High-Purity)',
-    supplier: 'Airgas Freeport',
+    supplier: 'Airgas Texas',
     tankCapacity: '16-Cylinder High-Pressure Manifold Pack',
     currentLevelPct: 32,
     currentPsi: 1850,
@@ -864,14 +864,14 @@ export const INITIAL_SUPPLIER_POS: SupplierPO[] = [
     status: 'Confirmed',
     deliveryStatus: 'In Transit via Flatbed Carrier',
     requireMTR: true,
-    destination: 'Iron Prairie Fabrication Group LLC, Freeport, TX 77541',
+    destination: 'Iron Prairie Fabrication Group LLC, Texas',
     specialInstructions: 'Must include certified mill test reports (CMTR) with shipment and Buy American certification.',
   },
   {
     poNumber: 'PO-GAS-2026-0188',
     supplierName: 'Airgas USA LLC',
     supplierContact: 'Travis Sterling',
-    supplierEmail: 'freeport.bulk@airgas.com',
+    supplierEmail: 'texas.bulk@airgas.com',
     orderDate: '2026-08-10',
     requestedDeliveryDate: '2026-08-14',
     category: 'Laser Assist Gas',
@@ -895,7 +895,7 @@ export const INITIAL_SUPPLIER_POS: SupplierPO[] = [
     status: 'Delivered',
     deliveryStatus: 'Tank Filled & Signed Off by Russell',
     requireMTR: false,
-    destination: 'North Laser Bulkhead Pad, Freeport, TX',
+    destination: 'North Laser Bulkhead Pad, Texas Shop',
   },
 ];
 `;

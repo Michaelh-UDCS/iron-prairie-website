@@ -58,7 +58,7 @@ export default function TermsOfService() {
         </p>
         <div className="mt-4 space-y-1 text-xs text-brand-ivory/90">
           <div>Iron Prairie Fabrication Group LLC</div>
-          <div>Freeport, TX 77541</div>
+          <div>Texas, United States</div>
           <div>Phone: <a href="tel:+19792489266" className="underline hover:text-white">979-248-9266</a></div>
           <div>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="underline hover:text-white">Sales@ironprairiefabrication.com</a></div>
         </div>

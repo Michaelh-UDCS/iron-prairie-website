@@ -128,7 +128,7 @@ export const LaserCuttingKanban: React.FC<LaserCuttingKanbanProps> = ({
           return {
             ...order,
             status: 'shipped',
-            carrierName: order.shippingMethod.includes('LTL') ? 'R+L Carriers (Freeport Dock)' : 'UPS Freight Express',
+            carrierName: order.shippingMethod.includes('LTL') ? 'R+L Carriers (Gulf Coast Dock)' : 'UPS Freight Express',
             trackingNumber: \`1Z-IPF-\${Math.floor(100000000 + Math.random() * 900000000)}\`,
           };
         }
@@ -391,7 +391,7 @@ export const AbandonedCartRecovery: React.FC<AbandonedCartRecoveryProps> = ({
       companyName: cart.companyName,
       contactName: cart.buyerName,
       email: cart.email,
-      jobsiteAddress: cart.facilityLocation || 'Freeport Petrochemical Complex, TX',
+      jobsiteAddress: cart.facilityLocation || 'Texas Petrochemical Complex, TX',
       poNumber: \`PO-RECOVERED-\${Date.now().toString().slice(-4)}\`,
       items: cart.items,
       subtotal: cart.subtotal,
@@ -637,7 +637,7 @@ export const OperationsAuthGate: React.FC<OperationsAuthGateProps> = ({ children
   const [pinInput, setPinInput] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Default shop PIN: 1979 (Freeport area code origin) or 2026
+  // Default shop PIN: 1979 or 2026
   const VALID_PINS = ['1979', '2026', '979248'];
 
   const handlePinSubmit = (e: React.FormEvent) => {
@@ -684,7 +684,7 @@ export const OperationsAuthGate: React.FC<OperationsAuthGateProps> = ({ children
               Shop Floor &amp; Operations Workspace
             </h1>
             <p className="text-xs text-slate-400 mt-1 font-sans">
-              Authorized access only &bull; Freeport, TX Shop Operations
+              Authorized access only &bull; Texas Shop Operations
             </p>
           </div>
         </div>

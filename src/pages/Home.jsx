@@ -107,7 +107,7 @@ export default function Home() {
               Professional delivery for private and public buyers
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-700">
-              Iron Prairie Fabrication Group LLC provides structural steel fabrication, high-definition CNC plasma plate cutting, custom livestock pens, tornado shelters, custom bunkers, and municipal infrastructure metalwork across Freeport, Lake Jackson, Brazoria County, and statewide Texas with schedule discipline and safety compliance.
+              Iron Prairie Fabrication Group LLC provides structural steel fabrication, high-definition CNC plasma plate cutting, custom livestock pens, tornado shelters, custom bunkers, and municipal infrastructure metalwork across Lake Jackson, Brazoria County, and statewide Texas with schedule discipline and safety compliance.
             </p>
           </div>
           <Link

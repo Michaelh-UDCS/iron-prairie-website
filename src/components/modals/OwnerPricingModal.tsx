@@ -43,10 +43,10 @@ export const OwnerPricingModal: React.FC<OwnerPricingModalProps> = ({
 
         <div className="space-y-4 overflow-y-auto pr-1">
           
-          {/* Global Markup */}
+          {/* Global Baseline Markup */}
           <div className="p-4 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
             <div className="flex justify-between items-center">
-              <span className="font-bold text-slate-200">Global Storefront Markup:</span>
+              <span className="font-bold text-slate-200">Global Baseline Shop Markup:</span>
               <span className="text-base font-black text-amber-400">{pricingConfig.globalMarkupPct}%</span>
             </div>
             <input
@@ -58,6 +58,30 @@ export const OwnerPricingModal: React.FC<OwnerPricingModalProps> = ({
               onChange={(e) => setPricingConfig({ ...pricingConfig, globalMarkupPct: parseInt(e.target.value) })}
               className="w-full accent-amber-500"
             />
+          </div>
+
+          {/* Public Catalog & Amazon List Buffer (Russell Strategy) */}
+          <div className="p-4 bg-slate-950 rounded-xl border border-amber-500/30 space-y-2.5">
+            <div className="flex justify-between items-center">
+              <div>
+                <span className="font-bold text-slate-200 block text-xs">Public Catalog &amp; Amazon List Buffer:</span>
+                <span className="text-[10px] text-slate-400">Added to public web / Amazon list price to protect shop margin &amp; allow 10% direct discount</span>
+              </div>
+              <span className="text-base font-black text-emerald-400 font-mono">+{pricingConfig.publicListBufferPct ?? 10}%</span>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="30"
+              step="1"
+              value={pricingConfig.publicListBufferPct ?? 10}
+              onChange={(e) => setPricingConfig({ ...pricingConfig, publicListBufferPct: parseInt(e.target.value) || 0 })}
+              className="w-full accent-emerald-500"
+            />
+            <div className="text-[10px] text-slate-400 flex items-center justify-between font-mono pt-1 border-t border-slate-800">
+              <span>Public List: e.g. $39.00</span>
+              <span className="text-emerald-400">Approved Email Wholesale: $35.00 (Save {pricingConfig.publicListBufferPct ?? 10}%)</span>
+            </div>
           </div>
 
           {/* Raw Plate Rates per Lb */}
@@ -154,6 +178,39 @@ export const OwnerPricingModal: React.FC<OwnerPricingModalProps> = ({
                 onChange={(e) => setPricingConfig({ ...pricingConfig, hotShotEmergencyFee: parseFloat(e.target.value) || 250.00 })}
                 className="w-full bg-slate-950 border border-slate-700 px-3 py-1.5 rounded-lg text-slate-100 focus:border-amber-500 focus:outline-none"
               />
+            </div>
+          </div>
+
+          {/* Variable Machining Costs (Lathe Facing) */}
+          <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="font-bold text-slate-300 uppercase text-[11px]">Variable CNC Lathe Machining (Facing Adder):</span>
+              <span className="text-[10px] text-amber-400 font-mono">Scales with OD ($Setup + $Rate/in)</span>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-[10px] text-slate-400 block mb-1">Base Lathe Setup ($)</label>
+                <input
+                  type="number"
+                  step="5"
+                  value={pricingConfig.baseMachiningSetupFee ?? 25}
+                  onChange={(e) => setPricingConfig({ ...pricingConfig, baseMachiningSetupFee: parseFloat(e.target.value) || 25 })}
+                  className="w-full bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-lg text-slate-100 focus:border-amber-500 focus:outline-none text-xs"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] text-slate-400 block mb-1">Machining Rate ($/inch OD)</label>
+                <input
+                  type="number"
+                  step="0.50"
+                  value={pricingConfig.machiningRatePerInch ?? 9.50}
+                  onChange={(e) => setPricingConfig({ ...pricingConfig, machiningRatePerInch: parseFloat(e.target.value) || 9.50 })}
+                  className="w-full bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-lg text-slate-100 focus:border-amber-500 focus:outline-none text-xs"
+                />
+              </div>
+            </div>
+            <div className="text-[10px] text-slate-500 font-mono pt-1">
+              Sample: 4" (6.75" OD) = ${( (pricingConfig.baseMachiningSetupFee ?? 25) + 6.75 * (pricingConfig.machiningRatePerInch ?? 9.50) ).toFixed(0)} | 12" (16" OD) = ${( (pricingConfig.baseMachiningSetupFee ?? 25) + 16 * (pricingConfig.machiningRatePerInch ?? 9.50) ).toFixed(0)}
             </div>
           </div>
 

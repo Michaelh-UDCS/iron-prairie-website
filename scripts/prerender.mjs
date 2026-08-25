@@ -115,7 +115,7 @@ const routes = [
   {
     path: '/contact',
     title: 'Request a Metal Fabrication Quote | Iron Prairie TX',
-    description: 'Get a quote for custom metal fabrication, structural steel, or public procurement projects across Texas. Contact Iron Prairie in Freeport, TX today.',
+    description: 'Get a quote for custom metal fabrication, structural steel, or public procurement projects across Texas. Contact Iron Prairie in Texas today.',
     canonical: `${DOMAIN}/contact`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
@@ -145,7 +145,7 @@ const routes = [
   {
     path: '/storefront',
     title: 'ASME B16.48 Paddle Blind Configurator & Storefront | Iron Prairie',
-    description: 'Configure and order ASME B16.48 paddle blinds with instant pricing, weight calculation, MTR compliance packets, and rapid turnaround dispatch from Iron Prairie in Freeport, TX.',
+    description: 'Configure and order ASME B16.48 paddle blinds with instant pricing, weight calculation, MTR compliance packets, and rapid turnaround dispatch from Iron Prairie in Texas.',
     canonical: `${DOMAIN}/storefront`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
@@ -155,7 +155,7 @@ const routes = [
   {
     path: '/paddle-blinds',
     title: 'ASME B16.48 Paddle Blinds & Spacer Rings | Iron Prairie Fabrication',
-    description: 'Turnaround-grade ASME B16.48 paddle blinds in SA-516 Gr. 70, SA-36, 304L, 316L, and 6061-T6 aluminum with certified MTRs and Freeport hot-shot delivery.',
+    description: 'Turnaround-grade ASME B16.48 paddle blinds in SA-516 Gr. 70, SA-36, 304L, 316L, and 6061-T6 aluminum with certified MTRs and dedicated hot-shot delivery.',
     canonical: `${DOMAIN}/paddle-blinds`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
@@ -165,7 +165,7 @@ const routes = [
   {
     path: '/operations',
     title: 'Shop Operations Workspace | Iron Prairie Fabrication',
-    description: 'Owner and shop floor operations platform for Iron Prairie Fabrication Group LLC in Freeport, TX.',
+    description: 'Owner and shop floor operations platform for Iron Prairie Fabrication Group LLC in Texas.',
     canonical: `${DOMAIN}/operations`,
     robots: 'noindex, nofollow',
     breadcrumbs: [
@@ -176,7 +176,7 @@ const routes = [
   {
     path: '/shop-floor',
     title: 'Shop Floor Production Whiteboard | Iron Prairie Fabrication',
-    description: 'Owner operations and CNC plasma production board for Iron Prairie Fabrication Group LLC in Freeport, TX.',
+    description: 'Owner operations and CNC plasma production board for Iron Prairie Fabrication Group LLC in Texas.',
     canonical: `${DOMAIN}/shop-floor`,
     robots: 'noindex, nofollow',
     breadcrumbs: [
@@ -219,18 +219,17 @@ function buildJsonLd(route) {
       "email": "Sales@ironprairiefabrication.com",
       "address": {
         "@type": "PostalAddress",
-        "addressLocality": "Freeport",
+        "addressLocality": "Lake Jackson",
         "addressRegion": "TX",
-        "postalCode": "77541",
+        "postalCode": "77566",
         "addressCountry": "US"
       },
       "geo": {
         "@type": "GeoCoordinates",
-        "latitude": 28.9541,
-        "longitude": -95.3597
+        "latitude": 29.0339,
+        "longitude": -95.4344
       },
       "areaServed": [
-        { "@type": "City", "name": "Freeport", "sameAs": "https://en.wikipedia.org/wiki/Freeport,_Texas" },
         { "@type": "City", "name": "Lake Jackson", "sameAs": "https://en.wikipedia.org/wiki/Lake_Jackson,_Texas" },
         { "@type": "City", "name": "Angleton", "sameAs": "https://en.wikipedia.org/wiki/Angleton,_Texas" },
         { "@type": "City", "name": "Pearland", "sameAs": "https://en.wikipedia.org/wiki/Pearland,_Texas" },

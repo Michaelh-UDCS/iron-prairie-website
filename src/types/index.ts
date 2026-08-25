@@ -35,6 +35,8 @@ export type KanbanStage = 'queued' | 'plasma' | 'laser' | 'deburred' | 'ready' |
 // 1. MATERIAL & GEOMETRY CONFIGURATION
 export interface PricingConfig {
   globalMarkupPct: number;
+  publicListBufferPct?: number;
+  commercialDiscountPct?: number;
   sa36PricePerLb: number;
   sa516PricePerLb: number;
   ss304PricePerLb: number;
@@ -45,6 +47,8 @@ export interface PricingConfig {
   baseHandlingFee: number;
   scrapMultiplier: number;
   hotShotEmergencyFee: number;
+  baseMachiningSetupFee?: number;
+  machiningRatePerInch?: number;
   laserGasRatePerInch?: number;
   plasmaGasRatePerInch?: number;
 }
@@ -99,9 +103,12 @@ export interface ConfiguredItem {
   handleStamp: string;
   requireMTR: boolean;
   addTHadle: boolean;
+  addLockoutHole: boolean;
   addLiftingLug: boolean;
   addPlateDog: boolean;
   addWedge: boolean;
+  blindType?: 'Paddle Blind' | 'Figure 8 (Spectacle Blind)' | 'Paddle Spacer' | 'Bleeder Blind';
+  productType?: string;
 }
 
 export interface CustomerOrder {
@@ -313,7 +320,7 @@ export interface AmazonFeedRow {
 }
 
 export interface AddOnOption {
-  id: 'tHandle' | 'liftingLug' | 'plateDogs' | 'fitUpWedges';
+  id: 'tHandle' | 'lockoutHole' | 'liftingLug' | 'plateDogs' | 'fitUpWedges';
   name: string;
   price: number;
   unit: string;

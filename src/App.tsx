@@ -88,6 +88,7 @@ import {
 } from './services/emailService';
 import { RapidMatrixOrderGrid } from './components/RapidMatrixOrderGrid';
 import { InstantProposalModal } from './components/InstantProposalModal';
+import { BulkListRfqModal } from './components/BulkListRfqModal';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -118,6 +119,8 @@ interface PricingConfig {
   baseHandlingFee: number;
   scrapMultiplier: number;
   hotShotEmergencyFee: number;
+  baseMachiningSetupFee?: number;
+  machiningRatePerInch?: number;
 }
 
 interface MaterialConfig {
@@ -159,9 +162,12 @@ interface ConfiguredItem {
   handleStamp: string;
   requireMTR: boolean;
   addTHadle: boolean;
+  addLockoutHole: boolean;
   addLiftingLug: boolean;
   addPlateDog: boolean;
   addWedge: boolean;
+  blindType?: 'Paddle Blind' | 'Figure 8 (Spectacle Blind)' | 'Paddle Spacer' | 'Bleeder Blind';
+  productType?: string;
 }
 
 interface CustomerOrder {
@@ -215,6 +221,7 @@ interface AbandonedCartRecord {
   totalWeightLbs: number;
   status: 'Abandoned' | 'Quote Sent' | 'Recovered' | 'Dismissed';
   lastActiveStep: 'Cart Drawer' | 'Checkout Opened' | 'Payment Selection';
+  quoteSentAt?: string;
 }
 
 // ============================================================================
@@ -222,6 +229,8 @@ interface AbandonedCartRecord {
 // ============================================================================
 const DEFAULT_PRICING_CONFIG: PricingConfig = {
   globalMarkupPct: 0,
+  publicListBufferPct: 10,
+  commercialDiscountPct: 10,
   sa36PricePerLb: 1.85,
   sa516PricePerLb: 2.15,
   ss304PricePerLb: 5.50,
@@ -232,10 +241,13 @@ const DEFAULT_PRICING_CONFIG: PricingConfig = {
   baseHandlingFee: 5.00,
   scrapMultiplier: 1.40,
   hotShotEmergencyFee: 250.00,
+  baseMachiningSetupFee: 25.00,
+  machiningRatePerInch: 9.50,
 };
 
 const ACCESSORY_PRICES = {
-  tHandlePrice: 5.75,
+  tHandlePrice: 5.00,
+  lockoutHolePrice: 5.00,
   liftingLugPrice: 34.00,
   plateDogPrice: 35.00,
   fitUpWedgePrice: 34.00,
@@ -307,8 +319,8 @@ interface ThicknessOption {
 }
 
 const THICKNESS_OPTIONS: ThicknessOption[] = [
-  { label: '12 Gauge', thickness: 0.1046, fractionLabel: '12 Ga (0.105")', isDefault: true, description: 'Standard Turnaround Utility Isolation Blind (Default)' },
-  { label: '1/8"', thickness: 0.125, fractionLabel: '1/8" (0.125")', description: '11/10 Gauge Equiv' },
+  { label: '11 Gauge', thickness: 0.1196, fractionLabel: '11 Ga (0.120")', isDefault: true, description: 'Standard Turnaround Utility Isolation Blind (Owner Spec - Default)' },
+  { label: '1/8"', thickness: 0.125, fractionLabel: '1/8" (0.125")', description: '1/8" Nominal Plate' },
   { label: '3/16"', thickness: 0.1875, fractionLabel: '3/16" (0.188")', description: 'Medium Duty Isolation' },
   { label: '1/4"', thickness: 0.250, fractionLabel: '1/4" (0.250")', description: 'Heavy Duty Structural' },
   { label: '5/16"', thickness: 0.3125, fractionLabel: '5/16" (0.313")', description: 'High Pressure Rating' },
@@ -447,6 +459,12 @@ const LABOR_HOURS: Record<string, number> = {
 };
 
 // Dynamic JobTrax Calculation with Granular Metallurgy & Custom Thickness Engine
+function getVariableMachiningCost(od: number, pricing: PricingConfig): number {
+  const setup = pricing.baseMachiningSetupFee ?? 25.00;
+  const rate = pricing.machiningRatePerInch ?? 9.50;
+  return Math.round(setup + (od * rate));
+}
+
 function calculateDynamicBlindPrice(
   pClass: PressureClass,
   nps: string,
@@ -458,15 +476,23 @@ function calculateDynamicBlindPrice(
   addLiftingLug: boolean,
   addPlateDog: boolean,
   addWedge: boolean,
-  pricing: PricingConfig
+  pricing: PricingConfig,
+  addLockoutHole: boolean = false,
+  blindType: 'Paddle Blind' | 'Figure 8 (Spectacle Blind)' | 'Paddle Spacer' | 'Bleeder Blind' = 'Paddle Blind'
 ) {
   const geom = MASTER_GEOMETRY[pClass]?.[nps] || MASTER_GEOMETRY[150]['4"'];
   const mat = MATERIALS[matCode] || MATERIALS['SA-516-70'];
-  const laborHrs = LABOR_HOURS[nps] || 0.35;
+  const isFigure8 = blindType === 'Figure 8 (Spectacle Blind)';
+  const geometryMultiplier = isFigure8 ? 2.0 : 1.0;
+
+  const baseLaborHrs = LABOR_HOURS[nps] || 0.35;
+  const laborHrs = baseLaborHrs * geometryMultiplier;
 
   const handleWidth = Math.max(1.0, geom.od * 0.25);
   const handleLength = Math.max(3.5, geom.boltCircle - geom.od / 2 + 1.5);
-  const totalAreaSqFt = ((Math.PI * Math.pow(geom.od / 2, 2)) + (handleWidth * handleLength)) / 144.0;
+  // Area in sq ft (Figure 8 has dual discs connected by center bridge)
+  const singleDiscArea = (Math.PI * Math.pow(geom.od / 2, 2)) + (handleWidth * handleLength);
+  const totalAreaSqFt = (singleDiscArea * geometryMultiplier) / 144.0;
 
   // Real thickness physics calculation (lbs)
   const actualWt = Math.round(totalAreaSqFt * (mat.density1InchSqFt * thicknessVal) * 100) / 100;
@@ -482,22 +508,33 @@ function calculateDynamicBlindPrice(
 
   const matPrice = adjustedWt * activeMatPricePerLb;
   const laborPrice = laborHrs * pricing.laborRatePerHour;
-  const facingAdder = facing === 'Machined Gasket Finish (Special Order)' ? 45.00 : 0;
+  
+  // Variable machining cost based on OD (Figure 8 has dual faces)
+  const singleFacingAdder = facing === 'Machined Gasket Finish (Special Order)'
+    ? getVariableMachiningCost(geom.od, pricing)
+    : 0;
+  const facingAdder = singleFacingAdder * geometryMultiplier;
 
   let extrasTotal = 0;
   if (addTHadle) extrasTotal += ACCESSORY_PRICES.tHandlePrice;
+  if (addLockoutHole) extrasTotal += ACCESSORY_PRICES.lockoutHolePrice;
   if (addLiftingLug) extrasTotal += ACCESSORY_PRICES.liftingLugPrice;
   if (addPlateDog) extrasTotal += ACCESSORY_PRICES.plateDogPrice;
   if (addWedge) extrasTotal += ACCESSORY_PRICES.fitUpWedgePrice;
 
-  const subtotalBeforeMarkup = matPrice + laborPrice + pricing.baseHandlingFee + facingAdder + extrasTotal;
+  const subtotalBeforeMarkup = matPrice + laborPrice + (pricing.baseHandlingFee * geometryMultiplier) + facingAdder + extrasTotal;
   const markupMultiplier = 1 + (pricing.globalMarkupPct / 100);
-  const unitTotal = Math.max(25, Math.ceil(subtotalBeforeMarkup * markupMultiplier));
+  const wholesaleTotal = Math.max(isFigure8 ? 45 : 25, Math.ceil(subtotalBeforeMarkup * markupMultiplier));
+
+  // Public Catalog & Amazon List Buffer (Default +10% protection margin)
+  const listBuffer = 1 + ((pricing.publicListBufferPct ?? 10) / 100);
+  const listTotal = Math.max(wholesaleTotal, Math.ceil(wholesaleTotal * listBuffer));
 
   const classCode = pClass === 1500 ? 'C1500' : `CX${pClass}`;
   const sizeCode = `S${nps.replace('"', '')}`;
   const thkClean = thicknessLabel.replace(/["\s()]/g, '').replace('Gauge', 'GA');
-  const partNumber = `PB${matCode.replace('-', '')}-${classCode}T${thkClean}${sizeCode}`;
+  const typePrefix = isFigure8 ? 'F8' : blindType === 'Paddle Spacer' ? 'PS' : blindType === 'Bleeder Blind' ? 'PV' : 'PB';
+  const partNumber = `${typePrefix}${matCode.replace('-', '')}-${classCode}T${thkClean}${sizeCode}`;
 
   return {
     partNumber,
@@ -509,7 +546,15 @@ function calculateDynamicBlindPrice(
     actualWeightLbs: Math.max(0.1, actualWt),
     adjustedWeightLbs: Math.max(0.15, adjustedWt),
     activeMatPricePerLb,
-    unitPrice: unitTotal,
+    facingAdder,
+    singleFacingAdder,
+    unitPrice: wholesaleTotal,
+    wholesalePrice: wholesaleTotal,
+    listPrice: listTotal,
+    discountAmount: listTotal - wholesaleTotal,
+    discountPct: pricing.commercialDiscountPct ?? 10,
+    isFigure8,
+    blindType
   };
 }
 
@@ -519,33 +564,34 @@ const INITIAL_ORDERS: CustomerOrder[] = [
     orderId: 'PO-2026-8849',
     orderSource: 'Website B2B',
     createdAt: '2026-08-20 08:30 AM',
-    companyName: 'Dow Chemical (Freeport Plant B)',
+    companyName: 'Dow Chemical (Texas Plant B)',
     contactName: 'Mark Henderson (Turnaround Lead)',
     email: 'm.henderson@dow.com',
-    jobsiteAddress: '2301 N Brazosport Blvd, Gate 14, Freeport, TX 77541',
+    jobsiteAddress: 'Plant Gate 14 Receiving, TX 77531',
     poNumber: 'PO-DOW-TX-88492',
     items: [
       {
         id: 'ITEM-1',
-        partNumber: 'PBSA51670-CX150T12GA4',
+        partNumber: 'PB516-CX150T11GA4',
         nps: '4"',
         nominalSizeInches: 4,
         pressureClass: 150,
         materialCode: 'SA-516-70',
         materialName: 'Carbon Steel SA-516 Gr. 70 (PVQ Pressure Vessel)',
         facing: 'Flat Face (FF) - Standard (No Machining)',
-        thickness: 0.1046,
-        thicknessLabel: '12 Gauge (0.105")',
+        thickness: 0.1196,
+        thicknessLabel: '11 Gauge (0.120")',
         od: 6.75,
         boltCircle: 7.50,
         boltSize: 0.625,
-        actualWeightLbs: 1.48,
-        adjustedWeightLbs: 2.07,
-        unitPrice: 44.00,
+        actualWeightLbs: 1.69,
+        adjustedWeightLbs: 2.37,
+        unitPrice: 45.00,
         quantity: 4,
         handleStamp: 'UNIT-4-ISO-01',
         requireMTR: true,
         addTHadle: true,
+        addLockoutHole: true,
         addLiftingLug: false,
         addPlateDog: false,
         addWedge: false,
@@ -625,10 +671,10 @@ const INITIAL_ORDERS: CustomerOrder[] = [
     orderId: 'PO-2026-8852',
     orderSource: 'Website B2B',
     createdAt: '2026-08-19 11:00 AM',
-    companyName: 'BASF Freeport Site',
+    companyName: 'BASF Texas Verbund Site',
     contactName: 'David R. Vance',
     email: 'david.vance@basf.com',
-    jobsiteAddress: '602 Copper Rd, Freeport, TX 77541',
+    jobsiteAddress: '602 Copper Rd, Plant Gate 2, TX 77531',
     poNumber: 'BASF-PO-88520',
     items: [
       {
@@ -681,30 +727,31 @@ const INITIAL_ORDERS: CustomerOrder[] = [
     companyName: 'Olin Chlor-Alkali Operations',
     contactName: 'William Arzola',
     email: 'w.arzola@olin.com',
-    jobsiteAddress: 'Brazos River Works, Freeport, TX 77541',
+    jobsiteAddress: 'Brazos River Works, TX 77531',
     poNumber: 'OLIN-PO-99120',
     items: [
       {
         id: 'ITEM-4',
-        partNumber: 'PB316L-CX150T12GA2',
+        partNumber: 'PB316L-CX150T11GA2',
         nps: '2"',
         nominalSizeInches: 2,
         pressureClass: 150,
         materialCode: '316L',
         materialName: 'Stainless Steel 316L (Acid & Marine Refinery Grade)',
         facing: 'Flat Face (FF) - Standard (No Machining)',
-        thickness: 0.1046,
-        thicknessLabel: '12 Gauge (0.105")',
+        thickness: 0.1196,
+        thicknessLabel: '11 Gauge (0.120")',
         od: 4.00,
         boltCircle: 4.75,
         boltSize: 0.625,
-        actualWeightLbs: 0.38,
-        adjustedWeightLbs: 0.53,
+        actualWeightLbs: 0.43,
+        adjustedWeightLbs: 0.60,
         unitPrice: 52.00,
         quantity: 10,
         handleStamp: 'OLIN-UNIT-2',
         requireMTR: true,
         addTHadle: true,
+        addLockoutHole: false,
         addLiftingLug: false,
         addPlateDog: false,
         addWedge: false,
@@ -734,7 +781,7 @@ const INITIAL_ORDERS: CustomerOrder[] = [
     companyName: 'Olin Chlor-Alkali Operations',
     contactName: 'William Arzola',
     email: 'w.arzola@olin.com',
-    jobsiteAddress: 'Brazos River Works, Freeport, TX 77541',
+    jobsiteAddress: 'Brazos River Works, TX 77531',
     poNumber: 'OLIN-PO-99120',
     items: [
       {
@@ -926,7 +973,9 @@ function PaddleBlindVisualizer({
   addTHadle,
   addLiftingLug,
   od,
-  thickness
+  thickness,
+  addLockoutHole = false,
+  blindType = 'Paddle Blind'
 }: {
   nps: string;
   pressureClass: PressureClass;
@@ -938,7 +987,11 @@ function PaddleBlindVisualizer({
   addLiftingLug: boolean;
   od: number;
   thickness: number;
+  addLockoutHole?: boolean;
+  blindType?: 'Paddle Blind' | 'Figure 8 (Spectacle Blind)' | 'Paddle Spacer' | 'Bleeder Blind';
 }) {
+  const isFigure8 = blindType === 'Figure 8 (Spectacle Blind)';
+
   // Realistic metallic gradients and shader palettes
   let metalShader = {
     fill: 'url(#metal-sa516)',
@@ -994,18 +1047,28 @@ function PaddleBlindVisualizer({
 
   // Geometry calculations
   const centerX = 200;
-  const centerY = 250;
-  const radius = Math.min(85, Math.max(50, (od / 24) * 45 + 40));
+  const centerY = isFigure8 ? 195 : 250;
+  const radius = isFigure8
+    ? Math.min(68, Math.max(40, (od / 24) * 35 + 32))
+    : Math.min(85, Math.max(50, (od / 24) * 45 + 40));
   const handleWidth = Math.max(28, Math.min(42, (od * 0.25) * 8 + 20));
   const handleLength = Math.max(90, Math.min(130, (od * 0.25) * 10 + 75));
   const handleTopY = centerY - radius - handleLength + 30;
 
-  // T-Handle Crossbar parameters
+  // Figure 8 offsets
+  const f8Disc1Y = centerY - radius * 0.82;
+  const f8Disc2Y = centerY + radius * 0.82;
+  const f8BridgeWidth = Math.max(30, handleWidth * 1.1);
+
+  // T-Handle Integral Crossbar parameters (Monolithic CNC Cut-out - No Welds)
   const tHandleSpan = Math.max(120, Math.min(180, handleWidth * 3.8));
   const tHandleThick = 24;
   const tHandleLeft = centerX - tHandleSpan / 2;
   const tHandleRight = centerX + tHandleSpan / 2;
   const tHandleY = handleTopY - 4;
+
+  // Center Lockout Hole Position (in center of handle stem)
+  const lockoutHoleY = (handleTopY + (centerY - radius)) / 2;
 
   // Lifting Lug parameters
   const lugTopY = (addTHadle ? tHandleY : handleTopY) - 28;
@@ -1020,7 +1083,7 @@ function PaddleBlindVisualizer({
         <div className="flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-sky-600 animate-pulse"></span>
           <span className="text-xs font-bold text-slate-900 uppercase tracking-wider font-mono">
-            ASME B16.48 Live CAD Preview
+            {isFigure8 ? 'ASME B16.48 Figure 8 Spectacle Blind CAD Preview' : 'ASME B16.48 Live CAD Preview'}
           </span>
         </div>
         <div className="flex items-center gap-1.5 font-mono text-[11px] bg-slate-100 text-sky-900 px-2.5 py-0.5 rounded-full border border-slate-200 font-bold">
@@ -1041,11 +1104,23 @@ function PaddleBlindVisualizer({
           <span>IRON PRAIRIE CNC PLASMA PROFILE &bull; 1:1 CAD GEOMETRY</span>
         </div>
 
-        {addTHadle && (
-          <div className="absolute top-2.5 right-3 text-[10px] font-mono text-sky-950 font-extrabold bg-sky-100 border border-sky-300 px-2 py-0.5 rounded shadow-sm flex items-center gap-1 pointer-events-none">
-            <span>⚙️ WELDED T-HANDLE ATTACHED</span>
-          </div>
-        )}
+        <div className="absolute top-2.5 right-3 flex flex-col gap-1 items-end pointer-events-none">
+          {isFigure8 && (
+            <div className="text-[10px] font-mono text-amber-950 font-extrabold bg-amber-100 border border-amber-300 px-2 py-0.5 rounded shadow-sm">
+              ♾️ FIGURE 8 SPECTACLE (2x COST)
+            </div>
+          )}
+          {addTHadle && (
+            <div className="text-[10px] font-mono text-sky-950 font-extrabold bg-sky-100 border border-sky-300 px-2 py-0.5 rounded shadow-sm">
+              ⚙️ INTEGRAL CNC CUT T-HANDLE
+            </div>
+          )}
+          {addLockoutHole && (
+            <div className="text-[10px] font-mono text-amber-950 font-extrabold bg-amber-100 border border-amber-300 px-2 py-0.5 rounded shadow-sm">
+              🔒 3/8" LOCKOUT HOLE
+            </div>
+          )}
+        </div>
 
         <svg viewBox="0 0 400 390" className="w-full max-w-[340px] h-[320px] drop-shadow-md">
           <defs>
@@ -1066,23 +1141,24 @@ function PaddleBlindVisualizer({
             {/* SA-36 Carbon Steel Shader */}
             <linearGradient id="metal-sa36" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#64748b" />
-              <stop offset="35%" stopColor="#94a3b8" />
-              <stop offset="70%" stopColor="#475569" />
+              <stop offset="30%" stopColor="#94a3b8" />
+              <stop offset="60%" stopColor="#475569" />
+              <stop offset="90%" stopColor="#334155" />
+              <stop offset="100%" stopColor="#1e293b" />
+            </linearGradient>
+
+            {/* 304/304L Stainless Shader */}
+            <linearGradient id="metal-ss304" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#cbd5e1" />
+              <stop offset="30%" stopColor="#f8fafc" />
+              <stop offset="60%" stopColor="#94a3b8" />
+              <stop offset="85%" stopColor="#64748b" />
               <stop offset="100%" stopColor="#334155" />
             </linearGradient>
 
-            {/* 304 / 304L Stainless Steel Shader */}
-            <linearGradient id="metal-ss304" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#e2e8f0" />
-              <stop offset="20%" stopColor="#ffffff" />
-              <stop offset="45%" stopColor="#cbd5e1" />
-              <stop offset="75%" stopColor="#94a3b8" />
-              <stop offset="100%" stopColor="#64748b" />
-            </linearGradient>
-
-            {/* 316L Stainless Steel Shader */}
+            {/* 316L Acid Grade Stainless Shader */}
             <linearGradient id="metal-ss316" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#f8fafc" />
+              <stop offset="0%" stopColor="#f1f5f9" />
               <stop offset="25%" stopColor="#ffffff" />
               <stop offset="50%" stopColor="#e2e8f0" />
               <stop offset="80%" stopColor="#94a3b8" />
@@ -1097,7 +1173,7 @@ function PaddleBlindVisualizer({
               <stop offset="100%" stopColor="#cbd5e1" />
             </linearGradient>
 
-            {/* 3D Extruded Depth Bevel Shader */}
+            {/* 3D Extrusion Depth Shader */}
             <linearGradient id="metal-depth" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#0f172a" stopOpacity="0.8" />
               <stop offset="100%" stopColor="#020617" stopOpacity="0.95" />
@@ -1115,116 +1191,191 @@ function PaddleBlindVisualizer({
           {/* Centerlines & Drafting Calipers */}
           <g stroke="#94a3b8" strokeDasharray="4 3" strokeWidth="0.8" opacity="0.4">
             <line x1="20" y1={centerY} x2="380" y2={centerY} />
-            <line x1={centerX} y1="20" x2={centerX} y2="370" />
+            <line x1={centerX} y1="20" x2={centerX} y2={370} />
           </g>
 
           {/* ================================================================ */}
           {/* 1. 3D THICKNESS EXTRUSION (BOTTOM SHADOW LAYER)                  */}
           {/* ================================================================ */}
           <g transform={`translate(${extrudeOffset}, ${extrudeOffset})`} opacity="0.45">
-            {/* 3D Extrusion of Disc */}
-            <circle cx={centerX} cy={centerY} r={radius} fill="#020617" />
+            {isFigure8 ? (
+              <>
+                <rect x={centerX - f8BridgeWidth / 2} y={f8Disc1Y} width={f8BridgeWidth} height={f8Disc2Y - f8Disc1Y} rx="4" fill="#020617" />
+                <circle cx={centerX} cy={f8Disc1Y} r={radius} fill="#020617" />
+                <circle cx={centerX} cy={f8Disc2Y} r={radius} fill="#020617" />
+              </>
+            ) : (
+              <>
+                <circle cx={centerX} cy={centerY} r={radius} fill="#020617" />
+                <path
+                  d={`
+                    M ${centerX - handleWidth / 2} ${centerY}
+                    L ${centerX - handleWidth / 2} ${handleTopY}
+                    L ${centerX + handleWidth / 2} ${handleTopY}
+                    L ${centerX + handleWidth / 2} ${centerY}
+                    Z
+                  `}
+                  fill="#020617"
+                />
+                {addTHadle && (
+                  <rect
+                    x={tHandleLeft}
+                    y={tHandleY}
+                    width={tHandleSpan}
+                    height={tHandleThick}
+                    rx="6"
+                    fill="#020617"
+                  />
+                )}
+                {addLiftingLug && (
+                  <path
+                    d={`M ${centerX - 18} ${addTHadle ? tHandleY : handleTopY} L ${centerX - 18} ${lugTopY + 12} Q ${centerX} ${lugTopY} ${centerX + 18} ${lugTopY + 12} L ${centerX + 18} ${addTHadle ? tHandleY : handleTopY} Z`}
+                    fill="#020617"
+                  />
+                )}
+              </>
+            )}
+          </g>
 
-            {/* 3D Extrusion of Handle */}
-            <path
-              d={`
-                M ${centerX - handleWidth / 2} ${centerY}
-                L ${centerX - handleWidth / 2} ${handleTopY}
-                L ${centerX + handleWidth / 2} ${handleTopY}
-                L ${centerX + handleWidth / 2} ${centerY}
-                Z
-              `}
-              fill="#020617"
-            />
-
-            {/* 3D Extrusion of T-Handle Crossbar (if enabled) */}
-            {addTHadle && (
+          {/* ================================================================ */}
+          {/* 2. MAIN SOLID STEEL BODY                                         */}
+          {/* ================================================================ */}
+          {isFigure8 ? (
+            <g id="figure-8-spectacle-assembly">
+              {/* Connecting Bridge Web */}
               <rect
-                x={tHandleLeft}
-                y={tHandleY}
-                width={tHandleSpan}
-                height={tHandleThick}
+                x={centerX - f8BridgeWidth / 2}
+                y={f8Disc1Y}
+                width={f8BridgeWidth}
+                height={f8Disc2Y - f8Disc1Y}
                 rx="6"
-                fill="#020617"
+                fill={metalShader.fill}
+                stroke={metalShader.border}
+                strokeWidth="2.5"
               />
-            )}
 
-            {/* 3D Extrusion of Lifting Lug (if enabled) */}
-            {addLiftingLug && (
-              <path
-                d={`M ${centerX - 18} ${addTHadle ? tHandleY : handleTopY} L ${centerX - 18} ${lugTopY + 12} Q ${centerX} ${lugTopY} ${centerX + 18} ${lugTopY + 12} L ${centerX + 18} ${addTHadle ? tHandleY : handleTopY} Z`}
-                fill="#020617"
+              {/* Top Disc: Solid Blind (Isolation) */}
+              <circle
+                cx={centerX}
+                cy={f8Disc1Y}
+                r={radius}
+                fill={metalShader.fill}
+                stroke={metalShader.border}
+                strokeWidth="2.5"
               />
-            )}
-          </g>
-
-          {/* ================================================================ */}
-          {/* 2. MAIN SOLID STEEL PADDLE BLIND BODY                            */}
-          {/* ================================================================ */}
-          <g id="paddle-blind-steel-body">
-            
-            {/* Vertical Handle Stem */}
-            <path
-              d={`
-                M ${centerX - handleWidth / 2} ${centerY}
-                L ${centerX - handleWidth / 2} ${handleTopY + 8}
-                Q ${centerX - handleWidth / 2} ${handleTopY} ${centerX - handleWidth / 2 + 8} ${handleTopY}
-                L ${centerX + handleWidth / 2 - 8} ${handleTopY}
-                Q ${centerX + handleWidth / 2} ${handleTopY} ${centerX + handleWidth / 2} ${handleTopY + 8}
-                L ${centerX + handleWidth / 2} ${centerY}
-                Z
-              `}
-              fill={metalShader.fill}
-              stroke={metalShader.border}
-              strokeWidth="2.5"
-            />
-
-            {/* Circular Sealing Disc */}
-            <circle
-              cx={centerX}
-              cy={centerY}
-              r={radius}
-              fill={metalShader.fill}
-              stroke={metalShader.border}
-              strokeWidth="2.5"
-            />
-
-            {/* Inner Raised Face / Bevel Chamfer */}
-            <circle
-              cx={centerX}
-              cy={centerY}
-              r={radius - 2}
-              fill="none"
-              stroke={metalShader.specular}
-              strokeWidth="1"
-              opacity="0.6"
-            />
-          </g>
-
-          {/* ================================================================ */}
-          {/* 3. PHYSICAL T-HANDLE CROSSBAR (WHEN SELECTED)                    */}
-          {/* ================================================================ */}
-          {addTHadle ? (
-            <g id="physical-t-handle-assembly" className="transition-all duration-300">
-              
-              {/* Fillet Weld Reinforcements (Left & Right Throat) */}
-              <path
-                d={`M ${centerX - handleWidth / 2} ${tHandleY + tHandleThick} L ${centerX - handleWidth / 2 - 14} ${tHandleY + tHandleThick} L ${centerX - handleWidth / 2} ${tHandleY + tHandleThick + 12} Z`}
-                fill="#475569"
-                stroke="#334155"
+              <circle
+                cx={centerX}
+                cy={f8Disc1Y}
+                r={radius - 2}
+                fill="none"
+                stroke={metalShader.specular}
                 strokeWidth="1"
+                opacity="0.6"
               />
-              <path
-                d={`M ${centerX + handleWidth / 2} ${tHandleY + tHandleThick} L ${centerX + handleWidth / 2 + 14} ${tHandleY + tHandleThick} L ${centerX + handleWidth / 2} ${tHandleY + tHandleThick + 12} Z`}
-                fill="#475569"
-                stroke="#334155"
-                strokeWidth="1"
-              />
-              {/* Weld Crown Texture Beads */}
-              <line x1={centerX - handleWidth / 2 - 10} y1={tHandleY + tHandleThick + 4} x2={centerX - handleWidth / 2 - 2} y2={tHandleY + tHandleThick + 10} stroke="#94a3b8" strokeWidth="1.5" />
-              <line x1={centerX + handleWidth / 2 + 10} y1={tHandleY + tHandleThick + 4} x2={centerX + handleWidth / 2 + 2} y2={tHandleY + tHandleThick + 10} stroke="#94a3b8" strokeWidth="1.5" />
 
-              {/* Solid Steel T-Handle Crossbar Body */}
+              {/* Bottom Disc: Open Ring Spacer (Flow) */}
+              <circle
+                cx={centerX}
+                cy={f8Disc2Y}
+                r={radius}
+                fill={metalShader.fill}
+                stroke={metalShader.border}
+                strokeWidth="2.5"
+              />
+              {/* Center Open ID Bore Hole */}
+              <circle
+                cx={centerX}
+                cy={f8Disc2Y}
+                r={radius * 0.58}
+                fill="#020617"
+                stroke={metalShader.border}
+                strokeWidth="2.5"
+              />
+              <circle
+                cx={centerX}
+                cy={f8Disc2Y}
+                r={radius * 0.58 + 2}
+                fill="none"
+                stroke={metalShader.specular}
+                strokeWidth="0.8"
+                opacity="0.7"
+              />
+
+              {/* Center Pivot / Tie-Bar Center Lockout Hole */}
+              <circle
+                cx={centerX}
+                cy={centerY}
+                r="6"
+                fill="#020617"
+                stroke="#f59e0b"
+                strokeWidth="2"
+              />
+
+              {/* Figure 8 Spec Stamp in Center Bridge */}
+              <text
+                x={centerX}
+                y={centerY - 14}
+                textAnchor="middle"
+                className="fill-slate-900 font-mono font-extrabold text-[8px] tracking-wider"
+              >
+                BLIND
+              </text>
+              <text
+                x={centerX}
+                y={centerY + 22}
+                textAnchor="middle"
+                className="fill-slate-900 font-mono font-extrabold text-[8px] tracking-wider"
+              >
+                OPEN
+              </text>
+            </g>
+          ) : (
+            <g id="paddle-blind-steel-body">
+              {/* Vertical Handle Stem */}
+              <path
+                d={`
+                  M ${centerX - handleWidth / 2} ${centerY}
+                  L ${centerX - handleWidth / 2} ${handleTopY + 8}
+                  Q ${centerX - handleWidth / 2} ${handleTopY} ${centerX - handleWidth / 2 + 8} ${handleTopY}
+                  L ${centerX + handleWidth / 2 - 8} ${handleTopY}
+                  Q ${centerX + handleWidth / 2} ${handleTopY} ${centerX + handleWidth / 2} ${handleTopY + 8}
+                  L ${centerX + handleWidth / 2} ${centerY}
+                  Z
+                `}
+                fill={metalShader.fill}
+                stroke={metalShader.border}
+                strokeWidth="2.5"
+              />
+
+              {/* Circular Sealing Disc */}
+              <circle
+                cx={centerX}
+                cy={centerY}
+                r={radius}
+                fill={metalShader.fill}
+                stroke={metalShader.border}
+                strokeWidth="2.5"
+              />
+
+              {/* Inner Raised Face / Bevel Chamfer */}
+              <circle
+                cx={centerX}
+                cy={centerY}
+                r={radius - 2}
+                fill="none"
+                stroke={metalShader.specular}
+                strokeWidth="1"
+                opacity="0.6"
+              />
+            </g>
+          )}
+
+          {/* ================================================================ */}
+          {/* 3. INTEGRAL CNC CUT T-HANDLE (1-PIECE CUTOUT - NO WELDS)         */}
+          {/* ================================================================ */}
+          {!isFigure8 && addTHadle ? (
+            <g id="integral-cnc-t-handle-assembly" className="transition-all duration-300">
+              {/* Monolithic Smooth Cut-Out Crossbar */}
               <rect
                 x={tHandleLeft}
                 y={tHandleY}
@@ -1247,26 +1398,17 @@ function PaddleBlindVisualizer({
                 opacity="0.8"
               />
 
-              {/* Single Center Hanging / Rigging Hole (Standard 1-Hole Spec) */}
+              {/* Standard Hanging Hole in T-Bar */}
               <circle
                 cx={centerX}
                 cy={tHandleY + tHandleThick / 2}
-                r={handleWidth * 0.22}
+                r={handleWidth * 0.20}
                 fill="#0f172a"
                 stroke={metalShader.border}
                 strokeWidth="1.8"
               />
-              <circle
-                cx={centerX}
-                cy={tHandleY + tHandleThick / 2}
-                r={handleWidth * 0.22 + 2}
-                fill="none"
-                stroke={metalShader.specular}
-                strokeWidth="0.8"
-                opacity="0.7"
-              />
 
-              {/* T-Handle Mechanical Caliper Annotation */}
+              {/* T-Handle Mechanical Annotation */}
               <g stroke="#0284c7" strokeWidth="1" opacity="0.85">
                 <line x1={tHandleLeft} y1={tHandleY - 8} x2={tHandleRight} y2={tHandleY - 8} />
                 <line x1={tHandleLeft} y1={tHandleY - 12} x2={tHandleLeft} y2={tHandleY - 4} />
@@ -1275,14 +1417,14 @@ function PaddleBlindVisualizer({
                   x={centerX}
                   y={tHandleY - 12}
                   textAnchor="middle"
-                  className="fill-sky-800 font-mono font-bold text-[8.5px] tracking-wider"
+                  className="fill-sky-800 font-mono font-bold text-[8px] tracking-wider"
                   stroke="none"
                 >
-                  WELDED T-HANDLE CROSSBAR [{(tHandleSpan / 25.4).toFixed(1)}" SPAN]
+                  INTEGRAL CNC CUT T-HANDLE [{(tHandleSpan / 25.4).toFixed(1)}" SPAN - NO WELDS]
                 </text>
               </g>
             </g>
-          ) : (
+          ) : !isFigure8 ? (
             /* Standard ASME Hanging Hole (Straight Handle) */
             <g id="standard-asme-handle-hole">
               <circle
@@ -1293,22 +1435,46 @@ function PaddleBlindVisualizer({
                 stroke={metalShader.border}
                 strokeWidth="1.8"
               />
+            </g>
+          ) : null}
+
+          {/* ================================================================ */}
+          {/* 3.5. 3/8" CENTER LOCKOUT HOLE (CNC PIERCED IN CENTER OF HANDLE)  */}
+          {/* ================================================================ */}
+          {!isFigure8 && addLockoutHole && (
+            <g id="lockout-tagout-hole" className="transition-all duration-300">
               <circle
                 cx={centerX}
-                cy={handleTopY + 16}
-                r={handleWidth * 0.22 + 2}
-                fill="none"
-                stroke={metalShader.specular}
-                strokeWidth="0.8"
-                opacity="0.7"
+                cy={lockoutHoleY}
+                r="6"
+                fill="#020617"
+                stroke="#f59e0b"
+                strokeWidth="2"
               />
+              <circle
+                cx={centerX}
+                cy={lockoutHoleY}
+                r="9"
+                fill="none"
+                stroke="#f59e0b"
+                strokeWidth="1"
+                strokeDasharray="2 2"
+                opacity="0.8"
+              />
+              <text
+                x={centerX + 14}
+                y={lockoutHoleY + 3.5}
+                className="fill-amber-700 font-mono font-bold text-[7.5px] tracking-wider"
+              >
+                3/8" LOCKOUT HOLE
+              </text>
             </g>
           )}
 
           {/* ================================================================ */}
           {/* 4. SOLID STEEL LIFTING LUG (WHEN SELECTED)                       */}
           {/* ================================================================ */}
-          {addLiftingLug && (
+          {!isFigure8 && addLiftingLug && (
             <g id="welded-lifting-lug-assembly" className="transition-all duration-300">
               <path
                 d={`
@@ -1322,7 +1488,6 @@ function PaddleBlindVisualizer({
                 stroke="#d97706"
                 strokeWidth="2"
               />
-              {/* 3/4" Hoist Rigging Eye */}
               <circle
                 cx={centerX}
                 cy={lugTopY + 14}
@@ -1349,25 +1514,27 @@ function PaddleBlindVisualizer({
             <g id="machined-facing-surface">
               <circle
                 cx={centerX}
-                cy={centerY}
+                cy={isFigure8 ? f8Disc1Y : centerY}
                 r={radius * 0.78}
                 fill="url(#machined-serrations)"
                 stroke="#d97706"
                 strokeWidth="1.5"
                 strokeDasharray="4 2"
               />
-              <circle
-                cx={centerX}
-                cy={centerY}
-                r={radius * 0.48}
-                fill="none"
-                stroke="#b45309"
-                strokeWidth="1"
-                strokeDasharray="3 3"
-              />
+              {isFigure8 && (
+                <circle
+                  cx={centerX}
+                  cy={f8Disc2Y}
+                  r={radius * 0.78}
+                  fill="url(#machined-serrations)"
+                  stroke="#d97706"
+                  strokeWidth="1.5"
+                  strokeDasharray="4 2"
+                />
+              )}
               <rect
                 x={centerX - 75}
-                y={centerY - 8}
+                y={(isFigure8 ? f8Disc1Y : centerY) - 8}
                 width="150"
                 height="16"
                 rx="4"
@@ -1378,9 +1545,9 @@ function PaddleBlindVisualizer({
               />
               <text
                 x={centerX}
-                y={centerY + 3.5}
+                y={(isFigure8 ? f8Disc1Y : centerY) + 3.5}
                 textAnchor="middle"
-                className="fill-amber-900 font-mono font-bold text-[8.5px] tracking-wider"
+                className="fill-amber-900 font-mono font-bold text-[8px] tracking-wider"
               >
                 MACHINED SERRATION (125-250 AARH)
               </text>
@@ -1389,7 +1556,7 @@ function PaddleBlindVisualizer({
             <g id="flat-face-smooth-surface">
               <circle
                 cx={centerX}
-                cy={centerY}
+                cy={isFigure8 ? f8Disc1Y : centerY}
                 r={radius * 0.78}
                 fill="none"
                 stroke={metalShader.specular}
@@ -1397,47 +1564,30 @@ function PaddleBlindVisualizer({
                 strokeDasharray="6 3"
                 opacity="0.7"
               />
-              <rect
-                x={centerX - 55}
-                y={centerY - 8}
-                width="110"
-                height="16"
-                rx="4"
-                fill="#ffffff"
-                stroke="#94a3b8"
-                strokeWidth="1"
-                opacity="0.9"
-              />
-              <text
-                x={centerX}
-                y={centerY + 3.5}
-                textAnchor="middle"
-                className="fill-slate-700 font-mono font-bold text-[8.5px] tracking-wider"
-              >
-                FLAT FACE (FF) SMOOTH
-              </text>
             </g>
           )}
 
           {/* ================================================================ */}
           {/* 6. AUTHENTIC PLASMA STAMPING ON HANDLE                           */}
           {/* ================================================================ */}
-          <g
-            transform={`translate(${centerX + 2.5}, ${handleTopY + (addTHadle ? 34 : 26)}) rotate(90)`}
-            id="handle-plasma-stamping"
-          >
-            <text
-              x="0"
-              y="0"
-              className="fill-slate-900 font-mono font-extrabold text-[7.5px] tracking-wider"
+          {!isFigure8 && (
+            <g
+              transform={`translate(${centerX + 2.5}, ${handleTopY + (addTHadle ? 34 : 26)}) rotate(90)`}
+              id="handle-plasma-stamping"
             >
-              IRON PRAIRIE &bull; {nps} {pressureClass}# {materialCode}
-            </text>
-          </g>
+              <text
+                x="0"
+                y="0"
+                className="fill-slate-900 font-mono font-extrabold text-[7.5px] tracking-wider"
+              >
+                IRON PRAIRIE &bull; {nps} {pressureClass}# {materialCode}
+              </text>
+            </g>
+          )}
           {handleStamp && (
             <text
               x={centerX}
-              y={centerY - radius - 6}
+              y={isFigure8 ? centerY : centerY - radius - 6}
               textAnchor="middle"
               className="fill-slate-900 font-mono font-bold text-[8px] tracking-wider"
             >
@@ -1448,14 +1598,13 @@ function PaddleBlindVisualizer({
           {/* ================================================================ */}
           {/* 7. CAD DIMENSIONAL ANNOTATION CALIPERS                           */}
           {/* ================================================================ */}
-          {/* OD Horizontal Caliper */}
           <g stroke="#64748b" strokeWidth="0.8" opacity="0.7">
-            <line x1={centerX - radius} y1={centerY + radius + 14} x2={centerX + radius} y2={centerY + radius + 14} />
-            <line x1={centerX - radius} y1={centerY + radius + 8} x2={centerX - radius} y2={centerY + radius + 20} />
-            <line x1={centerX + radius} y1={centerY + radius + 8} x2={centerX + radius} y2={centerY + radius + 20} />
+            <line x1={centerX - radius} y1={centerY + radius + (isFigure8 ? 34 : 14)} x2={centerX + radius} y2={centerY + radius + (isFigure8 ? 34 : 14)} />
+            <line x1={centerX - radius} y1={centerY + radius + (isFigure8 ? 28 : 8)} x2={centerX - radius} y2={centerY + radius + (isFigure8 ? 40 : 20)} />
+            <line x1={centerX + radius} y1={centerY + radius + (isFigure8 ? 28 : 8)} x2={centerX + radius} y2={centerY + radius + (isFigure8 ? 40 : 20)} />
             <text
               x={centerX}
-              y={centerY + radius + 26}
+              y={centerY + radius + (isFigure8 ? 46 : 26)}
               textAnchor="middle"
               className="fill-slate-800 font-mono font-bold text-[9.5px]"
               stroke="none"
@@ -1526,6 +1675,7 @@ export default function App() {
   });
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
+  const [isBulkRfqModalOpen, setIsBulkRfqModalOpen] = useState<boolean>(false);
 
   // --------------------------------------------------------------------------
   // OWNER PRICING OVERRIDES & DYNAMIC COMPENSATION MATRIX
@@ -1582,15 +1732,17 @@ export default function App() {
   const [proposalModalItems, setProposalModalItems] = useState<any[]>([]);
 
   // Storefront Configurator State
+  const [blindType, setBlindType] = useState<'Paddle Blind' | 'Figure 8 (Spectacle Blind)'>('Paddle Blind');
   const [selectedNPS, setSelectedNPS] = useState<string>('4"');
   const [selectedClass, setSelectedClass] = useState<PressureClass>(150);
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialCode>('SA-516-70');
-  const [selectedThickness, setSelectedThickness] = useState<number>(0.1046); // Default 12 Gauge
-  const [selectedThicknessLabel, setSelectedThicknessLabel] = useState<string>('12 Gauge (0.105")');
+  const [selectedThickness, setSelectedThickness] = useState<number>(0.1196); // Default 11 Gauge (0.120")
+  const [selectedThicknessLabel, setSelectedThicknessLabel] = useState<string>('11 Gauge (0.120")');
   const [selectedFacing, setSelectedFacing] = useState<FacingType>('Flat Face (FF) - Standard (No Machining)');
   const [handleStamp, setHandleStamp] = useState<string>('ISO-UNIT-04');
   const [requireMTR, setRequireMTR] = useState<boolean>(true);
   const [addTHadle, setAddTHadle] = useState<boolean>(false);
+  const [addLockoutHole, setAddLockoutHole] = useState<boolean>(false);
   const [addLiftingLug, setAddLiftingLug] = useState<boolean>(false);
   const [addPlateDog, setAddPlateDog] = useState<boolean>(false);
   const [addWedge, setAddWedge] = useState<boolean>(false);
@@ -1678,9 +1830,11 @@ export default function App() {
       addLiftingLug,
       addPlateDog,
       addWedge,
-      pricingConfig
+      pricingConfig,
+      addLockoutHole,
+      blindType
     );
-  }, [selectedClass, selectedNPS, selectedMaterial, selectedThickness, selectedThicknessLabel, selectedFacing, addTHadle, addLiftingLug, addPlateDog, addWedge, pricingConfig]);
+  }, [selectedClass, selectedNPS, selectedMaterial, selectedThickness, selectedThicknessLabel, selectedFacing, addTHadle, addLockoutHole, addLiftingLug, addPlateDog, addWedge, pricingConfig, blindType]);
 
   // Cart Totals & High-Volume / Lead Time Detection
   const cartSubtotal = useMemo(() => cart.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0), [cart]);
@@ -2286,9 +2440,9 @@ export default function App() {
   // Quick Demo Login for Plant Mechanics
   const handleQuickDemoLogin = (preset: 'dow' | 'turner' | 'basf' | 'p66' | 'exxon') => {
     const presets: Record<string, ClientAccount> = {
-      dow: { companyName: 'Dow Chemical (Freeport Site)', buyerName: 'Mark Henderson (Turnaround Lead)', email: 'm.henderson@dow.com', facilityLocation: 'Freeport, TX', achAuthorized: true },
+      dow: { companyName: 'Dow Chemical (Texas Site)', buyerName: 'Mark Henderson (Turnaround Lead)', email: 'm.henderson@dow.com', facilityLocation: 'Texas', achAuthorized: true },
       turner: { companyName: 'Turner Industries', buyerName: 'Jason Miller (Procurement)', email: 'purchasing@turner-ind.com', facilityLocation: 'Port Arthur, TX', achAuthorized: true },
-      basf: { companyName: 'BASF Freeport Verbund', buyerName: 'David R. Vance', email: 'david.vance@basf.com', facilityLocation: 'Freeport, TX', achAuthorized: true },
+      basf: { companyName: 'BASF Texas Verbund', buyerName: 'David R. Vance', email: 'david.vance@basf.com', facilityLocation: 'Texas', achAuthorized: true },
       p66: { companyName: 'Phillips 66 Sweeny Refinery', buyerName: 'Brian Kowalski (Turnaround Emergency)', email: 'b.kowalski@p66.com', facilityLocation: 'Old Ocean, TX', achAuthorized: true },
       exxon: { companyName: 'ExxonMobil Baytown Complex', buyerName: 'Travis Hollingsworth', email: 'travis.hollingsworth@exxonmobil.com', facilityLocation: 'Baytown, TX', achAuthorized: true },
     };
@@ -2331,9 +2485,11 @@ export default function App() {
       handleStamp: handleStamp.trim(),
       requireMTR,
       addTHadle,
+      addLockoutHole,
       addLiftingLug,
       addPlateDog,
       addWedge,
+      blindType,
     };
 
     setCart(prev => [...prev, newItem]);
@@ -2363,9 +2519,12 @@ export default function App() {
       handleStamp: b.handleStamp || 'STANDARD',
       requireMTR: b.requireMTR ?? true,
       addTHadle: b.addTHadle ?? false,
+      addLockoutHole: b.addLockoutHole ?? false,
       addLiftingLug: b.addLiftingLug ?? false,
       addPlateDog: b.addPlateDog ?? false,
       addWedge: b.addWedge ?? false,
+      blindType: b.blindType || 'Paddle Blind',
+      productType: b.productType,
     }));
 
     setCart(prev => [...prev, ...converted]);
@@ -2434,10 +2593,10 @@ export default function App() {
       payStatus = 'ACH Clearing';
     }
 
-    const companyName = (formData.get('companyName') as string) || clientAccount?.companyName || 'Dow Chemical Freeport';
+    const companyName = (formData.get('companyName') as string) || clientAccount?.companyName || 'Dow Chemical';
     const contactName = (formData.get('contactName') as string) || clientAccount?.buyerName || 'Industrial Procurement';
     const email = (formData.get('email') as string) || clientAccount?.email || 'buyer@dow.com';
-    const address = (formData.get('address') as string) || '2301 N Brazosport Blvd, Gate 4, Freeport, TX 77541';
+    const address = (formData.get('address') as string) || 'Industrial Plant Gate 4 Receiving, TX';
     const poNumber = (formData.get('poNumber') as string) || `PO-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
 
     const newOrder: CustomerOrder = {
@@ -2542,77 +2701,56 @@ export default function App() {
   // 3.1 RENDER FUNCTION: STOREFRONT CONFIGURATOR
   // --------------------------------------------------------------------------
   const renderStorefrontView = () => (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-3 sm:py-5 space-y-3 sm:space-y-4 w-full min-w-0">
           
-          {/* Hero Header */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-7 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
-            <div className="space-y-1 text-center md:text-left">
-              <div className="inline-flex items-center gap-2 text-sky-700 font-mono text-xs uppercase tracking-wider font-bold">
-                <Flame className="h-4 w-4 text-sky-600" /> In-House CNC Plasma Cutting &bull; Freeport, TX Facility
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                ASME B16.48 Positive Isolation Paddle Blinds
-              </h1>
-              <p className="text-slate-600 text-xs sm:text-sm max-w-2xl">
-                Precision CNC plasma-cut paddle blinds, spacers, and turnaround bleeders. Select standard multi-size grid order or customize detailed geometry below. Automated formal proposals with 30-day price lock sent from <strong>{IPG_SALES_EMAIL}</strong>.
-              </p>
-            </div>
-            
-            {/* Facility Capabilities */}
-            <div className="flex flex-wrap gap-2.5 text-xs font-mono">
-              <div className="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-center min-w-[130px] shadow-sm">
-                <div className="text-slate-900 font-bold text-xs">Domestic Plate</div>
-                <div className="text-slate-500 text-[10px]">A516-70 / 304L In-Stock</div>
-              </div>
-              <div className="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-center min-w-[130px] shadow-sm">
-                <div className="text-slate-900 font-bold text-xs">ASME B16.48</div>
-                <div className="text-slate-500 text-[10px]">Standard Compliance</div>
-              </div>
-              <div className="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-center min-w-[130px] shadow-sm">
-                <div className="text-slate-900 font-bold text-xs">High-Def Plasma</div>
-                <div className="text-slate-500 text-[10px]">CNC Clean Precision</div>
-              </div>
-            </div>
+      {/* Compact Top Bar: Facility Specs & Catalog Mode Switcher */}
+      <div className="bg-white border border-slate-200 rounded-xl p-3 sm:p-4 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5 sm:gap-3 min-w-0">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 min-w-0">
+          <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-sky-700 uppercase tracking-wider pr-2 sm:border-r sm:border-slate-200">
+            <Flame className="h-3.5 w-3.5 text-sky-600 shrink-0" />
+            <span className="hidden sm:inline">Texas Facility &bull; ASME B16.48 In-House Plasma Cutting</span>
+            <span className="sm:hidden">Texas ASME B16.48</span>
           </div>
-
-          {/* DUAL-MODE CATALOG VIEW SWITCHER */}
-          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-slate-100 p-2 rounded-2xl border border-slate-200 shadow-inner">
-            <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-              <button
-                type="button"
-                onClick={() => setStorefrontMode('rapid_grid')}
-                className={`flex-1 md:flex-initial flex items-center justify-center gap-2 py-3 px-3.5 sm:px-5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
-                  storefrontMode === 'rapid_grid'
-                    ? 'bg-sky-800 text-white shadow-md font-black ring-2 ring-sky-600/30'
-                    : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
-                }`}
-              >
-                <Zap className="h-4 w-4 text-amber-400" />
-                <span>⚡ Rapid Multi-Size Grid (Turnaround Fast-Order)</span>
-                <span className="hidden md:inline-block bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full">
-                  Turnaround Table
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setStorefrontMode('custom_configurator')}
-                className={`flex-1 md:flex-initial flex items-center justify-center gap-2 py-3 px-3.5 sm:px-5 rounded-xl text-xs sm:text-sm font-bold transition-all ${
-                  storefrontMode === 'custom_configurator'
-                    ? 'bg-sky-800 text-white shadow-md font-black ring-2 ring-sky-600/30'
-                    : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
-                }`}
-              >
-                <SlidersHorizontal className="h-4 w-4 text-sky-400" />
-                <span>🛠️ Custom CAD Visualizer &amp; Deep Configurator</span>
-              </button>
-            </div>
-
-            <div className="hidden lg:flex items-center gap-2 text-xs text-slate-500 pr-2">
-              <ShieldCheck className="h-4 w-4 text-emerald-600" />
-              <span>Certified EN 10204 3.1 MTR Packets Included</span>
-            </div>
+          <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-mono text-slate-500 flex-wrap">
+            <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">Domestic Plate</span>
+            <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-200 hidden md:inline">Hi-Def Plasma</span>
+            <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded flex items-center gap-1 font-bold">
+              <ShieldCheck className="h-3 w-3 text-emerald-600" /> Free 3.1 MTRs
+            </span>
           </div>
+        </div>
+
+        {/* View Mode Switcher */}
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200 shrink-0 w-full sm:w-auto">
+          <button
+            type="button"
+            onClick={() => setStorefrontMode('rapid_grid')}
+            className={`flex items-center justify-center gap-1.5 py-2 sm:py-1.5 px-2 sm:px-3 rounded-md text-xs font-bold transition-all min-h-[38px] ${
+              storefrontMode === 'rapid_grid'
+                ? 'bg-sky-800 text-white shadow-sm font-black'
+                : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
+            }`}
+          >
+            <Zap className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+            <span className="hidden sm:inline">Turnaround Order Grid</span>
+            <span className="sm:hidden text-[11px]">Order Grid</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setStorefrontMode('custom_configurator')}
+            className={`flex items-center justify-center gap-1.5 py-2 sm:py-1.5 px-2 sm:px-3 rounded-md text-xs font-bold transition-all min-h-[38px] ${
+              storefrontMode === 'custom_configurator'
+                ? 'bg-sky-800 text-white shadow-sm font-black'
+                : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
+            }`}
+          >
+            <SlidersHorizontal className="h-3.5 w-3.5 text-sky-400 shrink-0" />
+            <span className="hidden sm:inline">Custom CAD Configurator</span>
+            <span className="sm:hidden text-[11px]">Custom CAD</span>
+          </button>
+        </div>
+      </div>
 
           {/* MODE 1: RAPID MULTI-SIZE ORDER MATRIX */}
           {storefrontMode === 'rapid_grid' ? (
@@ -2623,19 +2761,70 @@ export default function App() {
               materials={MATERIALS}
               calculateBlindPrice={calculateDynamicBlindPrice}
               pricingConfig={pricingConfig}
+              isClientLoggedIn={isClientLoggedIn}
+              onOpenLoginModal={() => setIsLoginModalOpen(true)}
+              onOpenBulkRfqModal={() => setIsBulkRfqModalOpen(true)}
             />
           ) : (
-            /* MODE 2: DEEP PARAMETRIC 7-STEP CONFIGURATOR & CAD PREVIEW */
+            /* MODE 2: DEEP PARAMETRIC CONFIGURATOR & CAD PREVIEW */
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               
               {/* Left: 3-Click Selection Form */}
               <div className="lg:col-span-7 space-y-6">
               
-              {/* Step 1: NPS Size */}
+              {/* Step 0: Blind Family & Style Selector */}
               <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
                     <span className="h-5 w-5 bg-sky-700 text-white rounded-full flex items-center justify-center text-[11px] font-bold">1</span>
+                    Select Isolation Product Family
+                  </label>
+                  <span className="text-xs font-mono text-sky-700 font-bold">Style: {blindType}</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setBlindType('Paddle Blind')}
+                    className={`p-3.5 rounded-xl border text-left transition-all ${
+                      blindType === 'Paddle Blind'
+                        ? 'bg-sky-50 border-sky-700 text-slate-900 shadow-sm ring-1 ring-sky-600'
+                        : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-xs text-slate-900">⚪ Paddle Blind (Solid Blank)</span>
+                      <span className="text-[10px] font-mono bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-bold">Standard</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      Single solid disc for complete positive pipeline line-break isolation.
+                    </p>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setBlindType('Figure 8 (Spectacle Blind)')}
+                    className={`p-3.5 rounded-xl border text-left transition-all ${
+                      blindType === 'Figure 8 (Spectacle Blind)'
+                        ? 'bg-amber-50 border-amber-600 text-slate-900 shadow-sm ring-1 ring-amber-500'
+                        : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-xs text-slate-900">♾️ Figure 8 (Spectacle Blind)</span>
+                      <span className="text-[10px] font-mono bg-amber-200 text-amber-950 px-2 py-0.5 rounded font-black">2x Cost</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      Dual-disc spectacle assembly (Solid Blank + Open Ring Spacer) joined by central web.
+                    </p>
+                  </button>
+                </div>
+              </div>
+
+              {/* Step 1: NPS Size */}
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                    <span className="h-5 w-5 bg-sky-700 text-white rounded-full flex items-center justify-center text-[11px] font-bold">2</span>
                     Select Nominal Pipe Size (NPS)
                   </label>
                   <span className="text-xs font-mono text-sky-700 font-bold">Selected: {selectedNPS}</span>
@@ -2661,7 +2850,7 @@ export default function App() {
               <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                    <span className="h-5 w-5 bg-sky-700 text-white rounded-full flex items-center justify-center text-[11px] font-bold">2</span>
+                    <span className="h-5 w-5 bg-sky-700 text-white rounded-full flex items-center justify-center text-[11px] font-bold">3</span>
                     Select Pressure Rating (ASME Class)
                   </label>
                   <span className="text-xs font-mono text-sky-700 font-bold">{selectedClass}# Class</span>
@@ -2688,7 +2877,7 @@ export default function App() {
               <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                    <span className="h-5 w-5 bg-sky-700 text-white rounded-full flex items-center justify-center text-[11px] font-bold">3</span>
+                    <span className="h-5 w-5 bg-sky-700 text-white rounded-full flex items-center justify-center text-[11px] font-bold">4</span>
                     Select Material Grade &amp; Metallurgy Spec
                   </label>
                   <span className="text-xs font-mono text-sky-700 font-bold">{MATERIALS[selectedMaterial].name.split('(')[0]}</span>
@@ -2777,24 +2966,24 @@ export default function App() {
 
               </div>
 
-              {/* Step 4: Plate Thickness Selection (Default to 12 Gauge) */}
+              {/* Step 4: Plate Thickness Selection (Default to 11 Gauge) */}
               <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <label className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                    <span className="h-5 w-5 bg-sky-700 text-white rounded-full flex items-center justify-center text-[11px] font-bold">4</span>
+                    <span className="h-5 w-5 bg-sky-700 text-white rounded-full flex items-center justify-center text-[11px] font-bold">5</span>
                     Select Plate Thickness
                   </label>
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => {
-                        const asmeGeom = MASTER_GEOMETRY[selectedClass]?.[selectedNPS] || { nominalThickness: 0.250, thicknessLabel: '1/4"' };
+                        const asmeGeom = MASTER_GEOMETRY[selectedClass]?.[selectedNPS] || { nominalThickness: 0.1196, thicknessLabel: '11 Gauge' };
                         setSelectedThickness(asmeGeom.nominalThickness);
                         setSelectedThicknessLabel(asmeGeom.thicknessLabel);
                       }}
                       className="text-[11px] bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 font-semibold px-2.5 py-1 rounded-lg transition-colors"
                     >
-                      ⚡ ASME B16.48 Standard ({MASTER_GEOMETRY[selectedClass]?.[selectedNPS]?.thicknessLabel || '1/4"'})
+                      ⚡ ASME Turnaround Spec ({MASTER_GEOMETRY[selectedClass]?.[selectedNPS]?.thicknessLabel || '11 Gauge'})
                     </button>
                     <span className="text-xs font-mono text-emerald-700 font-bold bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
                       Active: {selectedThicknessLabel}
@@ -2803,8 +2992,8 @@ export default function App() {
                 </div>
 
                 <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-[11px] text-slate-600 flex items-center justify-between">
-                  <span>Standard Isolation Utility Default: <strong>12 Gauge (0.105")</strong></span>
-                  <span className="text-[10px] font-mono text-slate-500">Increase as required by piping spec</span>
+                  <span>Standard Turnaround Utility Isolation Default: <strong>11 Gauge (0.120")</strong></span>
+                  <span className="text-[10px] font-mono text-slate-500">Industry Standard</span>
                 </div>
 
                 {/* Thickness Pills Grid */}
@@ -2835,11 +3024,11 @@ export default function App() {
               {/* Step 5: Facings, Stamping & MTR Toggle */}
               <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-5">
                 
-                {/* Facing Type */}
+                {/* Facing Type with Variable Machining Calculation */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                      5. Gasket Contact Face &amp; Machining Finish
+                      6. Gasket Contact Face &amp; Machining Finish
                     </label>
                     <span className="text-[11px] font-mono text-emerald-700 font-bold">
                       Standard Default: Flat Face (In-Stock)
@@ -2882,11 +3071,11 @@ export default function App() {
                           Machined Gasket Finish
                         </span>
                         <span className="text-[10px] font-mono bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">
-                          Special Order (+$45)
+                          Special Order (+${getVariableMachiningCost(liveSpec.od, pricingConfig)})
                         </span>
                       </div>
                       <p className="text-[11px] text-slate-600 mt-1">
-                        Phonographic / serrated gasket contact surface. Requires custom CNC lathe setup (Non-Stock).
+                        Phonographic / serrated gasket contact surface. CNC lathe facing adder dynamically calculated based on {selectedNPS} ({liveSpec.od}" OD).
                       </p>
                     </button>
                   </div>
@@ -2895,7 +3084,7 @@ export default function App() {
                 {/* Custom Handle Stamping */}
                 <div>
                   <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-1.5">
-                    6. Handle Line ID / Unit Stamping (Max 20 Characters)
+                    7. Handle Line ID / Unit Stamping (Max 20 Characters)
                   </label>
                   <input
                     type="text"
@@ -2910,7 +3099,7 @@ export default function App() {
                 {/* CRUCIAL MTR REQUIREMENT TOGGLE */}
                 <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
                   <label className="text-xs font-bold text-slate-800 uppercase tracking-wider block">
-                    7. Material Test Report (MTR) Compliance Protocol
+                    8. Material Test Report (MTR) Compliance Protocol
                   </label>
                   <div className="space-y-2">
                     <label
@@ -2969,22 +3158,36 @@ export default function App() {
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                      8. Optional Turnaround Add-ons &amp; Custom Handles
+                      9. Optional Turnaround Add-ons &amp; Custom Handles
                     </label>
                     <span className="text-[11px] font-mono text-slate-500">Stock Default: Straight Handle</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                    {/* T-Handle */}
                     <label className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${addTHadle ? 'bg-sky-50 border-sky-600 text-slate-900 font-bold shadow-sm' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'}`}>
                       <div className="flex items-center gap-2.5">
                         <input type="checkbox" checked={addTHadle} onChange={e => setAddTHadle(e.target.checked)} className="h-4 w-4 rounded text-sky-600 focus:ring-sky-500" />
                         <div>
-                          <span className="block font-semibold">Welded T-Handle Crossbar</span>
-                          <span className="text-[10px] text-slate-500 font-mono font-normal">Special Order Handle Upgrade</span>
+                          <span className="block font-semibold">Integral CNC Cut T-Handle</span>
+                          <span className="text-[10px] text-slate-500 font-mono font-normal">1-Piece Cut-Out Profile (No Welds)</span>
                         </div>
                       </div>
                       <span className="font-mono text-sky-800 font-bold">+${ACCESSORY_PRICES.tHandlePrice.toFixed(2)}</span>
                     </label>
 
+                    {/* 3/8" Lockout Hole */}
+                    <label className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${addLockoutHole ? 'bg-amber-50 border-amber-600 text-slate-900 font-bold shadow-sm' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'}`}>
+                      <div className="flex items-center gap-2.5">
+                        <input type="checkbox" checked={addLockoutHole} onChange={e => setAddLockoutHole(e.target.checked)} className="h-4 w-4 rounded text-amber-600 focus:ring-amber-500" />
+                        <div>
+                          <span className="block font-semibold">3/8" Lockout Hole in Center</span>
+                          <span className="text-[10px] text-slate-500 font-mono font-normal">Center Safety Lockout / Tagout Hole</span>
+                        </div>
+                      </div>
+                      <span className="font-mono text-amber-800 font-bold">+${ACCESSORY_PRICES.lockoutHolePrice.toFixed(2)}</span>
+                    </label>
+
+                    {/* Lifting Lug */}
                     <label className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${addLiftingLug ? 'bg-sky-50 border-sky-600 text-slate-900 font-bold shadow-sm' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'}`}>
                       <div className="flex items-center gap-2.5">
                         <input type="checkbox" checked={addLiftingLug} onChange={e => setAddLiftingLug(e.target.checked)} className="h-4 w-4 rounded text-sky-600 focus:ring-sky-500" />
@@ -2996,6 +3199,7 @@ export default function App() {
                       <span className="font-mono text-sky-800 font-bold">+${ACCESSORY_PRICES.liftingLugPrice.toFixed(2)}</span>
                     </label>
 
+                    {/* Plate Dog */}
                     <label className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${addPlateDog ? 'bg-sky-50 border-sky-600 text-slate-900 font-bold shadow-sm' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'}`}>
                       <div className="flex items-center gap-2.5">
                         <input type="checkbox" checked={addPlateDog} onChange={e => setAddPlateDog(e.target.checked)} className="h-4 w-4 rounded text-sky-600 focus:ring-sky-500" />
@@ -3007,6 +3211,7 @@ export default function App() {
                       <span className="font-mono text-sky-800 font-bold">+${ACCESSORY_PRICES.plateDogPrice.toFixed(2)}</span>
                     </label>
 
+                    {/* Fit-Up Wedge */}
                     <label className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${addWedge ? 'bg-sky-50 border-sky-600 text-slate-900 font-bold shadow-sm' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'}`}>
                       <div className="flex items-center gap-2.5">
                         <input type="checkbox" checked={addWedge} onChange={e => setAddWedge(e.target.checked)} className="h-4 w-4 rounded text-sky-600 focus:ring-sky-500" />
@@ -3036,9 +3241,11 @@ export default function App() {
                 facing={selectedFacing}
                 handleStamp={handleStamp}
                 addTHadle={addTHadle}
+                addLockoutHole={addLockoutHole}
                 addLiftingLug={addLiftingLug}
                 od={liveSpec.od}
                 thickness={liveSpec.thickness}
+                blindType={blindType}
               />
 
               <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-7 shadow-md space-y-5">
@@ -3048,9 +3255,31 @@ export default function App() {
                     <h2 className="text-base font-bold text-slate-900 uppercase tracking-wider">Live Plasma Cut Spec</h2>
                     <span className="text-xs font-mono text-sky-700 font-bold">{liveSpec.partNumber}</span>
                   </div>
-                  <span className="bg-slate-100 text-slate-700 border border-slate-300 text-[10px] font-mono px-2.5 py-1 rounded font-bold uppercase">
-                    ASME B16.48 Std
-                  </span>
+                  <div className="text-right">
+                    {isClientLoggedIn ? (
+                      <div>
+                        <div className="flex items-center justify-end gap-1.5 font-mono">
+                          <span className="text-xs text-slate-400 line-through">${liveSpec.listPrice.toFixed(2)}</span>
+                          <span className="text-lg font-black text-slate-900">${liveSpec.wholesalePrice.toFixed(2)}</span>
+                        </div>
+                        <div className="text-[10px] font-mono text-emerald-700 font-bold bg-emerald-50 border border-emerald-200 px-1.5 py-0.2 rounded w-fit ml-auto mt-0.5">
+                          SAVE 10% (Trade Rate)
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="text-lg font-black font-mono text-slate-900">${liveSpec.listPrice.toFixed(2)}</div>
+                        <button
+                          type="button"
+                          onClick={() => setIsLoginModalOpen(true)}
+                          className="mt-0.5 inline-flex items-center gap-1 text-[10px] font-bold text-sky-800 bg-sky-50 border border-sky-300 hover:bg-sky-100 px-2 py-0.5 rounded shadow-sm transition-all"
+                        >
+                          <Lock className="h-3 w-3 text-sky-600" />
+                          <span>10% Trade: ${liveSpec.wholesalePrice.toFixed(2)}</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Technical Parameters Matrix */}
@@ -4207,37 +4436,39 @@ export default function App() {
       {/* -------------------------------------------------------------------- */}
       {/* TOP EMERGENCY DISPATCH & OWNER PRICING STATUS BAR                    */}
       {/* -------------------------------------------------------------------- */}
-      <div className="border-b border-slate-200 bg-white px-4 py-2 text-xs text-slate-600 shadow-sm">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <span className="inline-flex items-center gap-1.5 text-emerald-700 font-mono text-[11px] font-semibold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 flex-shrink-0">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              Plasma Cutting Queue: LIVE
+      <div className="border-b border-slate-200 bg-white px-3 sm:px-4 lg:px-6 py-1.5 sm:py-2 text-xs text-slate-600 shadow-sm w-full min-w-0">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-3 min-w-0">
+          <div className="flex items-center gap-2 min-w-0 truncate">
+            <span className="inline-flex items-center gap-1.5 text-emerald-700 font-mono text-[10px] sm:text-[11px] font-semibold bg-emerald-50 px-2 sm:px-2.5 py-0.5 rounded-full border border-emerald-200 flex-shrink-0">
+              <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="hidden xs:inline">Plasma Cutting Queue:</span> LIVE
             </span>
-            <span className="hidden md:inline text-slate-300 flex-shrink-0">|</span>
-            <span className="hidden md:inline text-slate-700 font-medium text-[11px] truncate">
-              Turnaround Emergency Dispatch &bull; Dedicated Freeport Hot-Shot Logistics
+            <span className="hidden lg:inline text-slate-300 flex-shrink-0">|</span>
+            <span className="hidden lg:inline text-slate-700 font-medium text-[11px] truncate">
+              Turnaround Emergency Dispatch &bull; Dedicated Hot-Shot Logistics
             </span>
           </div>
 
-          <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
             {/* Active Owner Pricing Indicator - STRICTLY VISIBLE ONLY ON OWNER SCREEN / SHOP FLOOR */}
             {location.pathname === '/shop-floor' && (
               <button
                 onClick={() => setIsOwnerPricingModalOpen(true)}
-                className="flex items-center gap-1.5 text-amber-900 font-mono text-[11px] bg-amber-50 hover:bg-amber-100 px-2.5 py-0.5 rounded-full border border-amber-300 font-bold transition-colors shadow-sm flex-shrink-0"
+                className="flex items-center gap-1.5 text-amber-900 font-mono text-[10px] sm:text-[11px] bg-amber-50 hover:bg-amber-100 px-2 sm:px-2.5 py-0.5 rounded-full border border-amber-300 font-bold transition-colors shadow-sm flex-shrink-0"
                 title="Click to adjust Owner Pricing Matrix"
               >
-                <Settings className="h-3 w-3 text-amber-700" />
-                <span>⚙️ Owner Mode: SA-516 ${(pricingConfig.sa516PricePerLb ?? DEFAULT_PRICING_CONFIG.sa516PricePerLb).toFixed(2)}/lb | 304L ${(pricingConfig.ss304LPricePerLb ?? DEFAULT_PRICING_CONFIG.ss304LPricePerLb).toFixed(2)}/lb ({pricingConfig.globalMarkupPct > 0 ? `+${pricingConfig.globalMarkupPct}%` : `${pricingConfig.globalMarkupPct}%`})</span>
+                <Settings className="h-3 w-3 text-amber-700 shrink-0" />
+                <span className="hidden md:inline">⚙️ Owner Mode: SA-516 ${(pricingConfig.sa516PricePerLb ?? DEFAULT_PRICING_CONFIG.sa516PricePerLb).toFixed(2)}/lb | 304L ${(pricingConfig.ss304LPricePerLb ?? DEFAULT_PRICING_CONFIG.ss304LPricePerLb).toFixed(2)}/lb ({pricingConfig.globalMarkupPct > 0 ? `+${pricingConfig.globalMarkupPct}%` : `${pricingConfig.globalMarkupPct}%`})</span>
+                <span className="md:hidden">Owner Mode</span>
               </button>
             )}
 
             <a
               href="tel:+19792489266"
-              className="font-mono font-bold text-sky-800 hover:text-sky-900 transition-colors text-xs flex items-center gap-1 flex-shrink-0"
+              className="font-mono font-bold text-sky-800 hover:text-sky-900 transition-colors text-xs flex items-center gap-1.5 flex-shrink-0 py-1 px-1.5 rounded-md hover:bg-sky-50 touch-manipulation min-h-[32px]"
             >
-              <Phone className="h-3 w-3 text-sky-600" /> (979) 248-9266
+              <Phone className="h-3.5 w-3.5 text-sky-600 shrink-0" />
+              <span>(979) 248-9266</span>
             </a>
           </div>
         </div>
@@ -4246,28 +4477,28 @@ export default function App() {
       {/* -------------------------------------------------------------------- */}
       {/* HEADER & MAIN NAVIGATION                                             */}
       {/* -------------------------------------------------------------------- */}
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3 sm:gap-4">
+      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-sm w-full">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-4 min-w-0">
           
           {/* Logo & Company Name */}
-          <Link to="/" className="flex items-center gap-2 sm:gap-2.5 group flex-shrink-0">
+          <Link to="/" className="flex items-center gap-2 sm:gap-2.5 group flex-shrink min-w-0">
             <img
               src={brandLogo}
               alt="Iron Prairie Fabrication Group LLC logo"
-              className="h-10 sm:h-11 w-auto rounded-lg border border-slate-200 bg-white p-1 shadow-sm object-contain flex-shrink-0"
+              className="h-9 sm:h-11 w-auto rounded-lg border border-slate-200 bg-white p-1 shadow-sm object-contain flex-shrink-0"
             />
-            <div className="leading-tight flex-shrink-0">
-              <span className="text-base sm:text-lg font-display font-bold uppercase tracking-wide text-slate-900 group-hover:text-brand-brown transition-colors whitespace-nowrap block">
+            <div className="leading-tight min-w-0">
+              <span className="text-sm sm:text-base lg:text-lg font-display font-bold uppercase tracking-wide text-slate-900 group-hover:text-brand-brown transition-colors whitespace-nowrap block truncate">
                 Iron Prairie
               </span>
-              <span className="text-[10px] text-slate-500 font-sans tracking-wide block whitespace-nowrap">
-                Fabrication Group LLC &bull; Freeport, TX
+              <span className="hidden sm:block text-[10px] text-slate-500 font-sans tracking-wide whitespace-nowrap truncate">
+                Fabrication Group LLC &bull; Texas
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav aria-label="Primary navigation" className="hidden xl:flex items-center gap-1 2xl:gap-1.5 flex-shrink-0">
+          <nav aria-label="Primary navigation" className="hidden 2xl:flex items-center gap-1 2xl:gap-1.5 flex-shrink-0">
             {navLinks.map((item) => {
               const isCatalog = item.to === '/storefront' || item.to === '/paddle-blinds';
               return (
@@ -4297,46 +4528,38 @@ export default function App() {
           </nav>
 
           {/* Right Action Icons */}
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
             {/* Gated Wholesale Login / Status Button */}
-            {isClientLoggedIn ? (
-              <div className="flex items-center gap-1.5">
+            {isClientLoggedIn && (
+              <div className="flex items-center gap-1 sm:gap-1.5">
                 <button
                   onClick={() => setIsLoginModalOpen(true)}
-                  className="flex items-center gap-1.5 bg-sky-50 border border-sky-200 text-sky-900 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-sky-100 transition-colors"
+                  className="flex items-center gap-1.5 bg-sky-50 border border-sky-200 text-sky-900 px-2 sm:px-3 py-2 rounded-lg text-xs font-semibold hover:bg-sky-100 transition-colors min-h-[40px] sm:min-h-[44px] touch-manipulation"
                   title="Click to view client account details"
                 >
-                  <UserCheck className="h-3.5 w-3.5 text-sky-700" />
-                  <span className="max-w-[90px] sm:max-w-[130px] truncate">{clientAccount?.companyName || 'Verified Trade'}</span>
+                  <UserCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-sky-700 shrink-0" />
+                  <span className="hidden sm:inline max-w-[90px] xl:max-w-[130px] truncate">{clientAccount?.companyName || 'Verified Trade'}</span>
+                  <span className="sm:hidden text-[11px] font-bold">Trade</span>
                 </button>
                 <button
                   onClick={handleClientLogout}
-                  className="p-1.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors"
-                  title="Log out & lock pricing"
+                  className="p-2 sm:p-2 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center touch-manipulation"
+                  title="Log out"
                 >
-                  <LogOut className="h-3.5 w-3.5" />
+                  <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </button>
               </div>
-            ) : (
-              <button
-                onClick={() => setIsLoginModalOpen(true)}
-                className="flex items-center gap-1.5 bg-sky-700 hover:bg-sky-800 text-white px-2.5 sm:px-3 py-2 rounded-lg font-bold transition-all shadow-sm active:scale-95 text-xs"
-              >
-                <Lock className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Unlock Pricing</span>
-                <span className="sm:hidden">Login</span>
-              </button>
             )}
 
             {/* Cart Button */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 px-2.5 sm:px-3 py-2 rounded-lg font-bold transition-all shadow-sm active:scale-95 text-xs"
+              className="relative flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 px-2.5 sm:px-3 py-2 rounded-lg font-bold transition-all shadow-sm active:scale-95 text-xs min-h-[40px] sm:min-h-[44px] touch-manipulation"
             >
-              <ShoppingCart className="h-4 w-4 text-sky-700" />
+              <ShoppingCart className="h-4 w-4 text-sky-700 shrink-0" />
               <span className="hidden sm:inline">Cart</span>
               {cart.length > 0 && (
-                <span className="bg-sky-700 text-white font-mono text-[10px] px-1.5 py-0.2 rounded-full font-bold">
+                <span className="bg-sky-700 text-white font-mono text-[10px] px-1.5 py-0.5 rounded-full font-bold">
                   {cart.reduce((a, b) => a + b.quantity, 0)}
                 </span>
               )}
@@ -4345,7 +4568,7 @@ export default function App() {
             {/* Request a Quote Button */}
             <Link
               to="/contact"
-              className="hidden sm:inline-flex rounded-lg bg-brand-brown hover:bg-brand-brown/90 px-3 py-2 text-xs font-bold text-brand-ivory shadow-sm transition-all active:scale-95 whitespace-nowrap"
+              className="hidden 2xl:inline-flex rounded-lg bg-brand-brown hover:bg-brand-brown/90 px-3.5 py-2 text-xs font-bold text-brand-ivory shadow-sm transition-all active:scale-95 whitespace-nowrap min-h-[44px] items-center touch-manipulation"
             >
               Request a Quote
             </Link>
@@ -4354,7 +4577,7 @@ export default function App() {
             <button
               type="button"
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="p-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 xl:hidden"
+              className="p-2 sm:p-2.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 2xl:hidden min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center touch-manipulation"
               aria-label="Toggle navigation menu"
             >
               <Menu className="h-5 w-5" />
@@ -4365,7 +4588,7 @@ export default function App() {
 
         {/* Mobile Navigation Dropdown */}
         {mobileOpen && (
-          <nav className="border-t border-slate-200 bg-white p-4 space-y-2 xl:hidden shadow-lg">
+          <nav className="border-t border-slate-200 bg-white p-4 space-y-2.5 2xl:hidden shadow-lg animate-fadeIn max-h-[85vh] overflow-y-auto">
             {navLinks.map((item) => {
               const isCatalog = item.to === '/storefront' || item.to === '/paddle-blinds';
               return (
@@ -4376,10 +4599,10 @@ export default function App() {
                   onClick={() => setMobileOpen(false)}
                   className={({ isActive }) =>
                     isCatalog
-                      ? `block px-3 py-2.5 rounded-xl text-xs font-black bg-amber-400 text-slate-950 flex items-center justify-between shadow-sm`
-                      : `block px-3 py-2 rounded-lg text-xs font-semibold ${
-                          isActive ? 'bg-slate-100 text-sky-900 font-bold' : 'text-slate-700 hover:bg-slate-50'
-                        }`
+                      ? `block px-3.5 py-3 rounded-xl text-sm font-black bg-amber-400 text-slate-950 flex items-center justify-between shadow-sm min-h-[48px] touch-manipulation`
+                      : `block px-3.5 py-2.5 rounded-lg text-sm font-semibold min-h-[44px] flex items-center ${
+                          isActive ? 'bg-slate-100 text-sky-900 font-bold border border-slate-200' : 'text-slate-700 hover:bg-slate-50'
+                        } touch-manipulation`
                   }
                 >
                   <span>{item.label}</span>
@@ -4387,13 +4610,22 @@ export default function App() {
                 </NavLink>
               );
             })}
-            <Link
-              to="/contact"
-              onClick={() => setMobileOpen(false)}
-              className="block w-full text-center rounded-lg bg-brand-brown py-2.5 text-xs font-bold text-brand-ivory shadow-sm mt-3"
-            >
-              Request a Quote
-            </Link>
+            <div className="pt-2 border-t border-slate-200 space-y-2">
+              <Link
+                to="/contact"
+                onClick={() => setMobileOpen(false)}
+                className="block w-full text-center rounded-xl bg-brand-brown py-3 text-sm font-bold text-brand-ivory shadow-sm min-h-[48px] flex items-center justify-center touch-manipulation"
+              >
+                Request a Quote
+              </Link>
+              <a
+                href="tel:+19792489266"
+                className="block w-full text-center rounded-xl bg-sky-50 border border-sky-200 py-2.5 text-xs font-bold text-sky-900 min-h-[44px] flex items-center justify-center gap-2 touch-manipulation"
+              >
+                <Phone className="h-4 w-4 text-sky-700" />
+                <span>Call Shop: (979) 248-9266</span>
+              </a>
+            </div>
           </nav>
         )}
       </header>
@@ -4401,7 +4633,7 @@ export default function App() {
       {/* -------------------------------------------------------------------- */}
       {/* MULTI-ROUTE APPLICATION CONTENT                                      */}
       {/* -------------------------------------------------------------------- */}
-      <main id="main-content" className="flex-1">
+      <main id="main-content" className="flex-1 min-w-0 w-full overflow-hidden">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
@@ -4462,7 +4694,7 @@ export default function App() {
               <div className="space-y-2 text-xs text-slate-400">
                 <div>Phone: <a href="tel:+19792489266" className="text-white hover:text-amber-400 font-bold">(979) 248-9266</a></div>
                 <div>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="text-white hover:text-amber-400 underline">Sales@ironprairiefabrication.com</a></div>
-                <div>Location: Freeport, Lake Jackson &amp; Statewide Texas</div>
+                <div>Location: Lake Jackson, Brazoria County &amp; Statewide Texas</div>
                 <div className="pt-2 flex gap-4 text-[11px] text-slate-500">
                   <Link to="/privacy-policy" className="hover:text-slate-400 underline">Privacy Policy</Link>
                   <Link to="/terms-of-service" className="hover:text-slate-400 underline">Terms of Service</Link>
@@ -4666,23 +4898,41 @@ export default function App() {
                     </div>
                   </div>
 
-                  {/* Hot Shot Emergency Dispatch Fee */}
-                  <div className="p-3 bg-white border border-rose-200 rounded-xl space-y-1 shadow-sm col-span-2 sm:col-span-3">
-                    <label className="block text-[10px] text-rose-700 font-bold uppercase flex items-center gap-1">
-                      <Truck className="h-3.5 w-3.5" /> Hot Shot Courier Dispatch (Champion Logistics Call-Out Fee)
-                    </label>
-                    <div className="flex items-center gap-1 bg-rose-50 border border-rose-200 rounded px-2 py-1.5 max-w-xs">
-                      <span className="text-rose-600 font-bold">$</span>
-                      <input
-                        type="number"
-                        step="25"
-                        min="50"
-                        max="1500"
-                        value={pricingConfig.hotShotEmergencyFee}
-                        onChange={e => setPricingConfig(prev => ({ ...prev, hotShotEmergencyFee: parseFloat(e.target.value) || 250 }))}
-                        className="w-full bg-transparent text-rose-800 font-bold focus:outline-none"
-                      />
-                      <span className="text-rose-600 text-[10px]">flat courier fee</span>
+                  {/* Variable Machining Costs (Lathe Facing) */}
+                  <div className="p-3 bg-white border border-amber-200 rounded-xl space-y-2 shadow-sm col-span-2 sm:col-span-3">
+                    <div className="flex justify-between items-center">
+                      <label className="text-[10px] text-amber-900 font-bold uppercase">
+                        ⚙️ Variable CNC Lathe Machining (Facing Adder):
+                      </label>
+                      <span className="text-[10px] text-amber-700 font-mono">Scales with OD ($Setup + $Rate/in)</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2.5">
+                      <div>
+                        <label className="text-[9px] text-slate-500 block mb-0.5">Base Lathe Setup ($)</label>
+                        <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded px-2 py-1">
+                          <span className="text-slate-500">$</span>
+                          <input
+                            type="number"
+                            step="5"
+                            value={pricingConfig.baseMachiningSetupFee ?? 25}
+                            onChange={e => setPricingConfig(prev => ({ ...prev, baseMachiningSetupFee: parseFloat(e.target.value) || 25 }))}
+                            className="w-full bg-transparent text-slate-900 font-bold focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="text-[9px] text-slate-500 block mb-0.5">Machining Rate ($/in OD)</label>
+                        <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded px-2 py-1">
+                          <span className="text-slate-500">$</span>
+                          <input
+                            type="number"
+                            step="0.50"
+                            value={pricingConfig.machiningRatePerInch ?? 9.50}
+                            onChange={e => setPricingConfig(prev => ({ ...prev, machiningRatePerInch: parseFloat(e.target.value) || 9.50 }))}
+                            className="w-full bg-transparent text-slate-900 font-bold focus:outline-none"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -4696,10 +4946,10 @@ export default function App() {
                 </div>
                 <div className="grid grid-cols-2 gap-3 text-[11px] pt-1">
                   <div className="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm">
-                    <div className="text-slate-600">4" 150# SA-516-70 (12 Ga):</div>
+                    <div className="text-slate-600">4" 150# SA-516-70 (11 Ga Standard):</div>
                     <div className="text-slate-900 font-bold mt-1 text-sm">
-                      ${calculateDynamicBlindPrice(150, '4"', 'SA-516-70', 0.1046, '12 Gauge', 'Flat Face (FF) - Standard (No Machining)', false, false, false, false, pricingConfig).unitPrice.toFixed(2)}
-                      <span className="text-slate-500 text-[10px] ml-1 font-normal">(Base: $44)</span>
+                      ${calculateDynamicBlindPrice(150, '4"', 'SA-516-70', 0.1196, '11 Gauge', 'Flat Face (FF) - Standard (No Machining)', false, false, false, false, pricingConfig).unitPrice.toFixed(2)}
+                      <span className="text-slate-500 text-[10px] ml-1 font-normal">(Base: $45)</span>
                     </div>
                   </div>
                   <div className="bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm">
@@ -4770,7 +5020,7 @@ export default function App() {
                   className="p-2.5 rounded-lg bg-white hover:bg-sky-50 border border-slate-200 hover:border-sky-300 text-slate-800 text-left transition-colors shadow-sm"
                 >
                   <div className="font-bold text-sky-900">Dow Chemical</div>
-                  <div className="text-[10px] text-slate-500">Freeport, TX</div>
+                  <div className="text-[10px] text-slate-500">Texas Site</div>
                 </button>
                 <button
                   type="button"
@@ -4786,7 +5036,7 @@ export default function App() {
                   className="p-2.5 rounded-lg bg-white hover:bg-sky-50 border border-slate-200 hover:border-sky-300 text-slate-800 text-left transition-colors shadow-sm"
                 >
                   <div className="font-bold text-emerald-900">BASF Verbund</div>
-                  <div className="text-[10px] text-slate-500">Freeport Site</div>
+                  <div className="text-[10px] text-slate-500">Texas Verbund</div>
                 </button>
               </div>
             </div>
@@ -4800,7 +5050,7 @@ export default function App() {
                     required
                     name="companyName"
                     defaultValue={clientAccount?.companyName || ''}
-                    placeholder="e.g. ExxonMobil Beaumont or Freeport LNG"
+                    placeholder="e.g. ExxonMobil Beaumont or Gulf Coast LNG"
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white font-medium"
                   />
                 </div>
@@ -4834,7 +5084,7 @@ export default function App() {
                   <input
                     name="facilityLocation"
                     defaultValue={clientAccount?.facilityLocation || ''}
-                    placeholder="e.g. Freeport, TX (Plant Gate 4)"
+                    placeholder="e.g. Plant Gate 4 Receiving (Texas)"
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white"
                   />
                 </div>
@@ -5114,14 +5364,14 @@ export default function App() {
             </div>
 
             <form onSubmit={handlePlaceOrder} className="space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-slate-700 font-bold uppercase mb-1">Company / Plant Name</label>
                   <input
                     required
                     name="companyName"
-                    defaultValue={clientAccount?.companyName || 'Dow Chemical Freeport'}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white font-medium"
+                    defaultValue={clientAccount?.companyName || 'Dow Chemical'}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white font-medium min-h-[44px]"
                   />
                 </div>
                 <div>
@@ -5130,12 +5380,12 @@ export default function App() {
                     required
                     name="contactName"
                     defaultValue={clientAccount?.buyerName || 'Industrial Procurement'}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white font-medium"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white font-medium min-h-[44px]"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-slate-700 font-bold uppercase mb-1">Commercial Work Email</label>
                   <input
@@ -5143,7 +5393,7 @@ export default function App() {
                     type="email"
                     name="email"
                     defaultValue={clientAccount?.email || 'buyer@dow.com'}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white font-medium"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white font-medium min-h-[44px]"
                   />
                 </div>
                 <div>
@@ -5152,7 +5402,7 @@ export default function App() {
                     required
                     name="poNumber"
                     defaultValue={isHotShotOrder ? `HOT-PO-2026-${Math.floor(1000 + Math.random() * 9000)}` : `PO-2026-${Math.floor(1000 + Math.random() * 9000)}`}
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-sky-800 focus:outline-none focus:border-sky-600 focus:bg-white font-mono font-bold"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sky-800 focus:outline-none focus:border-sky-600 focus:bg-white font-mono font-bold min-h-[44px]"
                   />
                 </div>
               </div>
@@ -5162,8 +5412,8 @@ export default function App() {
                 <input
                   required
                   name="address"
-                  defaultValue="2301 N Brazosport Blvd, Gate 4, Freeport, TX 77541"
-                  placeholder="2301 N Brazosport Blvd, Gate 4, Freeport, TX 77541"
+                  defaultValue="Plant Gate 4 Receiving, TX"
+                  placeholder="e.g. Plant Gate 4 Receiving, TX"
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white"
                 />
               </div>
@@ -5659,6 +5909,22 @@ export default function App() {
         onClose={() => setIsProposalModalOpen(false)}
         items={proposalModalItems}
         onConfirmOrderAsPO={handleConfirmProposalAsPO}
+      />
+
+      {/* -------------------------------------------------------------------- */}
+      {/* TURNAROUND BULK BOM LIST & 10% TRADE RFQ MODAL                        */}
+      {/* -------------------------------------------------------------------- */}
+      <BulkListRfqModal
+        isOpen={isBulkRfqModalOpen}
+        onClose={() => setIsBulkRfqModalOpen(false)}
+        onSuccessLogin={(acc) => {
+          setClientAccount(acc);
+          setIsClientLoggedIn(true);
+          setNotificationToast({
+            type: 'success',
+            message: `🎉 10% Direct Wholesale Manufacturing Discount Active for ${acc.companyName}!`
+          });
+        }}
       />
 
       {/* -------------------------------------------------------------------- */}

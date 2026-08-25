@@ -110,7 +110,7 @@ export const LaserCuttingKanban: React.FC<LaserCuttingKanbanProps> = ({
           return {
             ...order,
             status: 'shipped',
-            carrierName: order.shippingMethod.includes('LTL') ? 'R+L Carriers (Freeport Dock)' : 'UPS Freight Express',
+            carrierName: order.shippingMethod.includes('LTL') ? 'R+L Carriers (Gulf Coast Dock)' : 'UPS Freight Express',
             trackingNumber: `1Z-IPF-${Math.floor(100000000 + Math.random() * 900000000)}`,
           };
         }

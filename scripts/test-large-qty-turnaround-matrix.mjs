@@ -88,7 +88,7 @@ console.log('================================================================\n'
 const testSuites = [
   {
     name: 'Mega Outage Blanket (300 Blinds - Mixed SA-516-70 / SA-36 / 304L)',
-    client: 'Turner Industries / Dow Freeport Site',
+    client: 'Turner Industries / Dow Texas Site',
     items: [
       { nps: '1-1/2"', class: 150, mat: 'SA-36', thk: 0.25, qty: 80 },
       { nps: '3"', class: 150, mat: 'SA-516-70', thk: 0.375, qty: 70 },
@@ -110,7 +110,7 @@ const testSuites = [
   },
   {
     name: 'Chemical Acid Unit 316L Stainless Bulk Upgrade (High Alloy / High Cost)',
-    client: 'BASF Verbund Freeport Complex',
+    client: 'BASF Verbund Texas Complex',
     items: [
       { nps: '2"', class: 300, mat: '316L', thk: 0.375, qty: 30 },
       { nps: '3"', class: 300, mat: '316L', thk: 0.500, qty: 25 },

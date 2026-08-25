@@ -22,6 +22,7 @@ import { LaserPaddlePreview } from './LaserPaddlePreview';
 import { AmazonFlatFileModal } from './AmazonFlatFileModal';
 import { FastPOCheckoutModal } from './FastPOCheckoutModal';
 import { InstantProposalModal } from './InstantProposalModal';
+import { StripeInstantCheckoutModal } from './StripeInstantCheckoutModal';
 import {
   Flame,
   ShieldCheck,
@@ -41,7 +42,9 @@ import {
   Wrench,
   PackageCheck,
   Sparkles,
-  FileText
+  FileText,
+  CreditCard,
+  Zap
 } from 'lucide-react';
 
 interface CustomerStorefrontProps {
@@ -81,6 +84,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
   const [quantity, setQuantity] = useState(1);
 
   // Modals state
+  const [isStripeModalOpen, setIsStripeModalOpen] = useState(false);
   const [isAmazonModalOpen, setIsAmazonModalOpen] = useState(false);
   const [isPOModalOpen, setIsPOModalOpen] = useState(false);
   const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
@@ -129,7 +133,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
           <div className="space-y-1">
             <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-0.5 text-xs font-mono font-semibold text-amber-400">
               <Flame className="h-3.5 w-3.5 animate-pulse text-amber-400" />
-              <span>DIRECT CNC PLASMA CUTTING SHOP &bull; FREEPORT, TX</span>
+              <span>DIRECT CNC PLASMA CUTTING SHOP &bull; TEXAS</span>
             </div>
             <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight text-slate-100 font-display">
               ASME B16.48 Positive Isolation Paddle Blinds
@@ -781,33 +785,66 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                     </div>
                   </div>
 
+                  {/* 3% ACH Discount Encouragement Banner */}
+                  <div className="rounded-xl border border-emerald-500/40 bg-emerald-950/30 p-2.5 text-xs text-emerald-300 flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 font-sans">
+                      <Sparkles className="h-4 w-4 text-emerald-400 shrink-0" />
+                      <span><strong>Pay via ACH:</strong> Save 3% on items</span>
+                    </div>
+                    <span className="font-mono font-bold text-emerald-400 text-sm">
+                      -${(cartSubtotal * 0.03).toFixed(2)}
+                    </span>
+                  </div>
+
                   {/* Action Buttons */}
-                  <div className="space-y-2 pt-1">
+                  <div className="space-y-2.5 pt-1">
+                    {/* PRIMARY: Stripe Instant E-Commerce Checkout */}
                     <button
                       type="button"
-                      onClick={() => setIsProposalModalOpen(true)}
-                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-amber-500 py-3 text-sm font-black text-slate-950 hover:bg-amber-400 transition-all shadow-lg active:scale-95"
+                      onClick={() => setIsStripeModalOpen(true)}
+                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 py-3.5 text-sm font-black text-slate-950 hover:from-emerald-400 hover:to-teal-400 transition-all shadow-lg active:scale-95 border border-emerald-400/40"
                     >
-                      <FileText className="h-4 w-4" />
-                      <span>⚡ Generate Official Proposal (Email PDF)</span>
+                      <Zap className="h-4 w-4" />
+                      <span>⚡ Instant Stripe Checkout (Card / Apple Pay / ACH)</span>
                     </button>
 
+                    {/* Trust Badges */}
+                    <div className="flex items-center justify-center gap-2 text-[10px] font-mono text-slate-400 py-0.5">
+                      <span className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800">VISA</span>
+                      <span className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800">MC</span>
+                      <span className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800">AMEX</span>
+                      <span className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800">APPLE PAY</span>
+                      <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold">ACH (SAVE 3%)</span>
+                    </div>
+
+                    {/* SECONDARY: Commercial B2B Net 30 PO Checkout */}
                     <button
                       type="button"
                       onClick={() => setIsPOModalOpen(true)}
-                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-sky-700 py-3 text-sm font-bold text-white hover:bg-sky-600 transition-all shadow-md active:scale-95"
+                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-sky-800/90 py-2.5 text-xs font-bold text-sky-100 hover:bg-sky-700 transition-all shadow border border-sky-600/40 active:scale-95"
                     >
-                      <ShieldCheck className="h-4 w-4" />
-                      <span>1-Click PO Checkout &amp; Dispatch</span>
+                      <ShieldCheck className="h-4 w-4 text-sky-300" />
+                      <span>1-Click Industrial PO Checkout (Net 30 Terms)</span>
                     </button>
 
+                    {/* TERTIARY: Official Proposal PDF */}
+                    <button
+                      type="button"
+                      onClick={() => setIsProposalModalOpen(true)}
+                      className="w-full flex items-center justify-center gap-2 rounded-xl border border-amber-500/40 bg-amber-500/10 py-2.5 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition-all"
+                    >
+                      <FileText className="h-4 w-4" />
+                      <span>Generate Formal Proposal (Email PDF)</span>
+                    </button>
+
+                    {/* Amazon Feed Export */}
                     <button
                       type="button"
                       onClick={() => setIsAmazonModalOpen(true)}
-                      className="w-full flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-800 py-2.5 text-xs font-semibold text-slate-200 hover:bg-slate-700 transition-all"
+                      className="w-full flex items-center justify-center gap-2 rounded-xl border border-slate-800 bg-slate-900/60 py-2 text-[11px] font-semibold text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-all"
                     >
-                      <FileSpreadsheet className="h-4 w-4 text-amber-400" />
-                      <span>Export to Amazon Flat-File Feed (.TSV/.CSV)</span>
+                      <FileSpreadsheet className="h-3.5 w-3.5 text-amber-400" />
+                      <span>Export Amazon Flat-File Feed (.TSV)</span>
                     </button>
                   </div>
                 </div>
@@ -816,6 +853,18 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
           </div>
         </div>
       )}
+
+      {/* STRIPE INSTANT CHECKOUT MODAL */}
+      <StripeInstantCheckoutModal
+        isOpen={isStripeModalOpen}
+        onClose={() => setIsStripeModalOpen(false)}
+        cartItems={cart.length > 0 ? cart : [currentConfig]}
+        onOrderSubmitted={(newJob) => {
+          onOrderSubmitted(newJob);
+          setCart([]);
+        }}
+        onViewShopBoard={onViewShopBoard}
+      />
 
       {/* INSTANT PROPOSAL MODAL */}
       <InstantProposalModal

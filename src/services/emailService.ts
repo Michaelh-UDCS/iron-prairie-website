@@ -94,7 +94,8 @@ BILL OF MATERIALS (BOM) / CUT MANIFEST
 -------------------------------------------------------
 ${order.items.map((item: any, idx: number) => {
   const accessories = [
-    item.addTHadle ? 'Welded T-Handle' : '',
+    item.addTHadle ? 'Integral CNC T-Handle' : '',
+    item.addLockoutHole ? '3/8" Lockout Hole' : '',
     item.addLiftingLug ? 'Crane Lifting Lug' : '',
     item.addPlateDog ? 'Plate Dog' : '',
     item.addWedge ? 'Fit-Up Wedge' : ''
@@ -104,7 +105,7 @@ ${order.items.map((item: any, idx: number) => {
   Part #:       ${item.partNumber || item.sku}
   NPS & Class:  ${item.nps} Class ${item.pressureClass}# (${item.facing || 'Flat Face'})
   Material:     ${item.materialName || item.materialCode || item.material}
-  Thickness:    ${item.thicknessLabel || item.dimensions?.thicknessFraction || '12 Ga'} | OD: ${item.od || item.dimensions?.od}"
+  Thickness:    ${item.thicknessLabel || item.dimensions?.thicknessFraction || '11 Ga'} | OD: ${item.od || item.dimensions?.od}"
   Quantity:     ${item.quantity} units
   Unit Weight:  ${item.actualWeightLbs || item.finishedWeightPerUnit} lbs (Total: ${((item.actualWeightLbs || item.finishedWeightPerUnit) * item.quantity).toFixed(2)} lbs)
   Handle Stamp: "${item.handleStamp || item.handleStamping || 'STANDARD'}"
@@ -183,7 +184,7 @@ export function generateOrderEmailHtml(order: any): string {
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <div>
               <div style="color: #fbbf24; font-size: 11px; font-family: monospace; font-weight:bold; letter-spacing: 1px; text-transform: uppercase;">
-                IRON PRAIRIE FABRICATION GROUP LLC &bull; FREEPORT, TX
+                IRON PRAIRIE FABRICATION GROUP LLC &bull; TEXAS
               </div>
               <h1 style="margin: 6px 0 0 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;">
                 New ASME B16.48 Paddle Blind Order Confirmed
@@ -303,7 +304,7 @@ export function generateClientProposalEmailHtml(proposal: ProposalPayload): stri
     const weight = item.actualWeightLbs || item.finishedWeightPerUnit || 1;
     const unitPrice = item.unitPrice || 0;
     const lineTotal = unitPrice * item.quantity;
-    const thk = item.thicknessLabel || item.dimensions?.thicknessFraction || '12 Ga';
+    const thk = item.thicknessLabel || item.dimensions?.thicknessFraction || '11 Ga';
     const metal = item.materialName || item.materialCode || item.material || 'A516-70';
     const stamp = item.handleStamp || item.handleStamping || 'STANDARD';
 
@@ -378,7 +379,7 @@ export function generateClientProposalEmailHtml(proposal: ProposalPayload): stri
 
         <!-- Financial Breakdown -->
         <div style="background: #f8fafc; padding: 18px 24px; border-top: 1px solid #e2e8f0; font-size: 13px;">
-          <div style="max-width: 280px; margin-left: auto; font-family: monospace;">
+          <div style="max-width: 320px; margin-left: auto; font-family: monospace;">
             <div style="display:flex; justify-content:space-between; margin-bottom: 4px;">
               <span style="color: #64748b;">Items Subtotal:</span>
               <span style="font-weight: bold; color: #0f172a;">$${proposal.subtotal?.toFixed(2)}</span>
@@ -393,11 +394,21 @@ export function generateClientProposalEmailHtml(proposal: ProposalPayload): stri
                 <span>+$${proposal.hotShotFee?.toFixed(2)}</span>
               </div>
             ` : ''}
-            <div style="display:flex; justify-content:space-between; padding-top: 8px; border-top: 1px solid #cbd5e1; font-size: 16px; font-weight: bold; color: #0f172a;">
-              <span style="font-family: sans-serif;">Total Proposal:</span>
-              <span style="color: #0369a1;">$${proposal.totalAmount?.toFixed(2)}</span>
+            <div style="display:flex; justify-content:space-between; padding-top: 8px; border-top: 1px solid #cbd5e1; font-size: 15px; font-weight: bold; color: #0f172a;">
+              <span style="font-family: sans-serif;">Standard Total (Card / PO):</span>
+              <span style="color: #0f172a;">$${proposal.totalAmount?.toFixed(2)}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding-top: 4px; font-size: 15px; font-weight: bold; color: #059669; background: #ecfdf5; padding: 6px 8px; border-radius: 6px; margin-top: 6px; border: 1px solid #a7f3d0;">
+              <span style="font-family: sans-serif;">⚡ ACH / Wire Discount Rate:</span>
+              <span>$${(proposal.totalAmount - (proposal.subtotal * 0.03))?.toFixed(2)}</span>
             </div>
           </div>
+        </div>
+
+        <!-- ACH Cash Discount Callout Banner -->
+        <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 14px 20px; margin: 16px 24px; font-size: 12.5px; color: #065f46; border-radius: 0 8px 8px 0;">
+          <strong style="font-size: 13.5px; color: #047857;">⚡ Instant 3% ACH / Bank Payment Discount:</strong><br>
+          Pay or authorize via <strong>Direct ACH Bank Transfer</strong> and save <strong>$${(proposal.subtotal * 0.03)?.toFixed(2)}</strong> today (Discounted Total: <strong>$${(proposal.totalAmount - (proposal.subtotal * 0.03))?.toFixed(2)}</strong>). Reply to this email to receive an instant Stripe ACH checkout link or our Bluevine direct wire routing!
         </div>
 
         <!-- Compliance & Turnaround Guarantees -->
@@ -406,23 +417,23 @@ export function generateClientProposalEmailHtml(proposal: ProposalPayload): stri
           &bull; 100% ASME B16.48 Standard Geometry &amp; Chemical Compliance<br>
           &bull; Traceable Mill Heat Numbers permanently stamped on handles<br>
           &bull; Certified Material Test Reports (MTR EN 10204 3.1) packet included<br>
-          &bull; Payment Terms: Net 30 Commercial PO / Corporate P-Card / Direct ACH
+          &bull; Payment Terms: Net 30 Commercial PO / Corporate P-Card / Direct ACH (3% Discount)
         </div>
 
         <!-- Call to Action -->
         <div style="background: #0f172a; padding: 20px 24px; text-align: center; color: #ffffff;">
           <div style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">Ready to lock in your production table slot?</div>
           <div style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">
-            Simply reply to this email with your PO number or call our Freeport desk at (979) 248-9266.
+            Simply reply to this email with your PO number or call our shop desk at (979) 248-9266.
           </div>
-          <a href="mailto:${IPG_SALES_EMAIL}?subject=Confirm%20PO%20for%20Proposal%20${proposal.proposalId}" style="display:inline-block; background: #f59e0b; color: #0f172a; font-weight: bold; font-size: 13px; text-decoration: none; padding: 10px 20px; border-radius: 8px;">
-            Confirm Purchase Order &amp; Dispatch
+          <a href="mailto:${IPG_SALES_EMAIL}?subject=Confirm%20PO%20for%20Proposal%20${proposal.proposalId}%20(Request%20ACH%20Discount)" style="display:inline-block; background: #f59e0b; color: #0f172a; font-weight: bold; font-size: 13px; text-decoration: none; padding: 10px 20px; border-radius: 8px;">
+            Confirm Purchase Order (Lock In 3% ACH Discount)
           </a>
         </div>
 
         <!-- Signoff -->
         <div style="background: #090d16; padding: 14px 24px; text-align: center; font-size: 11px; color: #64748b;">
-          Iron Prairie Fabrication Group LLC &bull; Freeport, TX &bull; (979) 248-9266 &bull; ${IPG_SALES_EMAIL}
+          Iron Prairie Fabrication Group LLC &bull; Texas &bull; (979) 248-9266 &bull; ${IPG_SALES_EMAIL}
         </div>
 
       </div>
@@ -435,6 +446,9 @@ export function generateClientProposalEmailHtml(proposal: ProposalPayload): stri
  * Generate Plain Text Proposal Email for Client
  */
 export function generateClientProposalEmailText(proposal: ProposalPayload): string {
+  const achDiscount = proposal.subtotal * 0.03;
+  const achTotal = proposal.totalAmount - achDiscount;
+
   return `=======================================================
 IRON PRAIRIE FABRICATION GROUP LLC
 OFFICIAL TURNAROUND & BLINDING PROPOSAL
@@ -456,7 +470,7 @@ BILL OF MATERIALS & SPECIFICATIONS:
 ${proposal.items.map((item: any, idx: number) => {
   const weight = item.actualWeightLbs || item.finishedWeightPerUnit || 1;
   const unitPrice = item.unitPrice || 0;
-  const thk = item.thicknessLabel || item.dimensions?.thicknessFraction || '12 Ga';
+  const thk = item.thicknessLabel || item.dimensions?.thicknessFraction || '11 Ga';
   const metal = item.materialName || item.materialCode || item.material || 'A516-70';
   const stamp = item.handleStamp || item.handleStamping || 'STANDARD';
 
@@ -474,9 +488,13 @@ ${proposal.items.map((item: any, idx: number) => {
 -------------------------------------------------------
 FINANCIAL TOTALS:
 -------------------------------------------------------
-Items Subtotal:   $${proposal.subtotal?.toFixed(2)}
-Estimated Freight: $${proposal.shippingCost?.toFixed(2)} (${proposal.totalWeightLbs} lbs)
-${proposal.hotShotFee > 0 ? `Hot Shot Rush:    +$${proposal.hotShotFee.toFixed(2)}\n` : ''}GRAND TOTAL:      $${proposal.totalAmount?.toFixed(2)}
+Items Subtotal:        $${proposal.subtotal?.toFixed(2)}
+Estimated Freight:     $${proposal.shippingCost?.toFixed(2)} (${proposal.totalWeightLbs} lbs)
+${proposal.hotShotFee > 0 ? `Hot Shot Rush:         +$${proposal.hotShotFee.toFixed(2)}\n` : ''}STANDARD TOTAL:        $${proposal.totalAmount?.toFixed(2)}
+
+⚡ PREFERRED ACH DISCOUNT RATE (SAVE 3%):
+ACH / Wire Discount:   -$${achDiscount.toFixed(2)}
+TOTAL VIA DIRECT ACH:  $${achTotal.toFixed(2)} (Instant 3% Cash Savings)
 
 -------------------------------------------------------
 TURNAROUND COMPLIANCE & QUALITY GUARANTEES:
@@ -484,16 +502,16 @@ TURNAROUND COMPLIANCE & QUALITY GUARANTEES:
 1. Standard: Manufactured to ASME B16.48 specifications
 2. Traceability: Traceable Mill Heat Numbers stamped on all handles
 3. Documentation: Full Certified Material Test Report (MTR) Packet included
-4. Terms: Net 30 Commercial Account / Corporate P-Card / ACH Wire
+4. Terms: Net 30 Commercial Account / Corporate P-Card / Direct ACH (3% Discount)
 
-HOW TO CONFIRM & DISPATCH:
-Reply directly to this email (${IPG_SALES_EMAIL}) with your PO Number or call our shop desk at (979) 248-9266.
+HOW TO CONFIRM & CLAIM ACH DISCOUNT:
+Reply directly to this email (${IPG_SALES_EMAIL}) with your PO Number and state "Pay via ACH for 3% discount" or call our shop desk at (979) 248-9266.
 
 Best regards,
 
 Sales & Estimating Team
 Iron Prairie Fabrication Group LLC
-Freeport, TX | (979) 248-9266
+Texas | (979) 248-9266
 ${IPG_SALES_EMAIL}
 https://ironprairiefabrication.com`;
 }
@@ -687,11 +705,11 @@ export function generateAbandonedCartQuoteEmail(cartRecord: any): { subject: str
 
 Thank you for visiting the Iron Prairie Fabrication Group online ordering portal. We noticed you configured the following ASME B16.48 paddle blinds for ${cartRecord.companyName}:
 
-${cartRecord.items.map((item: any) => `- ${item.quantity}x ${item.nps} Class ${item.pressureClass}# ${item.materialCode || item.material} (${item.thicknessLabel || '12 Ga'}) - Handle: "${item.handleStamp || 'STD'}"`).join('\n')}
+${cartRecord.items.map((item: any) => `- ${item.quantity}x ${item.nps} Class ${item.pressureClass}# ${item.materialCode || item.material} (${item.thicknessLabel || '11 Ga'}) - Handle: "${item.handleStamp || 'STD'}"`).join('\n')}
 
 Estimated Weight:   ${cartRecord.totalWeightLbs} lbs
 
-Our CNC plasma cutting shop in Freeport, TX has the domestic plate in-stock (A516-70, 304L, 316L) ready for same-day cut and dispatch with certified MTR packets.
+Our CNC plasma cutting shop in Texas has the domestic plate in-stock (A516-70, 304L, 316L) ready for same-day cut and dispatch with certified MTR packets.
 
 Would you like us to formalize this into an active Purchase Order and lock in your production table slot?
 
@@ -701,7 +719,7 @@ Best regards,
 
 Sales &amp; Estimating Team
 Iron Prairie Fabrication Group LLC
-Freeport, TX | (979) 248-9266
+Texas | (979) 248-9266
 ${IPG_SALES_EMAIL}
 https://ironprairiefabrication.com`;
 

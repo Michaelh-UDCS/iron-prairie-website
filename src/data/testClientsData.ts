@@ -18,14 +18,14 @@ export interface IndustrialClientProfile {
 
 export const INDUSTRIAL_TEST_CLIENTS: IndustrialClientProfile[] = [
   {
-    id: 'dow-freeport',
-    companyName: 'Dow Chemical (Freeport Site)',
-    facilityLocation: 'Freeport, TX',
+    id: 'dow-texas',
+    companyName: 'Dow Chemical (Texas Site)',
+    facilityLocation: 'Texas',
     buyerName: 'Mark Henderson',
     title: 'Senior Turnaround Procurement Lead',
     email: 'm.henderson@dow.com',
     phone: '(979) 238-2000',
-    jobsiteAddress: '2301 N Brazosport Blvd, Gate 14 Receiving, Freeport, TX 77541',
+    jobsiteAddress: 'Plant Gate 14 Receiving, TX 77531',
     poPrefix: 'PO-DOW-TX-',
     preferredPaymentMethod: 'Net 30 Commercial PO',
     typicalMaterials: ['SA-516-70', '304L', '316L'],
@@ -46,14 +46,14 @@ export const INDUSTRIAL_TEST_CLIENTS: IndustrialClientProfile[] = [
     industryCategory: 'Refinery'
   },
   {
-    id: 'basf-freeport',
-    companyName: 'BASF Freeport Verbund Site',
-    facilityLocation: 'Freeport, TX',
+    id: 'basf-texas',
+    companyName: 'BASF Texas Verbund Site',
+    facilityLocation: 'Texas',
     buyerName: 'David R. Vance',
     title: 'Turnaround Materials Coordinator',
     email: 'david.vance@basf.com',
     phone: '(979) 415-6000',
-    jobsiteAddress: '602 Copper Rd, Warehouse Gate 2, Freeport, TX 77541',
+    jobsiteAddress: '602 Copper Rd, Warehouse Gate 2, TX 77531',
     poPrefix: 'BASF-PO-',
     preferredPaymentMethod: 'ACH Direct Debit',
     typicalMaterials: ['SA-36', 'SA-516-70', '304L', '316L'],
@@ -160,7 +160,7 @@ export const INDUSTRIAL_TEST_CLIENTS: IndustrialClientProfile[] = [
   {
     id: 'turner-ind',
     companyName: 'Turner Industries Group',
-    facilityLocation: 'Pasadena / Freeport, TX',
+    facilityLocation: 'Pasadena, TX',
     buyerName: 'Jason Miller',
     title: 'Gulf Coast Regional Procurement Director',
     email: 'purchasing@turner-ind.com',
@@ -174,12 +174,12 @@ export const INDUSTRIAL_TEST_CLIENTS: IndustrialClientProfile[] = [
   {
     id: 'zachry-group',
     companyName: 'Zachry Industrial Inc.',
-    facilityLocation: 'Freeport & Houston, TX',
+    facilityLocation: 'Houston, TX',
     buyerName: 'Bradley Cooper',
     title: 'Project Materials Manager',
     email: 'b.cooper@zachrygroup.com',
     phone: '(713) 641-4141',
-    jobsiteAddress: 'Dow Freeport Project Site, Gate 4 Laydown Yard, Freeport, TX 77541',
+    jobsiteAddress: 'Industrial Project Site, Gate 4 Laydown Yard, TX 77531',
     poPrefix: 'ZACH-TX-',
     preferredPaymentMethod: 'Net 30 Commercial PO',
     typicalMaterials: ['SA-516-70', '304L', '316L'],
@@ -202,7 +202,7 @@ export const INDUSTRIAL_TEST_CLIENTS: IndustrialClientProfile[] = [
   {
     id: 'performance-contractors',
     companyName: 'Performance Contractors Inc.',
-    facilityLocation: 'Lake Jackson & Freeport, TX',
+    facilityLocation: 'Lake Jackson, TX',
     buyerName: 'Dustin Walker',
     title: 'Turnaround Fabrication Lead',
     email: 'dwalker@performance-contractors.com',
@@ -228,7 +228,7 @@ export const ALL_MATERIAL_CODES = [
 ] as const;
 
 export const ALL_THICKNESSES = [
-  { label: '12 Gauge', thickness: 0.1046, fractionLabel: '12 Ga (0.105")' },
+  { label: '11 Gauge', thickness: 0.1196, fractionLabel: '11 Ga (0.120")' },
   { label: '1/8"', thickness: 0.125, fractionLabel: '1/8" (0.125")' },
   { label: '3/16"', thickness: 0.1875, fractionLabel: '3/16" (0.188")' },
   { label: '1/4"', thickness: 0.250, fractionLabel: '1/4" (0.250")' },
@@ -286,7 +286,7 @@ export const LARGE_QTY_TURNAROUND_SCENARIOS: TurnaroundScenario[] = [
     id: 'turnaround-dow-unit4',
     name: 'Major Ethylene Unit 4 Turnaround Package',
     description: '145x ASME B16.48 blinds for positive battery limit isolation during 30-day turnaround.',
-    clientIndex: 0, // Dow Chemical Freeport
+    clientIndex: 0, // Dow Chemical Texas
     paymentMethod: 'Net 30 Commercial PO',
     isSpecialOrder: true,
     leadTime: '5-7 Business Days (Mill Plate Rolling & Multi-Sheet Nesting)',
@@ -319,7 +319,7 @@ export const LARGE_QTY_TURNAROUND_SCENARIOS: TurnaroundScenario[] = [
     id: 'acid-basf-316l-alloy',
     name: 'Acid Plant Corrosive 316L Stainless Bulk Package',
     description: '85x 316L acid-grade paddle blinds for chlorine & sulfuric acid line turnaround.',
-    clientIndex: 2, // BASF Verbund Freeport
+    clientIndex: 2, // BASF Verbund Texas
     paymentMethod: 'ACH Direct Debit',
     isSpecialOrder: true,
     leadTime: '5-7 Business Days (316L Plate Allocation & Stamping)',

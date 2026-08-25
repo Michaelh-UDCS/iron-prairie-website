@@ -148,7 +148,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                 {generatedProposal ? `Official Proposal #${generatedProposal.proposalId}` : 'Generate Instant Official Proposal'}
               </h3>
               <p className="text-xs text-slate-300">
-                {generatedProposal ? '30-Day Guaranteed Price Lock &bull; Sent from Sales@ironprairiefabrication.com' : 'ASME B16.48 Precision Plasma Cutting &bull; Freeport, TX'}
+                {generatedProposal ? '30-Day Guaranteed Price Lock &bull; Sent from Sales@ironprairiefabrication.com' : 'ASME B16.48 Precision Plasma Cutting &bull; Texas Facility'}
               </p>
             </div>
           </div>
@@ -181,7 +181,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                   {items.map((item, idx) => (
                     <div key={idx} className="bg-white border border-slate-200 rounded-lg p-2.5 flex justify-between">
                       <span>{item.quantity}x {item.nps} {item.pressureClass}# {item.materialCode || item.material}</span>
-                      <span className="text-slate-400 font-sans">{item.thicknessLabel || '12 Ga'}</span>
+                      <span className="text-slate-400 font-sans">{item.thicknessLabel || '11 Ga'}</span>
                     </div>
                   ))}
                 </div>
@@ -267,7 +267,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                         required
                         value={companyName}
                         onChange={e => setCompanyName(e.target.value)}
-                        placeholder="e.g. Dow Chemical Freeport"
+                        placeholder="e.g. Dow Chemical / Plant Site"
                         className="w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-9 pr-3 text-xs text-slate-900 focus:border-sky-600 focus:outline-none"
                       />
                     </div>
@@ -283,7 +283,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                         type="text"
                         value={jobsiteAddress}
                         onChange={e => setJobsiteAddress(e.target.value)}
-                        placeholder="e.g. Gate 4 Receiving, Freeport TX 77541"
+                        placeholder="e.g. Gate 4 Receiving, TX 77531"
                         className="w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-9 pr-3 text-xs text-slate-900 focus:border-sky-600 focus:outline-none"
                       />
                     </div>
@@ -395,7 +395,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                         ASME B16.48 Paddle Blinds &bull; Precision CNC Plasma Cutting &bull; Certified Woman-Owned
                       </div>
                       <div className="text-xs text-slate-500">
-                        Freeport, TX Facility &bull; Phone: (979) 248-9266 &bull; {IPG_SALES_EMAIL}
+                        Texas Facility &bull; Phone: (979) 248-9266 &bull; {IPG_SALES_EMAIL}
                       </div>
                     </div>
                   </div>
@@ -409,7 +409,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                 </div>
 
                 {/* Prepared For Grid */}
-                <div className="grid grid-cols-2 gap-4 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs">
                   <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-1">
                     <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Client &amp; Estimator:</span>
                     <div className="font-bold text-slate-900 text-sm">{generatedProposal.companyName}</div>
@@ -445,9 +445,18 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                       {generatedProposal.items.map((item, idx) => (
                         <tr key={idx} className="hover:bg-slate-50">
                           <td className="py-2.5 px-3 font-bold text-slate-900">{idx + 1}</td>
-                          <td className="py-2.5 px-3 font-bold text-sky-800">{item.nps} {item.pressureClass}#</td>
+                          <td className="py-2.5 px-3 font-bold text-sky-800">
+                            <div>{item.nps} {item.pressureClass}#</div>
+                            {item.blindType === 'Figure 8 (Spectacle Blind)' && (
+                              <div className="text-[10px] text-amber-700 font-sans font-bold">♾️ Figure 8 Spectacle</div>
+                            )}
+                          </td>
                           <td className="py-2.5 px-3 text-slate-700">{item.materialCode || item.material}</td>
-                          <td className="py-2.5 px-3 text-slate-800">{item.thicknessLabel || '12 Ga'}</td>
+                          <td className="py-2.5 px-3 text-slate-800">
+                            <div>{item.thicknessLabel || '11 Ga (0.120")'}</div>
+                            {item.addTHadle && <span className="text-[9px] bg-sky-100 text-sky-800 px-1 rounded mr-1">T-Handle</span>}
+                            {item.addLockoutHole && <span className="text-[9px] bg-amber-100 text-amber-800 px-1 rounded">3/8" Lockout</span>}
+                          </td>
                           <td className="py-2.5 px-3 text-slate-700">{(item.actualWeightLbs || item.finishedWeightPerUnit || 1)} lbs</td>
                           <td className="py-2.5 px-3 text-slate-600">{item.handleStamp || 'STD'}</td>
                           <td className="py-2.5 px-2 text-center font-bold text-slate-900">{item.quantity}</td>
@@ -460,15 +469,22 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                 </div>
 
                 {/* Financial Summary */}
-                <div className="border-t-2 border-slate-200 pt-4 flex justify-between items-start text-xs font-mono">
-                  <div className="max-w-md text-slate-500 font-sans space-y-1">
+                <div className="border-t-2 border-slate-200 pt-4 flex flex-col md:flex-row justify-between items-start gap-4 text-xs font-mono">
+                  <div className="max-w-md text-slate-500 font-sans space-y-2">
                     <div className="font-bold text-slate-800 uppercase text-[11px]">Quality &amp; Compliance Guarantee:</div>
                     <p className="text-[11px] leading-relaxed">
                       All paddle blinds manufactured strictly to ASME B16.48 specifications from domestic mill-certified plate. Mill Heat Numbers permanently stamped on handles. Certified MTR packets included with delivery.
                     </p>
+                    {/* ACH Discount Callout */}
+                    <div className="rounded-xl border border-emerald-300 bg-emerald-50 p-2.5 text-emerald-800 text-[11px] font-sans flex items-start gap-2">
+                      <Sparkles className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <div>
+                        <strong className="text-emerald-900">3% ACH / Bank Payment Discount:</strong> Pay or authorize invoice via <strong>Direct ACH Bank Transfer</strong> and save <strong>${(generatedProposal.subtotal * 0.03).toFixed(2)}</strong> (Discounted Total: <strong>${(generatedProposal.totalAmount - (generatedProposal.subtotal * 0.03)).toFixed(2)}</strong>).
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="w-64 space-y-1.5 text-right">
+                  <div className="w-full md:w-72 space-y-1.5 text-right">
                     <div className="flex justify-between text-slate-600">
                       <span>Items Subtotal:</span>
                       <span className="font-bold text-slate-900">${generatedProposal.subtotal.toFixed(2)}</span>
@@ -483,9 +499,13 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                         <span>+${generatedProposal.hotShotFee.toFixed(2)}</span>
                       </div>
                     )}
-                    <div className="flex justify-between text-sm font-bold text-slate-950 border-t border-slate-300 pt-2">
-                      <span className="font-sans">Grand Total:</span>
-                      <span className="text-sky-800 text-base font-black">${generatedProposal.totalAmount.toFixed(2)}</span>
+                    <div className="flex justify-between text-xs font-bold text-slate-700 border-t border-slate-200 pt-1.5">
+                      <span className="font-sans">Standard Rate (Card / Net 30):</span>
+                      <span className="text-slate-900 font-mono">${generatedProposal.totalAmount.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm font-bold text-emerald-800 bg-emerald-50 p-1.5 rounded-lg border border-emerald-200">
+                      <span className="font-sans">⚡ Direct ACH Discount Rate:</span>
+                      <span className="font-mono text-emerald-700 text-base font-black">${(generatedProposal.totalAmount - (generatedProposal.subtotal * 0.03)).toFixed(2)}</span>
                     </div>
                   </div>
                 </div>

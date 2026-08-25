@@ -123,7 +123,7 @@ export const JobPacketModal: React.FC<JobPacketModalProps> = ({ job, isOpen, onC
                       IRON PRAIRIE FABRICATION GROUP LLC
                     </h2>
                     <p className="text-xs text-slate-300 print:text-stone-700">
-                      Freeport, TX &bull; 979-248-9266 &bull; ASME B16.48 Positive Isolation Production
+                      Texas &bull; 979-248-9266 &bull; ASME B16.48 Positive Isolation Production
                     </p>
                   </div>
                   <div className="text-right">
@@ -205,9 +205,10 @@ export const JobPacketModal: React.FC<JobPacketModalProps> = ({ job, isOpen, onC
                           {item.handleStamping}
                         </td>
                         <td className="px-4 py-3 text-slate-300 print:text-black">
-                          {item.addOns.tHandle && <span className="mr-1 rounded bg-amber-500/20 px-1 py-0.5 text-[10px]">T-Handle</span>}
-                          {item.addOns.liftingLug && <span className="mr-1 rounded bg-sky-500/20 px-1 py-0.5 text-[10px]">Lug</span>}
-                          {!item.addOns.tHandle && !item.addOns.liftingLug && 'Standard'}
+                          {item.addOns?.tHandle && <span className="mr-1 rounded bg-amber-500/20 px-1 py-0.5 text-[10px]">T-Handle</span>}
+                          {item.addOns?.lockoutHole && <span className="mr-1 rounded bg-amber-500/20 px-1 py-0.5 text-[10px]">3/8" Lockout</span>}
+                          {item.addOns?.liftingLug && <span className="mr-1 rounded bg-sky-500/20 px-1 py-0.5 text-[10px]">Lug</span>}
+                          {!item.addOns?.tHandle && !item.addOns?.lockoutHole && !item.addOns?.liftingLug && 'Standard'}
                         </td>
                       </tr>
                     ))}
@@ -258,7 +259,7 @@ export const JobPacketModal: React.FC<JobPacketModalProps> = ({ job, isOpen, onC
                   </h2>
                   <p className="text-xs text-slate-400 print:text-stone-700 mt-1">
                     Direct CNC Plasma &amp; Machining Facility<br />
-                    Freeport, TX 77541 &bull; Phone: (979) 248-9266<br />
+                    Texas &bull; Phone: (979) 248-9266<br />
                     sales@ironprairiefabrication.com
                   </p>
                 </div>

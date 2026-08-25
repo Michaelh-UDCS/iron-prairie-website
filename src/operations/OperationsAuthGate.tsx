@@ -21,7 +21,7 @@ export const OperationsAuthGate: React.FC<OperationsAuthGateProps> = ({ children
   const [pinInput, setPinInput] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Default shop PIN: 1979 (Freeport area code origin) or 2026
+  // Default shop PIN: 1979 or 2026
   const VALID_PINS = ['1979', '2026', '979248'];
 
   const handlePinSubmit = (e: React.FormEvent) => {
@@ -68,7 +68,7 @@ export const OperationsAuthGate: React.FC<OperationsAuthGateProps> = ({ children
               Shop Floor &amp; Operations Workspace
             </h1>
             <p className="text-xs text-slate-400 mt-1 font-sans">
-              Authorized access only &bull; Freeport, TX Shop Operations
+              Authorized access only &bull; Texas Shop Operations
             </p>
           </div>
         </div>

@@ -591,7 +591,7 @@ export const ShopFloorBoard: React.FC<ShopFloorBoardProps> = ({ jobs, setJobs, o
                   required
                   value={manualCustomer}
                   onChange={(e) => setManualCustomer(e.target.value)}
-                  placeholder="e.g. Freeport LNG or LyondellBasell"
+                  placeholder="e.g. Gulf Coast LNG or LyondellBasell"
                   className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
                 />
               </div>

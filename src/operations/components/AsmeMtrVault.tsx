@@ -429,7 +429,7 @@ export const AsmeMtrVault: React.FC = () => {
                 <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-[11px] text-slate-400">
                   <div>
                     <div>Certified by: <strong>Iron Prairie Fabrication Group LLC QA/QC</strong></div>
-                    <div>Freeport, TX &bull; ASME BPVC Certificate Holder Compliance</div>
+                    <div>Texas &bull; ASME BPVC Certificate Holder Compliance</div>
                   </div>
                   <div className="text-right sm:text-right">
                     <div>Date Certified: <strong>{selectedMtr.certifiedDate}</strong></div>

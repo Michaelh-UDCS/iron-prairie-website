@@ -65,7 +65,7 @@ export default function Services() {
       <div className="bg-gradient-to-br from-slate-900 via-sky-950 to-slate-900 border border-sky-800/40 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-2 max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 text-xs font-mono font-bold uppercase tracking-wider">
-            <Zap className="h-3.5 w-3.5 text-amber-400" /> Featured Turnaround Capability &bull; Freeport, TX
+            <Zap className="h-3.5 w-3.5 text-amber-400" /> Featured Turnaround Capability &bull; Texas
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
             ASME B16.48 Positive Isolation Paddle Blinds &amp; Spacers

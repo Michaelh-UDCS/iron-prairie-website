@@ -43,7 +43,7 @@ export const AbandonedCartRecovery: React.FC<AbandonedCartRecoveryProps> = ({
       companyName: cart.companyName,
       contactName: cart.buyerName,
       email: cart.email,
-      jobsiteAddress: cart.facilityLocation || 'Freeport Petrochemical Complex, TX',
+      jobsiteAddress: cart.facilityLocation || 'Texas Petrochemical Complex, TX',
       poNumber: `PO-RECOVERED-${Date.now().toString().slice(-4)}`,
       items: cart.items,
       subtotal: cart.subtotal,

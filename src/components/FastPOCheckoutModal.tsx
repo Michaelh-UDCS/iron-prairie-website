@@ -193,7 +193,7 @@ export const FastPOCheckoutModal: React.FC<FastPOCheckoutModalProps> = ({
                       required
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
-                      placeholder="e.g. Dow Chemical Freeport"
+                      placeholder="e.g. Dow Chemical / Plant Site"
                       className="w-full rounded-lg border border-slate-700 bg-slate-950 py-2 pl-9 pr-3 text-xs text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
                     />
                   </div>
@@ -257,7 +257,7 @@ export const FastPOCheckoutModal: React.FC<FastPOCheckoutModalProps> = ({
                     type="text"
                     value={deliveryAddress}
                     onChange={(e) => setDeliveryAddress(e.target.value)}
-                    placeholder="e.g. 2301 N Brazosport Blvd, Gate 4 Receiving, Freeport, TX 77541"
+                    placeholder="e.g. Plant Gate 4 Receiving, TX 77531"
                     className="w-full rounded-lg border border-slate-700 bg-slate-950 py-2 pl-9 pr-3 text-xs text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
                   />
                 </div>
@@ -274,8 +274,8 @@ export const FastPOCheckoutModal: React.FC<FastPOCheckoutModalProps> = ({
                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-slate-200 focus:border-amber-500 focus:outline-none"
                   >
                     <option value="Net 30 Commercial Account">Net 30 Commercial Account (Standard)</option>
-                    <option value="Credit Card / P-Card on File">Credit Card / P-Card on File</option>
-                    <option value="Direct ACH / Wire Transfer">Direct ACH / Wire Transfer</option>
+                    <option value="Direct ACH / Wire Transfer (Bluevine $0 Fee)">Direct ACH / Wire Transfer (Bluevine $0 Fee)</option>
+                    <option value="50% ACH Deposit / Balance Net 30">50% ACH Deposit / Balance Net 30 (Large Order)</option>
                     <option value="Pre-approved Public Procurement Voucher">Pre-approved Public Procurement Voucher</option>
                   </select>
                 </div>
@@ -293,6 +293,15 @@ export const FastPOCheckoutModal: React.FC<FastPOCheckoutModalProps> = ({
                   />
                 </div>
               </div>
+
+              {totalAmount >= 5000 && (
+                <div className="rounded-xl border border-sky-500/30 bg-sky-950/20 p-3 text-xs text-sky-300 flex items-start gap-2">
+                  <Building2 className="h-4 w-4 shrink-0 text-sky-400 mt-0.5" />
+                  <div>
+                    <strong className="text-sky-200">Commercial Account Term:</strong> Orders &ge; $5,000 are settled via <strong>Direct ACH / Electronic Wire</strong> to Bluevine Business Checking on Net 30 maturity to prevent merchant processing surcharges.
+                  </div>
+                </div>
+              )}
 
               {/* Submit CTA */}
               <div className="pt-2">
