@@ -23,7 +23,7 @@ export default function WomanOwned() {
           Iron Prairie Fabrication Group LLC is an officially registered government contractor on SAM.gov (Unique Entity ID: <strong>XX7XCMGN9XD5</strong>) and a certified woman-owned enterprise. We provide high-precision structural steel fabrication, ASME B16.48 paddle blinds, CNC plasma plate cutting, custom security enclosures, and municipal infrastructure components.
         </p>
         <p className="mt-3 text-sm leading-relaxed text-slate-800">
-          We support local Texas public agencies (ISDs, cities, counties, TPWD) with direct field support and regional delivery, while fulfilling tier-1 prime contractor supplier diversity goals, DOD, DOE, and federal agency solicitations nationwide.
+          We support local Texas public agencies (ISDs, cities, counties, TPWD) with direct shop fabrication and regional delivery, while fulfilling tier-1 prime contractor supplier diversity goals, DOD, DOE, and federal agency solicitations nationwide.
         </p>
       </section>
 

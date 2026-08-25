@@ -6,7 +6,7 @@ const sections = [
   {
     title: 'CNC Plasma Cutting & Welding',
     summary:
-      'Fast-turn plate and practical fabrication support for parts, assemblies, and field-ready repairs.',
+      'Fast-turn plate and practical fabrication support for parts, custom assemblies, and maintenance replacements.',
     logistics: 'Daily Nationwide Parcel & LTL Freight Shipping',
     items: [
       'CNC plasma plate cutting for production and one-off jobs',
@@ -35,7 +35,7 @@ const sections = [
     title: 'Public Sector & O&G Support',
     summary:
       'Procurement-ready support for Texas agencies, parks, and industrial/O&G clients nationwide.',
-    logistics: 'Texas Priority Field Support & Nationwide Logistics',
+    logistics: 'Texas Priority Regional Delivery & Nationwide Logistics',
     items: [
       'Fire rings and fire pits for parks and public sites',
       'Handrails and safety steel for facilities',
@@ -56,7 +56,7 @@ const sections = [
       'Large built-in safes and secure room steelwork',
       'Heavy doors, frames, hinges, and locking support steel',
       'Custom plate packages for protected storage areas',
-      'Field-ready coordination for unique site requirements',
+      'Custom shop fabrication built to exact project specifications',
     ],
   },
 ];
@@ -117,7 +117,7 @@ export default function Services() {
           Iron Prairie focuses on practical steel work that keeps operations moving. From CNC plasma-cut
           parts to custom pens, blinds, secure steel builds, and public infrastructure components,
           we support projects that are too specific for off-the-shelf solutions and too important
-          to delay. All services available with local Texas field coordination or crated nationwide shipping.
+          to delay. All services available with local Texas regional delivery, shop pickup, or crated nationwide shipping.
         </p>
       </section>
 

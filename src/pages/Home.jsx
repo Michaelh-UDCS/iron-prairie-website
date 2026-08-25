@@ -22,7 +22,7 @@ export default function Home() {
             Built-to-last fabrication for ranches, industry, and agencies.
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-brand-muted">
-            Iron Prairie Fabrication Group LLC delivers CNC plasma plate cutting, ASME B16.48 positive isolation paddle blinds, practical welding, and custom metal fabrication. Proudly based in Lake Jackson, Texas with daily field support across the Gulf Coast, and <strong>nationwide freight &amp; parcel shipping across all 50 states</strong>.
+            Iron Prairie Fabrication Group LLC delivers CNC plasma plate cutting, ASME B16.48 positive isolation paddle blinds, practical welding, and custom metal fabrication. Proudly based in Lake Jackson, Texas with fast regional delivery across the Gulf Coast, and <strong>nationwide freight &amp; parcel shipping across all 50 states</strong>.
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link
@@ -110,7 +110,7 @@ export default function Home() {
             <MapPin className="h-3.5 w-3.5 text-amber-400" /> Geographic Coverage &bull; Local &amp; Nationwide
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-            Local Texas Field Service &amp; Nationwide Freight Dispatch
+            Local Texas Regional Delivery &amp; Nationwide Freight Dispatch
           </h2>
           <p className="text-sm text-slate-300 leading-relaxed">
             Whether you need a same-day hot-shot emergency paddle blind dropped at a Texas Gulf Coast refinery or crated custom fabrication delivered to an industrial site anywhere in the country, Iron Prairie is equipped to fulfill your schedule.
@@ -133,7 +133,7 @@ export default function Home() {
                 </span>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed">
-                Direct manufacturing and rapid field coordination for agricultural operators, refineries, chemical plants, and municipal entities across the Texas Gulf Coast and statewide.
+                Direct shop manufacturing and rapid order fulfillment for agricultural operators, refineries, chemical plants, and municipal entities across the Texas Gulf Coast and statewide.
               </p>
               <div className="space-y-2 pt-2 border-t border-slate-800">
                 <div className="text-[11px] font-bold text-sky-300 uppercase tracking-wider">Core Local Service Regions:</div>

@@ -4549,7 +4549,7 @@ export default function App() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav aria-label="Primary navigation" className="hidden 2xl:flex items-center gap-1 2xl:gap-1.5 flex-shrink-0">
+          <nav aria-label="Primary navigation" className="hidden lg:flex items-center gap-1 xl:gap-1.5 flex-shrink-0">
             {navLinks.map((item) => {
               const isCatalog = item.to === '/storefront' || item.to === '/paddle-blinds';
               return (
@@ -4559,12 +4559,12 @@ export default function App() {
                   end={item.to === '/'}
                   className={({ isActive }) =>
                     isCatalog
-                      ? `px-2.5 2xl:px-3 py-1.5 text-xs font-black rounded-xl transition-all whitespace-nowrap shadow-sm flex items-center gap-1.5 ${
+                      ? `px-2 xl:px-3 py-1.5 text-xs font-black rounded-xl transition-all whitespace-nowrap shadow-sm flex items-center gap-1.5 ${
                           isActive
                             ? 'bg-amber-500 text-slate-950 ring-2 ring-amber-400'
                             : 'bg-amber-400 hover:bg-amber-300 text-slate-950 hover:scale-105'
                         }`
-                      : `px-2 2xl:px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
+                      : `px-1.5 xl:px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
                           isActive
                             ? 'bg-slate-100 text-sky-900 font-bold border border-slate-200'
                             : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
@@ -4619,7 +4619,7 @@ export default function App() {
             {/* Request a Quote Button */}
             <Link
               to="/contact"
-              className="hidden 2xl:inline-flex rounded-lg bg-brand-brown hover:bg-brand-brown/90 px-3.5 py-2 text-xs font-bold text-brand-ivory shadow-sm transition-all active:scale-95 whitespace-nowrap min-h-[44px] items-center touch-manipulation"
+              className="hidden xl:inline-flex rounded-lg bg-brand-brown hover:bg-brand-brown/90 px-3 py-2 text-xs font-bold text-brand-ivory shadow-sm transition-all active:scale-95 whitespace-nowrap min-h-[40px] items-center touch-manipulation"
             >
               Request a Quote
             </Link>
@@ -4628,7 +4628,7 @@ export default function App() {
             <button
               type="button"
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="p-2 sm:p-2.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 2xl:hidden min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center touch-manipulation"
+              className="p-2 sm:p-2.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 lg:hidden min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center touch-manipulation"
               aria-label="Toggle navigation menu"
             >
               <Menu className="h-5 w-5" />
@@ -4639,7 +4639,7 @@ export default function App() {
 
         {/* Mobile Navigation Dropdown */}
         {mobileOpen && (
-          <nav className="border-t border-slate-200 bg-white p-4 space-y-2.5 2xl:hidden shadow-lg animate-fadeIn max-h-[85vh] overflow-y-auto">
+          <nav className="border-t border-slate-200 bg-white p-4 space-y-2.5 lg:hidden shadow-lg animate-fadeIn max-h-[85vh] overflow-y-auto">
             {navLinks.map((item) => {
               const isCatalog = item.to === '/storefront' || item.to === '/paddle-blinds';
               return (

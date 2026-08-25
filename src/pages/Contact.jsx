@@ -132,7 +132,7 @@ export default function Contact() {
                   name="logisticsPreference"
                   className="mt-1 w-full rounded-md border border-brand-brown/30 bg-white/80 px-3 py-2 text-sm shadow-sm outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/40"
                 >
-                  <option>Local Texas Field Drop-Off / Jobsite Delivery</option>
+                  <option>Local Texas Regional Delivery / Jobsite Drop-Off</option>
                   <option>Local Shop Pickup (Lake Jackson, TX)</option>
                   <option>🔥 Texas Emergency Hot-Shot Courier (2-4 Hr Burn)</option>
                   <option>📦 Nationwide UPS Ground Parcel (All 50 States)</option>

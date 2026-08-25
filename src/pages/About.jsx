@@ -64,7 +64,7 @@ export default function About() {
             Service Footprint &amp; Fulfillment Matrix
           </div>
           <h2 className="mt-1 font-display text-2xl font-bold text-slate-900">
-            Local Texas Field Presence &bull; Daily Nationwide Shipping
+            Local Texas Regional Delivery &bull; Daily Nationwide Shipping
           </h2>
           <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed max-w-3xl">
             Our strategic facility in Lake Jackson gives us immediate highway access to the Texas Gulf Coast industrial corridor while our integrated logistics network provides daily parcel and freight dispatch across all 50 states.
@@ -81,11 +81,11 @@ export default function About() {
                   Primary Texas Regional Service Area
                 </h3>
                 <span className="text-[10px] font-mono font-bold bg-amber-400/20 text-amber-200 px-2 py-0.5 rounded border border-amber-300/30">
-                  Local Field Service
+                  Regional Delivery &amp; Pickup
                 </span>
               </div>
               <p className="text-xs leading-relaxed text-brand-ivory/90">
-                Direct shop coordination, on-site measurements, and fast jobsite delivery for ranches, municipal facilities, and petrochemical plants across Brazoria County, Greater Houston, and the Texas Gulf Coast.
+                Direct shop fabrication, custom drawing review, and fast jobsite delivery for ranches, municipal facilities, and petrochemical plants across Brazoria County, Greater Houston, and the Texas Gulf Coast.
               </p>
               <div className="space-y-1.5 pt-2 border-t border-brand-ivory/20 text-xs">
                 <div className="font-semibold text-amber-300 text-[11px] uppercase tracking-wider">Dedicated Local Coverage:</div>

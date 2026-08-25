@@ -59,7 +59,7 @@ const routes = [
   {
     path: '/about',
     title: 'About Our Texas Metal Fabrication Shop & Nationwide Shipping | Iron Prairie',
-    description: 'Learn about Iron Prairie Fabrication Group, a woman-owned Texas metal shop built for durable ranch, industrial, and public-sector work with local field support and nationwide shipping.',
+    description: 'Learn about Iron Prairie Fabrication Group, a woman-owned Texas metal shop built for durable ranch, industrial, and public-sector work with regional Texas delivery and nationwide shipping.',
     canonical: `${DOMAIN}/about`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },

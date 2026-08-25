@@ -57,7 +57,7 @@ export default function Projects() {
           Sample work delivered locally and shipped nationwide.
         </h1>
         <p className="mt-4 text-sm leading-relaxed text-slate-800">
-          Explore representative projects executed by Iron Prairie: from local Texas field installations and emergency refinery hot-shots to bulk ASME paddle blind packages and crated secure steel assemblies shipped to industrial clients nationwide.
+          Explore representative projects executed by Iron Prairie: from custom Texas shop fabrications and emergency refinery hot-shots to bulk ASME paddle blind packages and crated secure steel assemblies shipped to industrial clients nationwide.
         </p>
       </section>
 
