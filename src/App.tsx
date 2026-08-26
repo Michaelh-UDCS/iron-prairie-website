@@ -4608,21 +4608,21 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-900 font-sans antialiased selection:bg-blue-200 selection:text-blue-900 flex flex-col justify-between overflow-x-hidden w-full max-w-full">
+    <div className="min-h-screen bg-brand-ink text-stone-300 font-sans antialiased selection:bg-brand-brown selection:text-brand-ivory flex flex-col justify-between overflow-x-hidden w-full max-w-full">
       <ScrollToTop />
       
       {/* -------------------------------------------------------------------- */}
       {/* TOP EMERGENCY DISPATCH & OWNER PRICING STATUS BAR                    */}
       {/* -------------------------------------------------------------------- */}
-      <div className="border-b border-slate-800 bg-slate-950 px-3 sm:px-4 lg:px-6 py-1.5 sm:py-2 text-xs text-slate-400 shadow-sm w-full min-w-0">
+      <div className="border-b border-brand-border bg-brand-panel px-3 sm:px-4 lg:px-6 py-1.5 sm:py-2 text-xs text-stone-400 shadow-sm w-full min-w-0">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-3 min-w-0">
           <div className="flex items-center gap-2 min-w-0 truncate">
             <span className="inline-flex items-center gap-1.5 text-emerald-400 font-mono text-[10px] sm:text-[11px] font-semibold bg-emerald-950/60 px-2 sm:px-2.5 py-0.5 rounded-full border border-emerald-800 flex-shrink-0">
               <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-emerald-400 animate-pulse"></span>
               <span className="hidden xs:inline">Plasma Cutting Queue:</span> LIVE
             </span>
-            <span className="hidden lg:inline text-slate-700 flex-shrink-0">|</span>
-            <span className="hidden lg:inline text-slate-400 font-medium text-[11px] truncate">
+            <span className="hidden lg:inline text-brand-border flex-shrink-0">|</span>
+            <span className="hidden lg:inline text-stone-400 font-medium text-[11px] truncate">
               Texas Fabrication Hub &bull; Daily Nationwide Shipping Across All 50 States &bull; Emergency Hot-Shot Logistics
             </span>
           </div>
