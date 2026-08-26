@@ -8,79 +8,79 @@ export default function About() {
       {/* STORY HEADER */}
       <section className="max-w-3xl">
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-brown-light font-mono">
+          <span className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-brown/80 font-mono">
             Our Story &amp; Reach
           </span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-brand-panel-muted border border-brand-border px-2.5 py-0.5 text-[11px] font-bold text-brand-bone font-mono">
+          <span className="inline-flex items-center gap-1 rounded-full bg-brand-brown/10 border border-brand-brown/30 px-2.5 py-0.5 text-[11px] font-bold text-brand-brown font-mono">
             Texas Shop &bull; Nationwide Logistics
           </span>
         </div>
-        <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-brand-bone md:text-4xl">
+        <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-brand-brown md:text-4xl">
           A practical fabrication shop built for hard-use work.
         </h1>
-        <p className="mt-4 text-sm leading-relaxed text-stone-300">
+        <p className="mt-4 text-sm leading-relaxed text-slate-800">
           Iron Prairie Fabrication Group LLC was founded to deliver rugged, precision metal fabrication for the operations that power Texas and the nation: agricultural ranches, petrochemical refineries, pipeline operators, and public agencies. As a certified woman-owned business based in Bay City, Texas (200 County Rd 170), we combine hands-on craftsmanship with schedule discipline, traceable quality, and dependable delivery.
         </p>
-        <p className="mt-3 text-sm leading-relaxed text-stone-300">
+        <p className="mt-3 text-sm leading-relaxed text-slate-800">
           Whether we&apos;re cutting custom CNC plasma plate parts for a local ranch, manufacturing ASME B16.48 positive isolation paddle blinds for an emergency turnaround in Freeport, or shipping palletized blind runs to industrial plants across the United States, our commitment never wavers: show up, do it right, and stand behind every weld.
         </p>
       </section>
 
       {/* CORE OPERATING PILLARS */}
       <section className="grid gap-6 md:grid-cols-3">
-        <div className="rounded-xl bg-brand-panel p-5 shadow-sm border border-brand-border">
-          <h2 className="text-sm font-bold text-brand-bone flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-emerald-400" />
+        <div className="rounded-xl bg-white p-5 shadow-sm border border-stone-200/80">
+          <h2 className="text-sm font-bold text-brand-brown flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-brand-brown" />
             <span>Grounded in Safety &amp; Quality</span>
           </h2>
-          <p className="mt-2 text-xs leading-relaxed text-stone-400">
+          <p className="mt-2 text-xs leading-relaxed text-slate-700">
             We enforce rigorous QA/QC practices, full mill heat traceability on all raw plate, and certified EN 10204 3.1 Material Test Reports (MTRs) for mission-critical industrial applications.
           </p>
         </div>
-        <div className="rounded-xl bg-brand-panel p-5 shadow-sm border border-brand-border">
-          <h2 className="text-sm font-bold text-brand-bone flex items-center gap-2">
-            <Zap className="h-4 w-4 text-brand-brown-light" />
+        <div className="rounded-xl bg-white p-5 shadow-sm border border-stone-200/80">
+          <h2 className="text-sm font-bold text-brand-brown flex items-center gap-2">
+            <Zap className="h-4 w-4 text-brand-brown" />
             <span>Built for High-Uptime Operations</span>
           </h2>
-          <p className="mt-2 text-xs leading-relaxed text-stone-400">
+          <p className="mt-2 text-xs leading-relaxed text-slate-700">
             We support buyers across agriculture, industrial, and public sectors with transparent pricing, instant proposals, and rapid turnaround lead times designed to prevent downtime.
           </p>
         </div>
-        <div className="rounded-xl bg-brand-panel p-5 shadow-sm border border-brand-border">
-          <h2 className="text-sm font-bold text-brand-bone flex items-center gap-2">
-            <Clock className="h-4 w-4 text-brand-brown-light" />
+        <div className="rounded-xl bg-white p-5 shadow-sm border border-stone-200/80">
+          <h2 className="text-sm font-bold text-brand-brown flex items-center gap-2">
+            <Clock className="h-4 w-4 text-brand-brown" />
             <span>Government &amp; Agency Procurement</span>
           </h2>
-          <p className="mt-2 text-xs leading-relaxed text-stone-400">
-            Registered Government Contractor on SAM.gov (UEI: <strong className="font-mono text-brand-bone">XX7XCMGN9XD5</strong>). Streamlined commercial purchasing with Net 30 PO authorization, ACH debit, credit card checkout, and direct alignment with municipal, state (TPWD), and federal procurement requirements.
+          <p className="mt-2 text-xs leading-relaxed text-slate-700">
+            Registered Government Contractor on SAM.gov (UEI: <strong className="font-mono text-slate-900">XX7XCMGN9XD5</strong>). Streamlined commercial purchasing with Net 30 PO authorization, ACH debit, credit card checkout, and direct alignment with municipal, state (TPWD), and federal procurement requirements.
           </p>
         </div>
       </section>
 
       {/* DUAL-FOCUS GEOGRAPHIC FOOTPRINT: LOCAL SERVICE AREA + NATIONWIDE SHIPPING */}
-      <section className="rounded-2xl border border-brand-border bg-brand-panel p-6 sm:p-8 shadow-sm space-y-6">
+      <section className="rounded-2xl border border-stone-200/80 bg-white p-6 sm:p-8 shadow-sm space-y-6">
         <div>
-          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-brown-light font-mono">
+          <div className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-brown/80 font-mono">
             Service Footprint &amp; Fulfillment Matrix
           </div>
-          <h2 className="mt-1 font-display text-2xl font-bold text-brand-bone">
+          <h2 className="mt-1 font-display text-2xl font-bold text-brand-brown">
             Local Texas Regional Delivery &bull; Daily Nationwide Shipping
           </h2>
-          <p className="mt-2 text-xs sm:text-sm text-stone-300 leading-relaxed max-w-3xl">
+          <p className="mt-2 text-xs sm:text-sm text-slate-700 leading-relaxed max-w-3xl">
             Our strategic facility in Bay City (200 County Rd 170, Bay City, TX 77414) gives us immediate highway access to the Texas Gulf Coast industrial corridor while our integrated logistics network provides daily parcel and freight dispatch across all 50 states.
           </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
           {/* Box 1: Local Texas Service Area */}
-          <div className="rounded-2xl bg-brand-panel-muted border border-brand-border p-6 text-stone-300 shadow-md flex flex-col justify-between space-y-4">
+          <div className="rounded-2xl bg-brand-panel border border-brand-border p-6 text-stone-300 shadow-md flex flex-col justify-between space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-brand-bone flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-brand-brown-light" />
                   Primary Texas Regional Service Area
                 </h3>
-                <span className="text-[10px] font-mono font-bold bg-brand-panel text-brand-brown-light px-2 py-0.5 rounded border border-brand-border">
+                <span className="text-[10px] font-mono font-bold bg-brand-panel-muted text-brand-brown-light px-2 py-0.5 rounded border border-brand-border">
                   Regional Delivery &amp; Pickup
                 </span>
               </div>
@@ -107,14 +107,14 @@ export default function About() {
           </div>
 
           {/* Box 2: Nationwide Delivery */}
-          <div className="rounded-2xl bg-brand-panel-muted border border-brand-border p-6 text-stone-300 shadow-md flex flex-col justify-between space-y-4">
+          <div className="rounded-2xl bg-brand-panel border border-brand-border p-6 text-stone-300 shadow-md flex flex-col justify-between space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-brand-bone flex items-center gap-2">
                   <Truck className="h-4 w-4 text-brand-brown-light" />
                   Nationwide Shipping &amp; Freight Logistics
                 </h3>
-                <span className="text-[10px] font-mono font-bold bg-brand-panel text-brand-bone px-2 py-0.5 rounded border border-brand-border">
+                <span className="text-[10px] font-mono font-bold bg-brand-panel-muted text-brand-bone px-2 py-0.5 rounded border border-brand-border">
                   All 50 States
                 </span>
               </div>
@@ -151,4 +151,3 @@ export default function About() {
     </div>
   );
 }
-

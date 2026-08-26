@@ -4608,7 +4608,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-ink text-stone-300 font-sans antialiased selection:bg-brand-brown selection:text-brand-ivory flex flex-col justify-between overflow-x-hidden w-full max-w-full">
+    <div className="min-h-screen bg-[#f7f5f0] text-slate-800 font-sans antialiased selection:bg-brand-brown selection:text-white flex flex-col justify-between overflow-x-hidden w-full max-w-full">
       <ScrollToTop />
       
       {/* -------------------------------------------------------------------- */}

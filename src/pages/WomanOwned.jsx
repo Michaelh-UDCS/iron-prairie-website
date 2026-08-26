@@ -8,21 +8,21 @@ export default function WomanOwned() {
       {/* HEADER */}
       <section className="max-w-3xl">
         <div className="flex flex-wrap items-center gap-2 mb-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-brown-light font-mono">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-brown/80 font-mono">
             Woman-Owned &bull; Government Contracting
           </p>
-          <span className="inline-flex items-center gap-1 rounded-full bg-brand-panel-muted border border-brand-border px-2.5 py-0.5 text-[11px] font-bold text-brand-bone font-mono">
-            <BadgeCheck className="h-3.5 w-3.5 text-emerald-400" />
+          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-300 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800 font-mono">
+            <BadgeCheck className="h-3.5 w-3.5 text-emerald-700" />
             <span>SAM.gov Registered Contractor</span>
           </span>
         </div>
-        <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-brand-bone md:text-4xl">
+        <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-brand-brown md:text-4xl">
           Registered Government Contractor &amp; Woman-Owned Fabrication Partner
         </h1>
-        <p className="mt-4 text-sm leading-relaxed text-stone-300">
+        <p className="mt-4 text-sm leading-relaxed text-slate-800">
           Iron Prairie Fabrication Group LLC is an officially registered government contractor on SAM.gov (Unique Entity ID: <strong>XX7XCMGN9XD5</strong>) and a certified woman-owned enterprise. We provide high-precision structural steel fabrication, ASME B16.48 paddle blinds, CNC plasma plate cutting, custom security enclosures, and municipal infrastructure components.
         </p>
-        <p className="mt-3 text-sm leading-relaxed text-stone-300">
+        <p className="mt-3 text-sm leading-relaxed text-slate-800">
           We support local Texas public agencies (ISDs, cities, counties, TPWD) with direct shop fabrication and regional delivery, while fulfilling tier-1 prime contractor supplier diversity goals, DOD, DOE, and federal agency solicitations nationwide.
         </p>
       </section>
@@ -86,30 +86,30 @@ export default function WomanOwned() {
 
       {/* PILLARS */}
       <section className="grid gap-6 md:grid-cols-3">
-        <div className="rounded-2xl bg-brand-panel p-5 shadow-sm border border-brand-border space-y-2">
-          <div className="flex items-center gap-2 text-brand-bone font-bold text-sm">
-            <Award className="h-4 w-4 text-brand-brown-light" />
-            <h2>Diversity &amp; Procurement Alignment</h2>
+        <div className="rounded-2xl bg-white p-5 shadow-sm border border-stone-200/80 space-y-2">
+          <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
+            <Award className="h-4 w-4 text-brand-brown" />
+            <h2 className="text-brand-brown">Diversity &amp; Procurement Alignment</h2>
           </div>
-          <p className="mt-2 text-xs text-stone-400 leading-relaxed">
+          <p className="mt-2 text-xs text-slate-600 leading-relaxed">
             Positioned to help prime contractors and public agencies fulfill small business enterprise (SBE), woman-owned (WBE), and state HUB supplier diversity participation goals with verified SAM.gov credentials.
           </p>
         </div>
-        <div className="rounded-2xl bg-brand-panel p-5 shadow-sm border border-brand-border space-y-2">
-          <div className="flex items-center gap-2 text-brand-bone font-bold text-sm">
-            <FileCheck className="h-4 w-4 text-emerald-400" />
-            <h2>Quality &amp; Traceability</h2>
+        <div className="rounded-2xl bg-white p-5 shadow-sm border border-stone-200/80 space-y-2">
+          <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
+            <FileCheck className="h-4 w-4 text-emerald-600" />
+            <h2 className="text-brand-brown">Quality &amp; Traceability</h2>
           </div>
-          <p className="mt-2 text-xs text-stone-400 leading-relaxed">
+          <p className="mt-2 text-xs text-slate-600 leading-relaxed">
             Full heat number stamping, certified EN 10204 3.1 Material Test Reports (MTRs), and rigorous QA inspection prior to local pickup or nationwide shipping dispatch.
           </p>
         </div>
-        <div className="rounded-2xl bg-brand-panel p-5 shadow-sm border border-brand-border space-y-2">
-          <div className="flex items-center gap-2 text-brand-bone font-bold text-sm">
-            <Truck className="h-4 w-4 text-brand-brown-light" />
-            <h2>Nationwide Fulfillment</h2>
+        <div className="rounded-2xl bg-white p-5 shadow-sm border border-stone-200/80 space-y-2">
+          <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
+            <Truck className="h-4 w-4 text-brand-brown" />
+            <h2 className="text-brand-brown">Nationwide Fulfillment</h2>
           </div>
-          <p className="mt-2 text-xs text-stone-400 leading-relaxed">
+          <p className="mt-2 text-xs text-slate-600 leading-relaxed">
             Direct parcel and palletized LTL freight shipping across all 50 states, ensuring reliable jobsite delivery for regional and national infrastructure projects.
           </p>
         </div>
@@ -125,7 +125,7 @@ export default function WomanOwned() {
         </div>
         <Link
           to="/contact"
-          className="self-start md:self-auto inline-flex items-center gap-2 bg-brand-brown hover:bg-brand-brown-light text-brand-ivory font-bold px-6 py-3 rounded-full text-xs uppercase tracking-wider transition-all shadow-sm active:scale-95"
+          className="self-start md:self-auto inline-flex items-center gap-2 bg-brand-brown hover:bg-brand-brown-light text-white font-bold px-6 py-3 rounded-full text-xs uppercase tracking-wider transition-all shadow-sm active:scale-95"
         >
           <span>Submit Scope Package</span>
           <ArrowRight className="h-4 w-4" />
@@ -134,4 +134,3 @@ export default function WomanOwned() {
     </div>
   );
 }
-

@@ -4,26 +4,28 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Core brand (rustic anchor)
+        // Core brand (rustic warm brown)
         'brand-brown': '#6b3b2a',
         'brand-brown-light': '#8a4d37',
-        // Dark UI surfaces (professional / industrial)
+        'brand-brown-dark': '#522c1e',
+        // Canvas & Light Surfaces
+        'brand-canvas': '#f7f5f0',
+        'brand-ivory': '#fbfaf8',
+        // Dark UI surfaces (header, footer, dark cards)
         'brand-ink': '#161413',
         'brand-panel': '#1f1c1a',
         'brand-panel-muted': '#2a2623',
         'brand-border': '#3d3834',
-        // Text + accents — neutral bone + steel blue (no peach tones)
+        // Text + accents
         'brand-bone': '#e8e4de',
-        'brand-muted': '#9c9690',
-        'brand-ivory': '#f5f4f2',
-        'brand-blue': '#6d92a3',
+        'brand-muted': '#78716c',
+        'brand-blue': '#475569',
       },
       fontFamily: {
-        display: ['"Playfair Display"', 'serif'],
+        display: ['"Playfair Display"', 'Georgia', 'serif'],
         body: ['"Inter"', 'system-ui', 'sans-serif'],
       },
     },
   },
   plugins: [],
 };
-

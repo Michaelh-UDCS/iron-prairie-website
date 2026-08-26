@@ -108,13 +108,13 @@ export default function Services() {
       </div>
 
       <section className="max-w-3xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-brown-light font-mono">
+        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-brown/80 font-mono">
           Services &amp; Capabilities
         </p>
-        <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-brand-bone md:text-4xl">
+        <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-brand-brown md:text-4xl">
           Fabrication that matches real-world needs.
         </h1>
-        <p className="mt-4 text-sm leading-relaxed text-stone-300">
+        <p className="mt-4 text-sm leading-relaxed text-slate-800">
           Iron Prairie focuses on practical steel work that keeps operations moving. From CNC plasma-cut
           parts to custom pens, blinds, secure steel builds, and public infrastructure components,
           we support projects that are too specific for off-the-shelf solutions and too important
@@ -125,24 +125,24 @@ export default function Services() {
       {/* SERVICE TILES */}
       <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {sections.map((section) => (
-          <div key={section.title} className="flex flex-col justify-between rounded-2xl bg-brand-panel p-5 shadow-sm border border-brand-border">
+          <div key={section.title} className="flex flex-col justify-between rounded-2xl bg-white p-5 shadow-sm border border-stone-200/80">
             <div>
-              <div className="text-[10px] font-mono font-bold text-brand-brown-light bg-brand-panel-muted px-2 py-0.5 rounded border border-brand-border mb-2 inline-block">
+              <div className="text-[10px] font-mono font-bold text-brand-brown bg-brand-brown/10 px-2 py-0.5 rounded border border-brand-brown/30 mb-2 inline-block">
                 {section.logistics}
               </div>
-              <h2 className="text-sm font-bold text-brand-bone">{section.title}</h2>
-              <p className="mt-2 text-xs text-stone-400 leading-relaxed">{section.summary}</p>
-              <ul className="mt-3 space-y-1 text-xs text-stone-300">
+              <h2 className="text-sm font-bold text-slate-900">{section.title}</h2>
+              <p className="mt-2 text-xs text-slate-600 leading-relaxed">{section.summary}</p>
+              <ul className="mt-3 space-y-1 text-xs text-slate-700">
                 {section.items.map((item) => (
                   <li key={item} className="flex gap-2">
-                    <span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-brand-brown-light shrink-0" />
+                    <span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-brand-brown shrink-0" />
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="pt-4 mt-4 border-t border-brand-border">
-              <Link to="/contact" className="text-xs font-bold text-brand-bone hover:text-brand-brown-light flex items-center gap-1">
+            <div className="pt-4 mt-4 border-t border-stone-100">
+              <Link to="/contact" className="text-xs font-bold text-brand-brown hover:text-brand-brown-light flex items-center gap-1">
                 Request Service Quote <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
@@ -220,4 +220,3 @@ export default function Services() {
     </div>
   );
 }
-
