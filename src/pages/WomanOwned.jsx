@@ -28,31 +28,31 @@ export default function WomanOwned() {
       </section>
 
       {/* OFFICIAL GOVERNMENT CONTRACTOR CREDENTIALS CARD */}
-      <section className="rounded-3xl border border-brand-border bg-brand-panel text-stone-300 p-6 sm:p-8 shadow-xl">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-brand-border">
+      <section className="rounded-3xl border border-stone-200/90 bg-white text-slate-800 p-6 sm:p-8 shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-stone-200">
           <div className="space-y-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-panel-muted text-brand-bone border border-brand-border text-xs font-mono font-bold uppercase tracking-wider">
-              <Building className="h-3.5 w-3.5 text-brand-brown-light" /> Official Procurement Data
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-brown/10 text-brand-brown border border-brand-brown/20 text-xs font-mono font-bold uppercase tracking-wider">
+              <Building className="h-3.5 w-3.5 text-brand-brown" /> Official Procurement Data
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-brand-bone">
+            <h2 className="text-xl sm:text-2xl font-bold text-brand-brown font-display">
               Federal &amp; State Contractor Identification
             </h2>
           </div>
           <div className="flex items-center gap-2">
-            <span className="rounded-xl bg-brand-panel-muted border border-brand-border px-3 py-1.5 text-xs font-mono font-bold text-emerald-400 flex items-center gap-1.5">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" /> Active SAM.gov Status
+            <span className="rounded-xl bg-emerald-50 border border-emerald-300 px-3 py-1.5 text-xs font-mono font-bold text-emerald-800 flex items-center gap-1.5">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600" /> Active SAM.gov Status
             </span>
           </div>
         </div>
 
         <div className="grid gap-6 mt-6 md:grid-cols-3">
           {/* Box 1: UEI & Entity */}
-          <div className="rounded-2xl bg-brand-panel-muted border border-brand-border p-5 space-y-3">
-            <div className="text-xs font-bold uppercase tracking-wider text-stone-400">Unique Entity Identifier (UEI)</div>
-            <div className="font-mono text-lg font-black text-brand-bone bg-brand-panel px-3 py-2 rounded-xl border border-brand-border tracking-widest">
+          <div className="rounded-2xl bg-stone-50/80 border border-stone-200 p-5 space-y-3">
+            <div className="text-xs font-bold uppercase tracking-wider text-slate-600">Unique Entity Identifier (UEI)</div>
+            <div className="font-mono text-lg font-black text-brand-brown bg-white px-3 py-2 rounded-xl border border-stone-300 tracking-widest">
               XX7XCMGN9XD5
             </div>
-            <div className="text-xs text-stone-300 space-y-1 pt-1 font-mono">
+            <div className="text-xs text-slate-700 space-y-1 pt-1 font-mono">
               <div><strong>Legal Business:</strong> Iron Prairie Fabrication Group LLC</div>
               <div><strong>Structure:</strong> Certified Woman-Owned Enterprise</div>
               <div><strong>Physical Shop:</strong> 200 County Rd 170, Bay City, TX 77414 (Matagorda County)</div>
@@ -60,25 +60,25 @@ export default function WomanOwned() {
           </div>
 
           {/* Box 2: NAICS Codes */}
-          <div className="rounded-2xl bg-brand-panel-muted border border-brand-border p-5 space-y-2">
-            <div className="text-xs font-bold uppercase tracking-wider text-stone-400">Core NAICS Classifications</div>
-            <ul className="space-y-1 text-xs text-stone-300 font-mono">
-              <li><strong className="text-brand-brown-light">332312</strong> &ndash; Fabricated Structural Metal</li>
-              <li><strong className="text-brand-brown-light">332313</strong> &ndash; Plate Work Manufacturing</li>
-              <li><strong className="text-brand-brown-light">332710</strong> &ndash; Machine Shops &amp; CNC Plasma</li>
-              <li><strong className="text-brand-brown-light">332996</strong> &ndash; Fabricated Pipe &amp; Fittings</li>
-              <li><strong className="text-brand-brown-light">332323</strong> &ndash; Ornamental &amp; Architectural Metal</li>
+          <div className="rounded-2xl bg-stone-50/80 border border-stone-200 p-5 space-y-2">
+            <div className="text-xs font-bold uppercase tracking-wider text-slate-600">Core NAICS Classifications</div>
+            <ul className="space-y-1 text-xs text-slate-700 font-mono">
+              <li><strong className="text-brand-brown">332312</strong> &ndash; Fabricated Structural Metal</li>
+              <li><strong className="text-brand-brown">332313</strong> &ndash; Plate Work Manufacturing</li>
+              <li><strong className="text-brand-brown">332710</strong> &ndash; Machine Shops &amp; CNC Plasma</li>
+              <li><strong className="text-brand-brown">332996</strong> &ndash; Fabricated Pipe &amp; Fittings</li>
+              <li><strong className="text-brand-brown">332323</strong> &ndash; Ornamental &amp; Architectural Metal</li>
             </ul>
           </div>
 
           {/* Box 3: Target Procurement Buyers */}
-          <div className="rounded-2xl bg-brand-panel-muted border border-brand-border p-5 space-y-2">
-            <div className="text-xs font-bold uppercase tracking-wider text-stone-400">Procurement Programs Supported</div>
-            <ul className="space-y-1 text-xs text-stone-300">
-              <li className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" /> Federal Agency Solicitations (DOD, DOE, NPS)</li>
-              <li className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" /> State Procurement (TPWD, TxDOT)</li>
-              <li className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" /> Municipal &amp; ISD Facility Infrastructure</li>
-              <li className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" /> Tier-1 Prime Contractor Supplier Diversity (WBE/SBE)</li>
+          <div className="rounded-2xl bg-stone-50/80 border border-stone-200 p-5 space-y-2">
+            <div className="text-xs font-bold uppercase tracking-wider text-slate-600">Procurement Programs Supported</div>
+            <ul className="space-y-1 text-xs text-slate-700">
+              <li className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" /> Federal Agency Solicitations (DOD, DOE, NPS)</li>
+              <li className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" /> State Procurement (TPWD, TxDOT)</li>
+              <li className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" /> Municipal &amp; ISD Facility Infrastructure</li>
+              <li className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" /> Tier-1 Prime Contractor Supplier Diversity (WBE/SBE)</li>
             </ul>
           </div>
         </div>
@@ -116,10 +116,10 @@ export default function WomanOwned() {
       </section>
 
       {/* CTA */}
-      <section className="rounded-2xl bg-brand-panel border border-brand-border p-6 sm:p-8 text-stone-300 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <section className="rounded-2xl bg-white border border-stone-200/90 p-6 sm:p-8 text-slate-800 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2 max-w-2xl">
-          <h2 className="text-lg font-bold text-brand-bone">Partner on an upcoming bid or procurement package</h2>
-          <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+          <h2 className="text-lg font-bold text-brand-brown font-display">Partner on an upcoming bid or procurement package</h2>
+          <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
             Need a qualified woman-owned, SAM.gov registered manufacturing partner (UEI: <strong>XX7XCMGN9XD5</strong>) for your state or federal contract? Send us your specification sheets, drawings, or RFQ package for fast turnaround pricing.
           </p>
         </div>

@@ -73,23 +73,23 @@ export default function About() {
 
         <div className="grid gap-6 md:grid-cols-2">
           {/* Box 1: Local Texas Service Area */}
-          <div className="rounded-2xl bg-brand-panel border border-brand-border p-6 text-stone-300 shadow-md flex flex-col justify-between space-y-4">
+          <div className="rounded-2xl bg-stone-50/80 border border-stone-200 p-6 text-slate-800 shadow-sm flex flex-col justify-between space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-brand-bone flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-brand-brown-light" />
+                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-brand-brown" />
                   Primary Texas Regional Service Area
                 </h3>
-                <span className="text-[10px] font-mono font-bold bg-brand-panel-muted text-brand-brown-light px-2 py-0.5 rounded border border-brand-border">
+                <span className="text-[10px] font-mono font-bold bg-brand-brown/10 text-brand-brown px-2 py-0.5 rounded border border-brand-brown/30">
                   Regional Delivery &amp; Pickup
                 </span>
               </div>
-              <p className="text-xs leading-relaxed text-stone-300">
+              <p className="text-xs leading-relaxed text-slate-700">
                 Direct shop fabrication, custom drawing review, and fast jobsite delivery for ranches, municipal facilities, and petrochemical plants across Matagorda County, Brazoria County, Greater Houston, and the Texas Gulf Coast.
               </p>
-              <div className="space-y-1.5 pt-2 border-t border-brand-border text-xs">
-                <div className="font-semibold text-brand-bone text-[11px] uppercase tracking-wider">Dedicated Local Coverage:</div>
-                <div className="grid grid-cols-2 gap-1 text-stone-400">
+              <div className="space-y-1.5 pt-2 border-t border-stone-200 text-xs">
+                <div className="font-semibold text-slate-900 text-[11px] uppercase tracking-wider">Dedicated Local Coverage:</div>
+                <div className="grid grid-cols-2 gap-1 text-slate-700">
                   <div>&bull; Bay City &amp; Matagorda County</div>
                   <div>&bull; Lake Jackson &amp; Clute</div>
                   <div>&bull; Freeport Industrial Area</div>
@@ -101,47 +101,47 @@ export default function About() {
                 </div>
               </div>
             </div>
-            <div className="pt-3 border-t border-brand-border text-xs font-mono text-brand-brown-light">
+            <div className="pt-3 border-t border-stone-200 text-xs font-mono text-brand-brown">
               ⚡ 2-4 Hr Same-Day Emergency Hot-Shot Courier Dispatch
             </div>
           </div>
 
           {/* Box 2: Nationwide Delivery */}
-          <div className="rounded-2xl bg-brand-panel border border-brand-border p-6 text-stone-300 shadow-md flex flex-col justify-between space-y-4">
+          <div className="rounded-2xl bg-stone-50/80 border border-stone-200 p-6 text-slate-800 shadow-sm flex flex-col justify-between space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-brand-bone flex items-center gap-2">
-                  <Truck className="h-4 w-4 text-brand-brown-light" />
+                <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                  <Truck className="h-4 w-4 text-brand-brown" />
                   Nationwide Shipping &amp; Freight Logistics
                 </h3>
-                <span className="text-[10px] font-mono font-bold bg-brand-panel-muted text-brand-bone px-2 py-0.5 rounded border border-brand-border">
+                <span className="text-[10px] font-mono font-bold bg-brand-brown/10 text-brand-brown px-2 py-0.5 rounded border border-brand-brown/30">
                   All 50 States
                 </span>
               </div>
-              <p className="text-xs leading-relaxed text-stone-300">
+              <p className="text-xs leading-relaxed text-slate-700">
                 We package, crate, and ship ASME B16.48 paddle blinds, custom CNC plasma plate cuts, spec blinds, and custom steel components to contractors, refineries, and buyers nationwide.
               </p>
-              <div className="space-y-2 pt-2 border-t border-brand-border text-xs">
-                <div className="font-semibold text-brand-bone text-[11px] uppercase tracking-wider">Logistics Capabilities:</div>
-                <div className="space-y-1 text-stone-400">
+              <div className="space-y-2 pt-2 border-t border-stone-200 text-xs">
+                <div className="font-semibold text-slate-900 text-[11px] uppercase tracking-wider">Logistics Capabilities:</div>
+                <div className="space-y-1 text-slate-700">
                   <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
                     <span><strong>UPS Ground &amp; Next-Day Air:</strong> Daily parcel courier dispatch.</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
                     <span><strong>Palletized LTL Freight:</strong> Crating &amp; liftgate delivery for heavy orders.</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
                     <span><strong>Dedicated Flatbed:</strong> Direct-to-jobsite delivery for oversized steel.</span>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="pt-3 border-t border-brand-border text-xs font-mono text-stone-400 flex items-center justify-between">
+            <div className="pt-3 border-t border-stone-200 text-xs font-mono text-slate-600 flex items-center justify-between">
               <span>⚡ Seamless Online Quotes &amp; Orders</span>
-              <Link to="/contact" className="text-brand-bone hover:text-brand-brown-light font-bold flex items-center gap-1">
+              <Link to="/contact" className="text-brand-brown hover:text-brand-brown-light font-bold flex items-center gap-1">
                 Get a Quote <ArrowRight className="h-3 w-3" />
               </Link>
             </div>

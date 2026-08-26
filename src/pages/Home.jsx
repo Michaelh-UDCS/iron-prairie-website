@@ -105,97 +105,97 @@ export default function Home() {
       </section>
 
       {/* DUAL-SCOPE GEOGRAPHIC DOMINANCE: LOCAL TEXAS SERVICE AREA + NATIONWIDE SHIPPING */}
-      <section className="rounded-3xl border border-brand-border bg-brand-panel text-white p-6 sm:p-8 shadow-xl">
+      <section className="rounded-3xl border border-stone-200/90 bg-white p-6 sm:p-8 shadow-sm">
         <div className="max-w-4xl space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-panel-muted text-brand-bone border border-brand-border text-xs font-mono font-bold uppercase tracking-wider">
-            <MapPin className="h-3.5 w-3.5 text-brand-brown-light" /> Geographic Coverage &bull; Local &amp; Nationwide
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-brown/10 text-brand-brown border border-brand-brown/20 text-xs font-mono font-bold uppercase tracking-wider">
+            <MapPin className="h-3.5 w-3.5 text-brand-brown" /> Geographic Coverage &bull; Local &amp; Nationwide
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-brand-bone">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-brand-brown font-display">
             Local Texas Regional Delivery &amp; Nationwide Freight Dispatch
           </h2>
-          <p className="text-sm text-stone-300 leading-relaxed">
+          <p className="text-sm text-slate-700 leading-relaxed">
             Whether you need a same-day hot-shot emergency paddle blind dropped at a Texas Gulf Coast refinery or crated custom fabrication delivered to an industrial site anywhere in the country, Iron Prairie is equipped to fulfill your schedule.
           </p>
         </div>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2">
           {/* Card 1: Local Texas Service Area */}
-          <div className="rounded-2xl border border-brand-border bg-brand-panel-muted p-6 flex flex-col justify-between space-y-4">
+          <div className="rounded-2xl border border-stone-200 bg-stone-50/70 p-6 flex flex-col justify-between space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-brand-panel border border-brand-border flex items-center justify-center text-brand-brown-light">
+                  <div className="h-8 w-8 rounded-lg bg-brand-brown/10 border border-brand-brown/20 flex items-center justify-center text-brand-brown">
                     <MapPin className="h-4 w-4" />
                   </div>
-                  <h3 className="text-lg font-bold text-brand-bone">Texas Regional Service Area</h3>
+                  <h3 className="text-lg font-bold text-slate-900">Texas Regional Service Area</h3>
                 </div>
-                <span className="text-[10px] font-mono font-bold bg-brand-panel text-brand-brown-light border border-brand-border px-2 py-0.5 rounded">
+                <span className="text-[10px] font-mono font-bold bg-brand-brown/10 text-brand-brown border border-brand-brown/30 px-2 py-0.5 rounded">
                   Local Priority
                 </span>
               </div>
-              <p className="text-xs text-stone-300 leading-relaxed">
+              <p className="text-xs text-slate-700 leading-relaxed">
                 Direct shop manufacturing and rapid order fulfillment for agricultural operators, refineries, chemical plants, and municipal entities across the Texas Gulf Coast and statewide.
               </p>
-              <div className="space-y-2 pt-2 border-t border-brand-border">
-                <div className="text-[11px] font-bold text-brand-bone uppercase tracking-wider">Core Local Service Regions:</div>
-                <div className="grid grid-cols-2 gap-1.5 text-xs text-stone-300">
-                  <div className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" /> Bay City &amp; Matagorda County</div>
-                  <div className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" /> Freeport Petrochemical Hub</div>
-                  <div className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" /> Lake Jackson &amp; Angleton</div>
-                  <div className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" /> Houston &amp; Texas City Plants</div>
-                  <div className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" /> Sweeny &amp; Old Ocean Refineries</div>
-                  <div className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" /> Statewide Texas Delivery</div>
+              <div className="space-y-2 pt-2 border-t border-stone-200">
+                <div className="text-[11px] font-bold text-slate-900 uppercase tracking-wider">Core Local Service Regions:</div>
+                <div className="grid grid-cols-2 gap-1.5 text-xs text-slate-700">
+                  <div className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" /> Bay City &amp; Matagorda County</div>
+                  <div className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" /> Freeport Petrochemical Hub</div>
+                  <div className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" /> Lake Jackson &amp; Angleton</div>
+                  <div className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" /> Houston &amp; Texas City Plants</div>
+                  <div className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" /> Sweeny &amp; Old Ocean Refineries</div>
+                  <div className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" /> Statewide Texas Delivery</div>
                 </div>
               </div>
             </div>
 
-            <div className="pt-3 border-t border-brand-border flex items-center justify-between text-xs text-stone-400 font-mono">
+            <div className="pt-3 border-t border-stone-200 flex items-center justify-between text-xs text-slate-600 font-mono">
               <span>⚡ 2-4 Hr Hot-Shot Courier Available</span>
-              <Link to="/contact" className="text-brand-bone hover:text-brand-brown-light font-bold flex items-center gap-1">
+              <Link to="/contact" className="text-brand-brown hover:text-brand-brown-light font-bold flex items-center gap-1">
                 Local Quote <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
           </div>
 
           {/* Card 2: Nationwide Shipping & Freight */}
-          <div className="rounded-2xl border border-brand-border bg-brand-panel-muted p-6 flex flex-col justify-between space-y-4">
+          <div className="rounded-2xl border border-stone-200 bg-stone-50/70 p-6 flex flex-col justify-between space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-brand-panel border border-brand-border flex items-center justify-center text-brand-brown-light">
+                  <div className="h-8 w-8 rounded-lg bg-brand-brown/10 border border-brand-brown/20 flex items-center justify-center text-brand-brown">
                     <Truck className="h-4 w-4" />
                   </div>
-                  <h3 className="text-lg font-bold text-brand-bone">Nationwide Shipping (All 50 States)</h3>
+                  <h3 className="text-lg font-bold text-slate-900">Nationwide Shipping (All 50 States)</h3>
                 </div>
-                <span className="text-[10px] font-mono font-bold bg-brand-panel text-brand-bone border border-brand-border px-2 py-0.5 rounded">
+                <span className="text-[10px] font-mono font-bold bg-brand-brown/10 text-brand-brown border border-brand-brown/30 px-2 py-0.5 rounded">
                   Daily Dispatch
                 </span>
               </div>
-              <p className="text-xs text-stone-300 leading-relaxed">
+              <p className="text-xs text-slate-700 leading-relaxed">
                 We crate, package, and ship ASME B16.48 paddle blinds, CNC plasma cut plate components, custom steel hardware, and modular assemblies anywhere in the United States.
               </p>
-              <div className="space-y-2 pt-2 border-t border-brand-border">
-                <div className="text-[11px] font-bold text-brand-bone uppercase tracking-wider">Multi-Tier Nationwide Freight Logistics:</div>
-                <ul className="space-y-1.5 text-xs text-stone-300">
+              <div className="space-y-2 pt-2 border-t border-stone-200">
+                <div className="text-[11px] font-bold text-slate-900 uppercase tracking-wider">Multi-Tier Nationwide Freight Logistics:</div>
+                <ul className="space-y-1.5 text-xs text-slate-700">
                   <li className="flex items-start gap-2">
-                    <PackageCheck className="h-3.5 w-3.5 text-brand-brown-light shrink-0 mt-0.5" />
+                    <PackageCheck className="h-3.5 w-3.5 text-brand-brown shrink-0 mt-0.5" />
                     <span><strong>UPS Ground &amp; Express Parcel:</strong> Foam-wrapped and heavy-duty boxed dispatch for items under 150 lbs.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Truck className="h-3.5 w-3.5 text-brand-brown-light shrink-0 mt-0.5" />
+                    <Truck className="h-3.5 w-3.5 text-brand-brown shrink-0 mt-0.5" />
                     <span><strong>Palletized LTL Freight:</strong> Banded, shrink-wrapped, and protected pallet transport with liftgate delivery nationwide.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <ShieldCheck className="h-3.5 w-3.5 text-brand-brown-light shrink-0 mt-0.5" />
+                    <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 shrink-0 mt-0.5" />
                     <span><strong>Traceable Paperwork:</strong> EN 10204 3.1 MTRs and packing slips included with every out-of-state order.</span>
                   </li>
                 </ul>
               </div>
             </div>
 
-            <div className="pt-3 border-t border-brand-border flex items-center justify-between text-xs text-stone-400 font-mono">
+            <div className="pt-3 border-t border-stone-200 flex items-center justify-between text-xs text-slate-600 font-mono">
               <span>⚡ Daily UPS &amp; Freight Carrier Pickups</span>
-              <Link to="/storefront" className="text-brand-bone hover:text-brand-brown-light font-bold flex items-center gap-1">
+              <Link to="/storefront" className="text-brand-brown hover:text-brand-brown-light font-bold flex items-center gap-1">
                 Storefront Catalog <ArrowRight className="h-3 w-3" />
               </Link>
             </div>

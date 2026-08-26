@@ -244,18 +244,18 @@ export default function Contact() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-brand-border bg-brand-panel text-white p-5 shadow-sm space-y-3">
-          <div className="flex items-center gap-2 text-brand-brown-light font-bold text-xs uppercase tracking-wider">
-            <Truck className="h-4 w-4 text-brand-brown-light" />
+        <div className="rounded-2xl border border-stone-200/80 bg-white text-slate-800 p-5 shadow-sm space-y-3">
+          <div className="flex items-center gap-2 text-brand-brown font-bold text-xs uppercase tracking-wider">
+            <Truck className="h-4 w-4 text-brand-brown" />
             <span>Fulfillment &amp; Shipping Reach</span>
           </div>
-          <div className="space-y-2 text-xs text-stone-300">
+          <div className="space-y-2 text-xs text-slate-700">
             <div>
-              <strong className="text-white block">Texas Regional Service Area:</strong>
+              <strong className="text-slate-900 block">Texas Regional Service Area:</strong>
               <span>Bay City, Matagorda, Freeport, Lake Jackson, Angleton, Pearland, Houston, Texas City, and statewide Texas. Same-day emergency hot-shot courier available.</span>
             </div>
-            <div className="pt-2 border-t border-brand-border">
-              <strong className="text-white block">Nationwide Shipping (All 50 States):</strong>
+            <div className="pt-2 border-t border-stone-200">
+              <strong className="text-slate-900 block">Nationwide Shipping (All 50 States):</strong>
               <span>Daily UPS Ground parcel for boxed blinds and parts; palletized LTL freight and dedicated flatbed transport for bulk orders and heavy equipment.</span>
             </div>
           </div>

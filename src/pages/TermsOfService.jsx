@@ -49,18 +49,18 @@ export default function TermsOfService() {
         </div>
       </section>
 
-      <section className="rounded-2xl bg-brand-panel border border-brand-border p-6 text-white shadow-md">
-        <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-brown-light font-mono">
+      <section className="rounded-2xl bg-white border border-stone-200/90 p-6 text-slate-800 shadow-sm">
+        <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-brown font-mono">
           Questions or Contract Inquiries
         </h2>
-        <p className="mt-3 text-sm leading-relaxed text-stone-300">
+        <p className="mt-3 text-sm leading-relaxed text-slate-700">
           For procurement contracts, master services agreements, or bid documentation, please contact our principal executive:
         </p>
-        <div className="mt-4 space-y-1 text-xs text-stone-400 font-mono">
-          <div className="font-bold text-white">Iron Prairie Fabrication Group LLC</div>
+        <div className="mt-4 space-y-1 text-xs text-slate-700 font-mono">
+          <div className="font-bold text-slate-900">Iron Prairie Fabrication Group LLC</div>
           <div>200 County Rd 170, Bay City, TX 77414</div>
-          <div>Phone: <a href="tel:+19792489266" className="text-brand-brown-light underline hover:text-white">(979) 248-9266</a></div>
-          <div>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="text-brand-brown-light underline hover:text-white">Sales@ironprairiefabrication.com</a></div>
+          <div>Phone: <a href="tel:+19792489266" className="text-brand-brown underline hover:text-brand-brown-light">(979) 248-9266</a></div>
+          <div>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="text-brand-brown underline hover:text-brand-brown-light">Sales@ironprairiefabrication.com</a></div>
         </div>
       </section>
     </div>
