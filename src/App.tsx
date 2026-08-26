@@ -1045,20 +1045,44 @@ function PaddleBlindVisualizer({
     };
   }
 
+  const isOneEighth = thickness === 0.125 || thicknessLabel?.includes('1/8');
+  const displayMatCode = (materialCode === 'SA-516-70' && isOneEighth) ? '516-70' : materialCode;
+
   // Geometry calculations
+  const geom = MASTER_GEOMETRY[pressureClass]?.[nps] || { boltCircle: od * 1.15 };
+  const boltCircle = geom.boltCircle || (od * 1.15);
+
   const centerX = 200;
   const centerY = isFigure8 ? 195 : 250;
   const radius = isFigure8
-    ? Math.min(68, Math.max(40, (od / 24) * 35 + 32))
+    ? Math.min(58, Math.max(45, (od / 24) * 20 + 44))
     : Math.min(85, Math.max(50, (od / 24) * 45 + 40));
   const handleWidth = Math.max(28, Math.min(42, (od * 0.25) * 8 + 20));
   const handleLength = Math.max(90, Math.min(130, (od * 0.25) * 10 + 75));
   const handleTopY = centerY - radius - handleLength + 30;
 
-  // Figure 8 offsets
-  const f8Disc1Y = centerY - radius * 0.82;
-  const f8Disc2Y = centerY + radius * 0.82;
-  const f8BridgeWidth = Math.max(30, handleWidth * 1.1);
+  // Figure 8 calculations (ASME B16.48 Non-Overlapping Discs + Web)
+  const f8CenterSpan = radius * 2.45;
+  const f8Disc1Y = centerY - f8CenterSpan / 2; // Top solid blind center
+  const f8Disc2Y = centerY + f8CenterSpan / 2; // Bottom open spacer ring center
+  const f8BoreRadius = radius * 0.58; // Internal pipe flow bore
+  const f8WaistHalfWidth = Math.max(18, radius * 0.38);
+
+  const sin25 = 0.4226;
+  const cos25 = 0.9063;
+  const f8XLeft = centerX - radius * cos25;
+  const f8XRight = centerX + radius * cos25;
+  const f8YTop = f8Disc1Y + radius * sin25;
+  const f8YBottom = f8Disc2Y - radius * sin25;
+
+  const f8SilhouettePath = `
+    M ${f8XLeft.toFixed(1)} ${f8YTop.toFixed(1)}
+    A ${radius.toFixed(1)} ${radius.toFixed(1)} 0 1 1 ${f8XRight.toFixed(1)} ${f8YTop.toFixed(1)}
+    Q ${(centerX + f8WaistHalfWidth).toFixed(1)} ${centerY.toFixed(1)} ${f8XRight.toFixed(1)} ${f8YBottom.toFixed(1)}
+    A ${radius.toFixed(1)} ${radius.toFixed(1)} 0 1 1 ${f8XLeft.toFixed(1)} ${f8YBottom.toFixed(1)}
+    Q ${(centerX - f8WaistHalfWidth).toFixed(1)} ${centerY.toFixed(1)} ${f8XLeft.toFixed(1)} ${f8YTop.toFixed(1)}
+    Z
+  `;
 
   // T-Handle Integral Crossbar parameters (Monolithic CNC Cut-out - No Welds)
   const tHandleSpan = Math.max(120, Math.min(180, handleWidth * 3.8));
@@ -1091,7 +1115,7 @@ function PaddleBlindVisualizer({
           <span className="text-slate-300">&bull;</span>
           <span>{pressureClass}#</span>
           <span className="text-slate-300">&bull;</span>
-          <span>{materialCode}</span>
+          <span>{displayMatCode}</span>
         </div>
       </div>
 
@@ -1106,17 +1130,17 @@ function PaddleBlindVisualizer({
 
         <div className="absolute top-2.5 right-3 flex flex-col gap-1 items-end pointer-events-none">
           {isFigure8 && (
-            <div className="text-[10px] font-mono text-amber-950 font-extrabold bg-amber-100 border border-amber-300 px-2 py-0.5 rounded shadow-sm">
+            <div className="text-[10px] font-mono text-blue-950 font-extrabold bg-blue-100 border border-blue-300 px-2 py-0.5 rounded shadow-sm">
               ♾️ FIGURE 8 SPECTACLE (2x COST)
             </div>
           )}
           {addTHadle && (
-            <div className="text-[10px] font-mono text-sky-950 font-extrabold bg-sky-100 border border-sky-300 px-2 py-0.5 rounded shadow-sm">
+            <div className="text-[10px] font-mono text-blue-950 font-extrabold bg-blue-100 border border-blue-300 px-2 py-0.5 rounded shadow-sm">
               ⚙️ INTEGRAL CNC CUT T-HANDLE
             </div>
           )}
           {addLockoutHole && (
-            <div className="text-[10px] font-mono text-amber-950 font-extrabold bg-amber-100 border border-amber-300 px-2 py-0.5 rounded shadow-sm">
+            <div className="text-[10px] font-mono text-blue-950 font-extrabold bg-blue-100 border border-blue-300 px-2 py-0.5 rounded shadow-sm">
               🔒 3/8" LOCKOUT HOLE
             </div>
           )}
@@ -1199,11 +1223,7 @@ function PaddleBlindVisualizer({
           {/* ================================================================ */}
           <g transform={`translate(${extrudeOffset}, ${extrudeOffset})`} opacity="0.45">
             {isFigure8 ? (
-              <>
-                <rect x={centerX - f8BridgeWidth / 2} y={f8Disc1Y} width={f8BridgeWidth} height={f8Disc2Y - f8Disc1Y} rx="4" fill="#020617" />
-                <circle cx={centerX} cy={f8Disc1Y} r={radius} fill="#020617" />
-                <circle cx={centerX} cy={f8Disc2Y} r={radius} fill="#020617" />
-              </>
+              <path d={f8SilhouettePath} fill="#020617" />
             ) : (
               <>
                 <circle cx={centerX} cy={centerY} r={radius} fill="#020617" />
@@ -1242,13 +1262,9 @@ function PaddleBlindVisualizer({
           {/* ================================================================ */}
           {isFigure8 ? (
             <g id="figure-8-spectacle-assembly">
-              {/* Connecting Bridge Web */}
-              <rect
-                x={centerX - f8BridgeWidth / 2}
-                y={f8Disc1Y}
-                width={f8BridgeWidth}
-                height={f8Disc2Y - f8Disc1Y}
-                rx="6"
+              {/* Continuous Monolithic Silhouette Profile */}
+              <path
+                d={f8SilhouettePath}
                 fill={metalShader.fill}
                 stroke={metalShader.border}
                 strokeWidth="2.5"
@@ -1258,75 +1274,147 @@ function PaddleBlindVisualizer({
               <circle
                 cx={centerX}
                 cy={f8Disc1Y}
-                r={radius}
-                fill={metalShader.fill}
-                stroke={metalShader.border}
-                strokeWidth="2.5"
+                r={radius - 2}
+                fill="none"
+                stroke={metalShader.specular}
+                strokeWidth="1.2"
+                opacity="0.65"
               />
               <circle
                 cx={centerX}
                 cy={f8Disc1Y}
-                r={radius - 2}
-                fill="none"
-                stroke={metalShader.specular}
-                strokeWidth="1"
-                opacity="0.6"
+                r={radius * 0.78}
+                fill={facing === 'Machined Gasket Finish (Special Order)' ? 'url(#machined-serrations)' : 'none'}
+                stroke={facing === 'Machined Gasket Finish (Special Order)' ? '#2563eb' : metalShader.specular}
+                strokeWidth="1.2"
+                strokeDasharray={facing === 'Machined Gasket Finish (Special Order)' ? '4 2' : '5 3'}
+                opacity="0.75"
               />
-
-              {/* Bottom Disc: Open Ring Spacer (Flow) */}
-              <circle
-                cx={centerX}
-                cy={f8Disc2Y}
-                r={radius}
-                fill={metalShader.fill}
-                stroke={metalShader.border}
-                strokeWidth="2.5"
-              />
-              {/* Center Open ID Bore Hole */}
-              <circle
-                cx={centerX}
-                cy={f8Disc2Y}
-                r={radius * 0.58}
-                fill="#020617"
-                stroke={metalShader.border}
-                strokeWidth="2.5"
-              />
-              <circle
-                cx={centerX}
-                cy={f8Disc2Y}
-                r={radius * 0.58 + 2}
-                fill="none"
-                stroke={metalShader.specular}
-                strokeWidth="0.8"
-                opacity="0.7"
-              />
-
-              {/* Center Pivot / Tie-Bar Center Lockout Hole */}
-              <circle
-                cx={centerX}
-                cy={centerY}
-                r="6"
-                fill="#020617"
-                stroke="#f59e0b"
-                strokeWidth="2"
-              />
-
-              {/* Figure 8 Spec Stamp in Center Bridge */}
               <text
                 x={centerX}
-                y={centerY - 14}
+                y={f8Disc1Y - 4}
                 textAnchor="middle"
-                className="fill-slate-900 font-mono font-extrabold text-[8px] tracking-wider"
+                className="fill-slate-900 font-mono font-black text-[9.5px] tracking-wider"
               >
                 BLIND
               </text>
               <text
                 x={centerX}
-                y={centerY + 22}
+                y={f8Disc1Y + 8}
                 textAnchor="middle"
-                className="fill-slate-900 font-mono font-extrabold text-[8px] tracking-wider"
+                className="fill-slate-600 font-mono font-bold text-[6.5px] tracking-widest uppercase"
+              >
+                [ISOLATION]
+              </text>
+
+              {/* Bottom Disc: Open Ring Spacer (Flow Passage) */}
+              <circle
+                cx={centerX}
+                cy={f8Disc2Y}
+                r={radius - 2}
+                fill="none"
+                stroke={metalShader.specular}
+                strokeWidth="1.2"
+                opacity="0.65"
+              />
+              <circle
+                cx={centerX}
+                cy={f8Disc2Y}
+                r={radius * 0.78}
+                fill={facing === 'Machined Gasket Finish (Special Order)' ? 'url(#machined-serrations)' : 'none'}
+                stroke={facing === 'Machined Gasket Finish (Special Order)' ? '#2563eb' : metalShader.specular}
+                strokeWidth="1.2"
+                strokeDasharray={facing === 'Machined Gasket Finish (Special Order)' ? '4 2' : '5 3'}
+                opacity="0.75"
+              />
+              {/* Internal Open Bore Hole */}
+              <circle
+                cx={centerX}
+                cy={f8Disc2Y}
+                r={f8BoreRadius}
+                fill="#020617"
+                stroke={metalShader.border}
+                strokeWidth="2.5"
+              />
+              <circle
+                cx={centerX}
+                cy={f8Disc2Y}
+                r={f8BoreRadius + 1.8}
+                fill="none"
+                stroke={metalShader.specular}
+                strokeWidth="1"
+                opacity="0.8"
+              />
+              <text
+                x={centerX}
+                y={f8Disc2Y + radius - 8}
+                textAnchor="middle"
+                className="fill-slate-900 font-mono font-black text-[9px] tracking-wider"
               >
                 OPEN
+              </text>
+              <text
+                x={centerX}
+                y={f8Disc2Y - radius + 13}
+                textAnchor="middle"
+                className="fill-slate-600 font-mono font-bold text-[6.5px] tracking-widest uppercase"
+              >
+                [FLOW SPACER]
+              </text>
+
+              {/* Central Rotational Pivot Bolt Hole */}
+              <circle
+                cx={centerX}
+                cy={centerY}
+                r={Math.max(6.5, radius * 0.14)}
+                fill="#020617"
+                stroke="#f59e0b"
+                strokeWidth="2.2"
+              />
+              <circle
+                cx={centerX}
+                cy={centerY}
+                r={Math.max(11, radius * 0.24)}
+                fill="none"
+                stroke="#64748b"
+                strokeWidth="0.8"
+                strokeDasharray="2 2"
+                opacity="0.7"
+              />
+
+              {/* Pivot Alignment Indicators */}
+              <text
+                x={centerX}
+                y={centerY - 12}
+                textAnchor="middle"
+                className="fill-amber-700 font-mono font-black text-[7px] tracking-wider"
+              >
+                ▲ BLIND END
+              </text>
+              <text
+                x={centerX}
+                y={centerY + 18}
+                textAnchor="middle"
+                className="fill-amber-700 font-mono font-black text-[7px] tracking-wider"
+              >
+                ▼ OPEN END
+              </text>
+
+              {/* Stamped Specification Along Tie-Bar Bridge */}
+              <text
+                x={centerX + f8WaistHalfWidth + 14}
+                y={centerY + 3}
+                className="fill-slate-600 font-mono font-extrabold text-[6.5px] tracking-wider"
+              >
+                ASME B16.48
+              </text>
+              <text
+                x={centerX - f8WaistHalfWidth - 14}
+                y={centerY + 3}
+                textAnchor="end"
+                className="fill-slate-600 font-mono font-extrabold text-[6.5px] tracking-wider"
+              >
+                {nps} {pressureClass}#
               </text>
             </g>
           ) : (
@@ -1446,9 +1534,9 @@ function PaddleBlindVisualizer({
               <circle
                 cx={centerX}
                 cy={lockoutHoleY}
-                r="6"
+                r="6.5"
                 fill="#020617"
-                stroke="#f59e0b"
+                stroke="#3b82f6"
                 strokeWidth="2"
               />
               <circle
@@ -1456,7 +1544,7 @@ function PaddleBlindVisualizer({
                 cy={lockoutHoleY}
                 r="9"
                 fill="none"
-                stroke="#f59e0b"
+                stroke="#3b82f6"
                 strokeWidth="1"
                 strokeDasharray="2 2"
                 opacity="0.8"
@@ -1464,7 +1552,7 @@ function PaddleBlindVisualizer({
               <text
                 x={centerX + 14}
                 y={lockoutHoleY + 3.5}
-                className="fill-amber-700 font-mono font-bold text-[7.5px] tracking-wider"
+                className="fill-blue-600 font-mono font-bold text-[7.5px] tracking-wider"
               >
                 3/8" LOCKOUT HOLE
               </text>
@@ -1485,7 +1573,7 @@ function PaddleBlindVisualizer({
                   Z
                 `}
                 fill={metalShader.fill}
-                stroke="#d97706"
+                stroke="#2563eb"
                 strokeWidth="2"
               />
               <circle
@@ -1493,14 +1581,14 @@ function PaddleBlindVisualizer({
                 cy={lugTopY + 14}
                 r="7.5"
                 fill="#0f172a"
-                stroke="#d97706"
+                stroke="#2563eb"
                 strokeWidth="2"
               />
               <text
                 x={centerX}
                 y={lugTopY - 4}
                 textAnchor="middle"
-                className="fill-amber-700 font-mono font-bold text-[8px] tracking-wider"
+                className="fill-blue-600 font-mono font-bold text-[8px] tracking-wider"
               >
                 ASME LIFTING LUG (3/4" EYE)
               </text>
@@ -1508,55 +1596,44 @@ function PaddleBlindVisualizer({
           )}
 
           {/* ================================================================ */}
-          {/* 5. GASKET FACING SURFACE (FLAT FACE VS. MACHINED SERRATIONS)     */}
+          {/* 5. GASKET FACING SURFACE (FOR PADDLE BLINDS)                     */}
           {/* ================================================================ */}
-          {facing === 'Machined Gasket Finish (Special Order)' ? (
+          {!isFigure8 && facing === 'Machined Gasket Finish (Special Order)' ? (
             <g id="machined-facing-surface">
               <circle
                 cx={centerX}
-                cy={isFigure8 ? f8Disc1Y : centerY}
+                cy={centerY}
                 r={radius * 0.78}
                 fill="url(#machined-serrations)"
-                stroke="#d97706"
+                stroke="#2563eb"
                 strokeWidth="1.5"
                 strokeDasharray="4 2"
               />
-              {isFigure8 && (
-                <circle
-                  cx={centerX}
-                  cy={f8Disc2Y}
-                  r={radius * 0.78}
-                  fill="url(#machined-serrations)"
-                  stroke="#d97706"
-                  strokeWidth="1.5"
-                  strokeDasharray="4 2"
-                />
-              )}
               <rect
                 x={centerX - 75}
-                y={(isFigure8 ? f8Disc1Y : centerY) - 8}
+                y={centerY - 8}
                 width="150"
                 height="16"
                 rx="4"
                 fill="#ffffff"
-                stroke="#d97706"
+                stroke="#2563eb"
                 strokeWidth="1"
                 opacity="0.92"
               />
               <text
                 x={centerX}
-                y={(isFigure8 ? f8Disc1Y : centerY) + 3.5}
+                y={centerY + 3.5}
                 textAnchor="middle"
-                className="fill-amber-900 font-mono font-bold text-[8px] tracking-wider"
+                className="fill-blue-900 font-mono font-bold text-[8px] tracking-wider"
               >
                 MACHINED SERRATION (125-250 AARH)
               </text>
             </g>
-          ) : (
+          ) : !isFigure8 ? (
             <g id="flat-face-smooth-surface">
               <circle
                 cx={centerX}
-                cy={isFigure8 ? f8Disc1Y : centerY}
+                cy={centerY}
                 r={radius * 0.78}
                 fill="none"
                 stroke={metalShader.specular}
@@ -1565,7 +1642,7 @@ function PaddleBlindVisualizer({
                 opacity="0.7"
               />
             </g>
-          )}
+          ) : null}
 
           {/* ================================================================ */}
           {/* 6. AUTHENTIC PLASMA STAMPING ON HANDLE                           */}
@@ -1580,14 +1657,14 @@ function PaddleBlindVisualizer({
                 y="0"
                 className="fill-slate-900 font-mono font-extrabold text-[7.5px] tracking-wider"
               >
-                IRON PRAIRIE &bull; {nps} {pressureClass}# {materialCode}
+                IRON PRAIRIE &bull; {nps} {pressureClass}# {displayMatCode}
               </text>
             </g>
           )}
-          {handleStamp && (
+          {handleStamp && !isFigure8 && (
             <text
               x={centerX}
-              y={isFigure8 ? centerY : centerY - radius - 6}
+              y={centerY - radius - 6}
               textAnchor="middle"
               className="fill-slate-900 font-mono font-bold text-[8px] tracking-wider"
             >
@@ -1598,20 +1675,52 @@ function PaddleBlindVisualizer({
           {/* ================================================================ */}
           {/* 7. CAD DIMENSIONAL ANNOTATION CALIPERS                           */}
           {/* ================================================================ */}
-          <g stroke="#64748b" strokeWidth="0.8" opacity="0.7">
-            <line x1={centerX - radius} y1={centerY + radius + (isFigure8 ? 34 : 14)} x2={centerX + radius} y2={centerY + radius + (isFigure8 ? 34 : 14)} />
-            <line x1={centerX - radius} y1={centerY + radius + (isFigure8 ? 28 : 8)} x2={centerX - radius} y2={centerY + radius + (isFigure8 ? 40 : 20)} />
-            <line x1={centerX + radius} y1={centerY + radius + (isFigure8 ? 28 : 8)} x2={centerX + radius} y2={centerY + radius + (isFigure8 ? 40 : 20)} />
-            <text
-              x={centerX}
-              y={centerY + radius + (isFigure8 ? 46 : 26)}
-              textAnchor="middle"
-              className="fill-slate-800 font-mono font-bold text-[9.5px]"
-              stroke="none"
-            >
-              {od.toFixed(2)}" OD &bull; {thicknessLabel} Nominal Thk
-            </text>
-          </g>
+          {isFigure8 ? (
+            <g stroke="#64748b" strokeWidth="0.8" opacity="0.75">
+              {/* Left Side: Center-to-Center Bolt Pivot Span (A Dimension) */}
+              <line x1={centerX - radius - 14} y1={f8Disc1Y} x2={centerX - radius - 14} y2={f8Disc2Y} />
+              <line x1={centerX - radius - 18} y1={f8Disc1Y} x2={centerX - radius - 10} y2={f8Disc1Y} />
+              <line x1={centerX - radius - 18} y1={f8Disc2Y} x2={centerX - radius - 10} y2={f8Disc2Y} />
+              <text
+                x={centerX - radius - 20}
+                y={centerY + 3}
+                textAnchor="end"
+                className="fill-slate-700 font-mono font-bold text-[8px]"
+                stroke="none"
+              >
+                {boltCircle.toFixed(2)}" Bolt Span
+              </text>
+
+              {/* Bottom: Disc OD */}
+              <line x1={centerX - radius} y1={f8Disc2Y + radius + 14} x2={centerX + radius} y2={f8Disc2Y + radius + 14} />
+              <line x1={centerX - radius} y1={f8Disc2Y + radius + 8} x2={centerX - radius} y2={f8Disc2Y + radius + 20} />
+              <line x1={centerX + radius} y1={f8Disc2Y + radius + 8} x2={centerX + radius} y2={f8Disc2Y + radius + 20} />
+              <text
+                x={centerX}
+                y={f8Disc2Y + radius + 26}
+                textAnchor="middle"
+                className="fill-slate-800 font-mono font-bold text-[9.5px]"
+                stroke="none"
+              >
+                {od.toFixed(2)}" OD &bull; {thicknessLabel} Nominal Thk
+              </text>
+            </g>
+          ) : (
+            <g stroke="#64748b" strokeWidth="0.8" opacity="0.7">
+              <line x1={centerX - radius} y1={centerY + radius + 14} x2={centerX + radius} y2={centerY + radius + 14} />
+              <line x1={centerX - radius} y1={centerY + radius + 8} x2={centerX - radius} y2={centerY + radius + 20} />
+              <line x1={centerX + radius} y1={centerY + radius + 8} x2={centerX + radius} y2={centerY + radius + 20} />
+              <text
+                x={centerX}
+                y={centerY + radius + 26}
+                textAnchor="middle"
+                className="fill-slate-800 font-mono font-bold text-[9.5px]"
+                stroke="none"
+              >
+                {od.toFixed(2)}" OD &bull; {thicknessLabel} Nominal Thk
+              </text>
+            </g>
+          )}
         </svg>
       </div>
 
@@ -2465,14 +2574,18 @@ export default function App() {
   // Add Item to Order Cart
   const handleAddToCart = () => {
     const activeUnitPrice = isClientLoggedIn ? liveSpec.wholesalePrice : liveSpec.listPrice;
+    const isOneEighth = liveSpec.thickness === 0.125 || liveSpec.thicknessLabel.includes('1/8');
+    const itemMatCode = (selectedMaterial === 'SA-516-70' && isOneEighth) ? '516-70' : selectedMaterial;
+    const itemMatName = (selectedMaterial === 'SA-516-70' && isOneEighth) ? MATERIALS[selectedMaterial].name.replace('SA-516', '516') : MATERIALS[selectedMaterial].name;
+
     const newItem: ConfiguredItem = {
       id: `ITEM-${Date.now()}`,
       partNumber: liveSpec.partNumber,
       nps: selectedNPS,
       nominalSizeInches: parseFloat(selectedNPS.replace('"', '').replace('-1/2', '.5').replace('-1/4', '.25').replace('-3/4', '.75')) || 1.0,
       pressureClass: selectedClass,
-      materialCode: selectedMaterial,
-      materialName: MATERIALS[selectedMaterial].name,
+      materialCode: itemMatCode,
+      materialName: itemMatName,
       facing: selectedFacing,
       thickness: liveSpec.thickness,
       thicknessLabel: liveSpec.thicknessLabel,
@@ -2711,8 +2824,8 @@ export default function App() {
         <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 min-w-0">
           <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-sky-700 uppercase tracking-wider pr-2 sm:border-r sm:border-slate-200">
             <Flame className="h-3.5 w-3.5 text-sky-600 shrink-0" />
-            <span className="hidden sm:inline">Texas Facility &bull; ASME B16.48 In-House Plasma Cutting</span>
-            <span className="sm:hidden">Texas ASME B16.48</span>
+            <span className="hidden sm:inline">Bay City, TX Facility &bull; ASME B16.48 In-House Plasma Cutting</span>
+            <span className="sm:hidden">Bay City ASME B16.48</span>
           </div>
           <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-mono text-slate-500 flex-wrap">
             <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">Domestic Plate</span>
@@ -2737,11 +2850,11 @@ export default function App() {
             onClick={() => setStorefrontMode('rapid_grid')}
             className={`flex items-center justify-center gap-1.5 py-2 sm:py-1.5 px-2 sm:px-3 rounded-md text-xs font-bold transition-all min-h-[38px] ${
               storefrontMode === 'rapid_grid'
-                ? 'bg-sky-800 text-white shadow-sm font-black'
+                ? 'bg-blue-600 text-white shadow-sm font-black'
                 : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
             }`}
           >
-            <Zap className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+            <Zap className="h-3.5 w-3.5 text-white shrink-0 fill-white" />
             <span className="hidden sm:inline">Turnaround Order Grid</span>
             <span className="sm:hidden text-[11px]">Order Grid</span>
           </button>
@@ -2751,11 +2864,11 @@ export default function App() {
             onClick={() => setStorefrontMode('custom_configurator')}
             className={`flex items-center justify-center gap-1.5 py-2 sm:py-1.5 px-2 sm:px-3 rounded-md text-xs font-bold transition-all min-h-[38px] ${
               storefrontMode === 'custom_configurator'
-                ? 'bg-sky-800 text-white shadow-sm font-black'
+                ? 'bg-blue-600 text-white shadow-sm font-black'
                 : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
             }`}
           >
-            <SlidersHorizontal className="h-3.5 w-3.5 text-sky-400 shrink-0" />
+            <SlidersHorizontal className="h-3.5 w-3.5 text-blue-200 shrink-0" />
             <span className="hidden sm:inline">Custom CAD Configurator</span>
             <span className="sm:hidden text-[11px]">Custom CAD</span>
           </button>
@@ -2786,10 +2899,10 @@ export default function App() {
               <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
-                    <span className="h-5 w-5 bg-sky-700 text-white rounded-full flex items-center justify-center text-[11px] font-bold">1</span>
+                    <span className="h-5 w-5 bg-blue-600 text-white rounded-full flex items-center justify-center text-[11px] font-bold">1</span>
                     Select Isolation Product Family
                   </label>
-                  <span className="text-xs font-mono text-sky-700 font-bold">Style: {blindType}</span>
+                  <span className="text-xs font-mono text-blue-600 font-bold">Style: {blindType}</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                   <button
@@ -2797,13 +2910,13 @@ export default function App() {
                     onClick={() => setBlindType('Paddle Blind')}
                     className={`p-3.5 rounded-xl border text-left transition-all ${
                       blindType === 'Paddle Blind'
-                        ? 'bg-sky-50 border-sky-700 text-slate-900 shadow-sm ring-1 ring-sky-600'
+                        ? 'bg-blue-50 border-blue-600 text-slate-900 shadow-sm ring-1 ring-blue-500'
                         : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-xs text-slate-900">⚪ Paddle Blind (Solid Blank)</span>
-                      <span className="text-[10px] font-mono bg-sky-100 text-sky-800 px-2 py-0.5 rounded font-bold">Standard</span>
+                      <span className="text-[10px] font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-bold">Standard</span>
                     </div>
                     <p className="text-[11px] text-slate-500 mt-1">
                       Single solid disc for complete positive pipeline line-break isolation.
@@ -2815,13 +2928,13 @@ export default function App() {
                     onClick={() => setBlindType('Figure 8 (Spectacle Blind)')}
                     className={`p-3.5 rounded-xl border text-left transition-all ${
                       blindType === 'Figure 8 (Spectacle Blind)'
-                        ? 'bg-amber-50 border-amber-600 text-slate-900 shadow-sm ring-1 ring-amber-500'
+                        ? 'bg-blue-50 border-blue-600 text-slate-900 shadow-sm ring-1 ring-blue-500'
                         : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50'
                     }`}
                   >
                     <div className="flex items-center justify-between">
                       <span className="font-bold text-xs text-slate-900">♾️ Figure 8 (Spectacle Blind)</span>
-                      <span className="text-[10px] font-mono bg-amber-200 text-amber-950 px-2 py-0.5 rounded font-black">2x Cost</span>
+                      <span className="text-[10px] font-mono bg-blue-100 text-blue-900 px-2 py-0.5 rounded font-black">2x Cost</span>
                     </div>
                     <p className="text-[11px] text-slate-500 mt-1">
                       Dual-disc spectacle assembly (Solid Blank + Open Ring Spacer) joined by central web.
@@ -2890,33 +3003,44 @@ export default function App() {
                     <span className="h-5 w-5 bg-sky-700 text-white rounded-full flex items-center justify-center text-[11px] font-bold">4</span>
                     Select Material Grade &amp; Metallurgy Spec
                   </label>
-                  <span className="text-xs font-mono text-sky-700 font-bold">{MATERIALS[selectedMaterial].name.split('(')[0]}</span>
+                  <span className="text-xs font-mono text-sky-700 font-bold">
+                    {selectedMaterial === 'SA-516-70' && (selectedThickness === 0.125 || selectedThicknessLabel.includes('1/8'))
+                      ? 'Carbon Steel 516 Gr. 70'
+                      : MATERIALS[selectedMaterial].name.split('(')[0]}
+                  </span>
                 </div>
 
                 {/* Carbon Steel Category */}
                 <div className="space-y-1.5">
                   <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block">Carbon Steel Plates:</span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    {(['SA-36', 'SA-516-70'] as MaterialCode[]).map(code => (
-                      <button
-                        key={code}
-                        type="button"
-                        onClick={() => setSelectedMaterial(code)}
-                        className={`p-3 rounded-xl border text-left transition-all ${
-                          selectedMaterial === code
-                            ? 'bg-sky-50 border-sky-600 text-slate-900 shadow-sm scale-[1.01]'
-                            : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-xs text-slate-900">{MATERIALS[code].name.split('(')[0]}</span>
-                          <span className="text-[10px] font-mono bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-semibold">
-                            {MATERIALS[code].badge}
-                          </span>
-                        </div>
-                        <div className="text-[11px] text-slate-500 mt-1 font-mono">{MATERIALS[code].shortSpec}</div>
-                      </button>
-                    ))}
+                    {(['SA-36', 'SA-516-70'] as MaterialCode[]).map(code => {
+                      const isOneEighth = selectedThickness === 0.125 || selectedThicknessLabel.includes('1/8');
+                      const cardTitle = code === 'SA-516-70' && isOneEighth ? 'Carbon Steel 516 Gr. 70' : MATERIALS[code].name.split('(')[0];
+                      const cardSpec = code === 'SA-516-70' && isOneEighth ? 'ASTM A516 / Grade 516-70 Plate' : MATERIALS[code].shortSpec;
+                      const cardBadge = code === 'SA-516-70' && isOneEighth ? 'Grade 516-70' : MATERIALS[code].badge;
+
+                      return (
+                        <button
+                          key={code}
+                          type="button"
+                          onClick={() => setSelectedMaterial(code)}
+                          className={`p-3 rounded-xl border text-left transition-all ${
+                            selectedMaterial === code
+                              ? 'bg-sky-50 border-sky-600 text-slate-900 shadow-sm scale-[1.01]'
+                              : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-xs text-slate-900">{cardTitle}</span>
+                            <span className="text-[10px] font-mono bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-semibold">
+                              {cardBadge}
+                            </span>
+                          </div>
+                          <div className="text-[11px] text-slate-500 mt-1 font-mono">{cardSpec}</div>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -3072,7 +3196,7 @@ export default function App() {
                       onClick={() => setSelectedFacing('Machined Gasket Finish (Special Order)')}
                       className={`p-3.5 rounded-xl border text-left transition-all ${
                         selectedFacing === 'Machined Gasket Finish (Special Order)'
-                          ? 'bg-amber-50 border-amber-500 text-slate-900 shadow-sm'
+                          ? 'bg-blue-50 border-blue-500 text-slate-900 shadow-sm'
                           : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
                       }`}
                     >
@@ -3080,7 +3204,7 @@ export default function App() {
                         <span className="font-bold text-xs text-slate-900">
                           Machined Gasket Finish
                         </span>
-                        <span className="text-[10px] font-mono bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">
+                        <span className="text-[10px] font-mono bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-bold">
                           Special Order (+${getVariableMachiningCost(liveSpec.od, pricingConfig)})
                         </span>
                       </div>
@@ -3102,7 +3226,7 @@ export default function App() {
                     value={handleStamp}
                     onChange={e => setHandleStamp(e.target.value.toUpperCase())}
                     placeholder="e.g., ISO-UNIT-4-BLIND"
-                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs font-mono text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-600 focus:bg-white"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-xs font-mono text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white"
                   />
                 </div>
 
@@ -3150,7 +3274,7 @@ export default function App() {
                         name="mtr_toggle"
                         checked={!requireMTR}
                         onChange={() => setRequireMTR(false)}
-                        className="mt-0.5 text-sky-600 focus:ring-sky-500"
+                        className="mt-0.5 text-blue-600 focus:ring-blue-500"
                       />
                       <div>
                         <div className="text-xs font-bold text-slate-800">
@@ -3174,27 +3298,27 @@ export default function App() {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
                     {/* T-Handle */}
-                    <label className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${addTHadle ? 'bg-sky-50 border-sky-600 text-slate-900 font-bold shadow-sm' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'}`}>
+                    <label className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${addTHadle ? 'bg-blue-50 border-blue-600 text-slate-900 font-bold shadow-sm' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'}`}>
                       <div className="flex items-center gap-2.5">
-                        <input type="checkbox" checked={addTHadle} onChange={e => setAddTHadle(e.target.checked)} className="h-4 w-4 rounded text-sky-600 focus:ring-sky-500" />
+                        <input type="checkbox" checked={addTHadle} onChange={e => setAddTHadle(e.target.checked)} className="h-4 w-4 rounded text-blue-600 focus:ring-blue-500" />
                         <div>
                           <span className="block font-semibold">Integral CNC Cut T-Handle</span>
                           <span className="text-[10px] text-slate-500 font-mono font-normal">1-Piece Cut-Out Profile (No Welds)</span>
                         </div>
                       </div>
-                      <span className="font-mono text-sky-800 font-bold">+${ACCESSORY_PRICES.tHandlePrice.toFixed(2)}</span>
+                      <span className="font-mono text-blue-800 font-bold">+${ACCESSORY_PRICES.tHandlePrice.toFixed(2)}</span>
                     </label>
 
                     {/* 3/8" Lockout Hole */}
-                    <label className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${addLockoutHole ? 'bg-amber-50 border-amber-600 text-slate-900 font-bold shadow-sm' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'}`}>
+                    <label className={`p-3 rounded-xl border flex items-center justify-between cursor-pointer transition-all ${addLockoutHole ? 'bg-blue-50 border-blue-600 text-slate-900 font-bold shadow-sm' : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'}`}>
                       <div className="flex items-center gap-2.5">
-                        <input type="checkbox" checked={addLockoutHole} onChange={e => setAddLockoutHole(e.target.checked)} className="h-4 w-4 rounded text-amber-600 focus:ring-amber-500" />
+                        <input type="checkbox" checked={addLockoutHole} onChange={e => setAddLockoutHole(e.target.checked)} className="h-4 w-4 rounded text-blue-600 focus:ring-blue-500" />
                         <div>
                           <span className="block font-semibold">3/8" Lockout Hole in Center</span>
                           <span className="text-[10px] text-slate-500 font-mono font-normal">Center Safety Lockout / Tagout Hole</span>
                         </div>
                       </div>
-                      <span className="font-mono text-amber-800 font-bold">+${ACCESSORY_PRICES.lockoutHolePrice.toFixed(2)}</span>
+                      <span className="font-mono text-blue-800 font-bold">+${ACCESSORY_PRICES.lockoutHolePrice.toFixed(2)}</span>
                     </label>
 
                     {/* Lifting Lug */}
@@ -3356,14 +3480,14 @@ export default function App() {
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5 uppercase tracking-wide">
-                          <Truck className="h-4 w-4 text-rose-600" /> Call Out Dedicated Hot Shot Delivery (Champion Logistics)
+                          <Truck className="h-4 w-4 text-rose-600" /> Call Out Dedicated Hot Shot Delivery
                         </span>
                         <span className="font-mono text-xs font-bold text-rose-700">
                           +${pricingConfig.hotShotEmergencyFee.toFixed(2)}
                         </span>
                       </div>
                       <p className="text-[11px] text-slate-600 mt-1">
-                        Dispatch a dedicated Hot Shot courier (e.g. Champion Logistics) immediately upon burn completion for same-day delivery directly to your plant gate or turnaround unit.
+                        Dispatch a dedicated Hot Shot courier immediately upon burn completion for same-day delivery directly to your plant gate or turnaround unit.
                       </p>
                     </div>
                   </label>
@@ -3464,15 +3588,15 @@ export default function App() {
                   </div>
 
                   {/* Prominent Official Proposal & Direct Sales RFQ Box */}
-                  <div className="bg-gradient-to-br from-slate-900 via-sky-950 to-slate-900 border border-sky-800/40 rounded-2xl p-4 text-white shadow-md space-y-2.5">
+                  <div className="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 border border-blue-800/40 rounded-2xl p-4 text-white shadow-md space-y-2.5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-amber-400 shrink-0" />
-                        <span className="text-xs font-bold uppercase tracking-wider text-amber-300 font-mono">
+                        <FileText className="h-4 w-4 text-blue-400 shrink-0" />
+                        <span className="text-xs font-bold uppercase tracking-wider text-blue-300 font-mono">
                           Official B2B Proposal Desk
                         </span>
                       </div>
-                      <span className="text-[10px] font-mono bg-amber-400/20 text-amber-300 border border-amber-400/30 px-2 py-0.5 rounded font-bold">
+                      <span className="text-[10px] font-mono bg-blue-500/20 text-blue-300 border border-blue-400/30 px-2 py-0.5 rounded font-bold">
                         30-Day Price Lock
                       </span>
                     </div>
@@ -3482,16 +3606,16 @@ export default function App() {
                     <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800/80 text-xs font-mono">
                       <a
                         href={`mailto:${IPG_SALES_EMAIL}?subject=Turnaround%20Proposal%20Request%20-%20${liveSpec.partNumber}`}
-                        className="text-amber-300 hover:text-white underline font-bold flex items-center gap-1.5 transition-colors"
+                        className="text-blue-300 hover:text-white underline font-bold flex items-center gap-1.5 transition-colors"
                       >
-                        <Mail className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+                        <Mail className="h-3.5 w-3.5 text-blue-400 shrink-0" />
                         <span>{IPG_SALES_EMAIL}</span>
                       </a>
                       <a
                         href="tel:+19792489266"
                         className="text-slate-300 hover:text-white flex items-center gap-1.5 transition-colors"
                       >
-                        <Phone className="h-3.5 w-3.5 text-sky-400 shrink-0" />
+                        <Phone className="h-3.5 w-3.5 text-blue-400 shrink-0" />
                         <span>(979) 248-9266</span>
                       </a>
                     </div>
@@ -3503,6 +3627,9 @@ export default function App() {
                       type="button"
                       onClick={() => {
                         const activeUnitPrice = isClientLoggedIn ? liveSpec.wholesalePrice : liveSpec.listPrice;
+                        const isOneEighth = liveSpec.thickness === 0.125 || liveSpec.thicknessLabel.includes('1/8');
+                        const itemMatCode = (selectedMaterial === 'SA-516-70' && isOneEighth) ? '516-70' : selectedMaterial;
+                        const itemMatName = (selectedMaterial === 'SA-516-70' && isOneEighth) ? MATERIALS[selectedMaterial].name.replace('SA-516', '516') : MATERIALS[selectedMaterial].name;
                         handleOpenProposalForItems([{
                           id: `ITEM-${Date.now()}`,
                           partNumber: liveSpec.partNumber,
@@ -3510,9 +3637,9 @@ export default function App() {
                           nps: selectedNPS,
                           nominalSizeInches: parseFloat(selectedNPS.replace('"', '').replace('-1/2', '.5').replace('-1/4', '.25').replace('-3/4', '.75')) || 4.0,
                           pressureClass: selectedClass,
-                          materialCode: selectedMaterial,
-                          material: selectedMaterial,
-                          materialName: MATERIALS[selectedMaterial].name,
+                          materialCode: itemMatCode,
+                          material: itemMatCode,
+                          materialName: itemMatName,
                           facing: selectedFacing,
                           thickness: liveSpec.thickness,
                           thicknessLabel: liveSpec.thicknessLabel,
@@ -3536,7 +3663,7 @@ export default function App() {
                           blindType,
                         }]);
                       }}
-                      className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg active:scale-98 text-xs sm:text-sm uppercase tracking-wider"
+                      className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-blue-600/20 active:scale-98 text-xs sm:text-sm uppercase tracking-wider"
                     >
                       <FileText className="h-4 w-4" /> Generate Instant Official Proposal
                     </button>
@@ -3544,7 +3671,7 @@ export default function App() {
                     <button
                       type="button"
                       onClick={handleAddToCart}
-                      className="w-full bg-sky-800 hover:bg-sky-700 text-white font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 shadow-md active:scale-98 text-xs sm:text-sm uppercase tracking-wider"
+                      className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 px-6 rounded-xl transition-all flex items-center justify-center gap-2 shadow-md active:scale-98 text-xs sm:text-sm uppercase tracking-wider"
                     >
                       <ShoppingCart className="h-4 w-4" /> Add {quantity}x to Order Cart
                     </button>
@@ -3633,8 +3760,8 @@ export default function App() {
         {/* Top Operational Whiteboard Header */}
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
           <div>
-            <div className="flex items-center gap-2 text-sky-800 text-xs font-mono font-bold uppercase tracking-wider">
-              <Factory className="h-4 w-4 text-sky-700" /> Shop Floor Operations &amp; Business Intelligence
+            <div className="flex items-center gap-2 text-blue-800 text-xs font-mono font-bold uppercase tracking-wider">
+              <Factory className="h-4 w-4 text-blue-700" /> Shop Floor Operations &amp; Business Intelligence
             </div>
             <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
               Active CNC Plasma Pipeline &amp; Sales Management
@@ -3649,7 +3776,7 @@ export default function App() {
               onClick={() => setIsOwnerPricingModalOpen(true)}
               className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold px-3.5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-sm active:scale-95"
             >
-              <Settings className="h-4 w-4 text-sky-400" />
+              <Settings className="h-4 w-4 text-blue-400" />
               <span>⚙️ Steel Pricing Matrix</span>
             </button>
 
@@ -3672,11 +3799,11 @@ export default function App() {
         {/* ------------------------------------------------------------------ */}
         {/* TEST CLIENT GENERATOR & MATRIX SIMULATION TOOLBAR                  */}
         {/* ------------------------------------------------------------------ */}
-        <div className="bg-gradient-to-r from-slate-900 via-sky-950 to-slate-900 text-white rounded-2xl p-4 sm:p-5 shadow-md border border-slate-800 space-y-3">
+        <div className="bg-slate-950 text-white rounded-2xl p-4 sm:p-5 shadow-md border border-slate-800 space-y-3">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-2 border-b border-slate-800">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-amber-400 animate-pulse" />
-              <span className="text-xs font-bold font-mono uppercase tracking-wider text-amber-400">
+              <Sparkles className="h-4 w-4 text-blue-400 animate-pulse" />
+              <span className="text-xs font-bold font-mono uppercase tracking-wider text-blue-400">
                 Random Test Client Simulator &amp; Parameter Matrix Engine
               </span>
             </div>
@@ -3689,10 +3816,10 @@ export default function App() {
             {/* 1-Click Single Random Order */}
             <button
               onClick={handleSimulateRandomOrder}
-              className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3 py-2 rounded-xl text-xs transition-all shadow-sm active:scale-95"
+              className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold px-3 py-2 rounded-xl text-xs transition-all shadow-md shadow-blue-600/20 active:scale-95"
               title="Pick a random petrochemical client and generate a random size/class/metal order"
             >
-              <Play className="h-3.5 w-3.5 text-slate-950" />
+              <Play className="h-3.5 w-3.5 text-white" />
               <span>🎲 1-Click Random Client Order</span>
             </button>
 
@@ -4464,8 +4591,8 @@ export default function App() {
     );
   };
 
-  // Dedicated Desktop Operations Platform (PIN Auth Gated)
-  if (location.pathname.startsWith('/operations') || location.pathname === '/shop-floor') {
+  // Dedicated Desktop Operations & Internal ERP Platform (PIN Auth Gated)
+  if (location.pathname.startsWith('/operations') || location.pathname.startsWith('/erp') || location.pathname === '/shop-floor') {
     return (
       <OperationsAuthGate>
         <OperationsApp
@@ -4481,21 +4608,21 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-900 font-sans antialiased selection:bg-sky-200 selection:text-sky-900 flex flex-col justify-between overflow-x-hidden w-full max-w-full">
+    <div className="min-h-screen bg-slate-100 text-slate-900 font-sans antialiased selection:bg-blue-200 selection:text-blue-900 flex flex-col justify-between overflow-x-hidden w-full max-w-full">
       <ScrollToTop />
       
       {/* -------------------------------------------------------------------- */}
       {/* TOP EMERGENCY DISPATCH & OWNER PRICING STATUS BAR                    */}
       {/* -------------------------------------------------------------------- */}
-      <div className="border-b border-slate-200 bg-white px-3 sm:px-4 lg:px-6 py-1.5 sm:py-2 text-xs text-slate-600 shadow-sm w-full min-w-0">
+      <div className="border-b border-slate-800 bg-slate-950 px-3 sm:px-4 lg:px-6 py-1.5 sm:py-2 text-xs text-slate-400 shadow-sm w-full min-w-0">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-3 min-w-0">
           <div className="flex items-center gap-2 min-w-0 truncate">
-            <span className="inline-flex items-center gap-1.5 text-emerald-700 font-mono text-[10px] sm:text-[11px] font-semibold bg-emerald-50 px-2 sm:px-2.5 py-0.5 rounded-full border border-emerald-200 flex-shrink-0">
-              <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span className="inline-flex items-center gap-1.5 text-emerald-400 font-mono text-[10px] sm:text-[11px] font-semibold bg-emerald-950/60 px-2 sm:px-2.5 py-0.5 rounded-full border border-emerald-800 flex-shrink-0">
+              <span className="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-emerald-400 animate-pulse"></span>
               <span className="hidden xs:inline">Plasma Cutting Queue:</span> LIVE
             </span>
-            <span className="hidden lg:inline text-slate-300 flex-shrink-0">|</span>
-            <span className="hidden lg:inline text-slate-700 font-medium text-[11px] truncate">
+            <span className="hidden lg:inline text-slate-700 flex-shrink-0">|</span>
+            <span className="hidden lg:inline text-slate-400 font-medium text-[11px] truncate">
               Texas Fabrication Hub &bull; Daily Nationwide Shipping Across All 50 States &bull; Emergency Hot-Shot Logistics
             </span>
           </div>
@@ -4505,20 +4632,29 @@ export default function App() {
             {location.pathname === '/shop-floor' && (
               <button
                 onClick={() => setIsOwnerPricingModalOpen(true)}
-                className="flex items-center gap-1.5 text-amber-900 font-mono text-[10px] sm:text-[11px] bg-amber-50 hover:bg-amber-100 px-2 sm:px-2.5 py-0.5 rounded-full border border-amber-300 font-bold transition-colors shadow-sm flex-shrink-0"
+                className="flex items-center gap-1.5 text-blue-300 font-mono text-[10px] sm:text-[11px] bg-blue-950/80 hover:bg-blue-900 px-2 sm:px-2.5 py-0.5 rounded-full border border-blue-800 font-bold transition-colors shadow-sm flex-shrink-0"
                 title="Click to adjust Owner Pricing Matrix"
               >
-                <Settings className="h-3 w-3 text-amber-700 shrink-0" />
+                <Settings className="h-3 w-3 text-blue-400 shrink-0" />
                 <span className="hidden md:inline">⚙️ Owner Mode: SA-516 ${(pricingConfig.sa516PricePerLb ?? DEFAULT_PRICING_CONFIG.sa516PricePerLb).toFixed(2)}/lb | 304L ${(pricingConfig.ss304LPricePerLb ?? DEFAULT_PRICING_CONFIG.ss304LPricePerLb).toFixed(2)}/lb ({pricingConfig.globalMarkupPct > 0 ? `+${pricingConfig.globalMarkupPct}%` : `${pricingConfig.globalMarkupPct}%`})</span>
                 <span className="md:hidden">Owner Mode</span>
               </button>
             )}
 
+            <Link
+              to="/erp"
+              className="font-mono font-bold text-slate-300 hover:text-blue-400 transition-colors text-[11px] flex items-center gap-1 flex-shrink-0 py-0.5 px-2 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800"
+              title="Launch Iron Prairie Internal ERP & Desktop Operations"
+            >
+              <span className="text-blue-400 font-bold">⚡</span>
+              <span>Internal ERP</span>
+            </Link>
+
             <a
               href="tel:+19792489266"
-              className="font-mono font-bold text-sky-800 hover:text-sky-900 transition-colors text-xs flex items-center gap-1.5 flex-shrink-0 py-1 px-1.5 rounded-md hover:bg-sky-50 touch-manipulation min-h-[32px]"
+              className="font-mono font-bold text-blue-400 hover:text-blue-300 transition-colors text-xs flex items-center gap-1.5 flex-shrink-0 py-1 px-1.5 rounded-md hover:bg-slate-900 touch-manipulation min-h-[32px]"
             >
-              <Phone className="h-3.5 w-3.5 text-sky-600 shrink-0" />
+              <Phone className="h-3.5 w-3.5 text-blue-400 shrink-0" />
               <span>(979) 248-9266</span>
             </a>
           </div>
@@ -4528,7 +4664,7 @@ export default function App() {
       {/* -------------------------------------------------------------------- */}
       {/* HEADER & MAIN NAVIGATION                                             */}
       {/* -------------------------------------------------------------------- */}
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-sm w-full">
+      <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/95 backdrop-blur-md shadow-md w-full">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-4 min-w-0">
           
           {/* Logo & Company Name */}
@@ -4536,13 +4672,13 @@ export default function App() {
             <img
               src={brandLogo}
               alt="Iron Prairie Fabrication Group LLC logo"
-              className="h-9 sm:h-11 w-auto rounded-lg border border-slate-200 bg-white p-1 shadow-sm object-contain flex-shrink-0"
+              className="h-9 sm:h-11 w-auto rounded-lg border border-slate-800 bg-slate-900 p-1 shadow-sm object-contain flex-shrink-0"
             />
             <div className="leading-tight min-w-0">
-              <span className="text-sm sm:text-base lg:text-lg font-display font-bold uppercase tracking-wide text-slate-900 group-hover:text-brand-brown transition-colors whitespace-nowrap block truncate">
+              <span className="text-sm sm:text-base lg:text-lg font-display font-bold uppercase tracking-wide text-white group-hover:text-blue-400 transition-colors whitespace-nowrap block truncate">
                 Iron Prairie
               </span>
-              <span className="hidden sm:block text-[10px] text-slate-500 font-sans tracking-wide whitespace-nowrap truncate">
+              <span className="hidden sm:block text-[10px] text-slate-400 font-sans tracking-wide whitespace-nowrap truncate">
                 Fabrication Group LLC &bull; Texas Shop &bull; Nationwide Shipping
               </span>
             </div>
@@ -4559,19 +4695,19 @@ export default function App() {
                   end={item.to === '/'}
                   className={({ isActive }) =>
                     isCatalog
-                      ? `px-2 xl:px-3 py-1.5 text-xs font-black rounded-xl transition-all whitespace-nowrap shadow-sm flex items-center gap-1.5 ${
+                      ? `px-2 xl:px-3 py-1.5 text-xs font-black rounded-xl transition-all whitespace-nowrap shadow-md flex items-center gap-1.5 ${
                           isActive
-                            ? 'bg-amber-500 text-slate-950 ring-2 ring-amber-400'
-                            : 'bg-amber-400 hover:bg-amber-300 text-slate-950 hover:scale-105'
+                            ? 'bg-blue-600 text-white ring-2 ring-blue-400 shadow-blue-600/30'
+                            : 'bg-blue-600 hover:bg-blue-500 text-white hover:scale-105 shadow-blue-600/20'
                         }`
                       : `px-1.5 xl:px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
                           isActive
-                            ? 'bg-slate-100 text-sky-900 font-bold border border-slate-200'
-                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                            ? 'bg-slate-900 text-blue-400 font-bold border border-slate-800'
+                            : 'text-slate-300 hover:text-white hover:bg-slate-900'
                         }`
                   }
                 >
-                  {isCatalog && <Zap className="h-3.5 w-3.5 fill-slate-950 text-slate-950" />}
+                  {isCatalog && <Zap className="h-3.5 w-3.5 fill-white text-white" />}
                   {item.label}
                 </NavLink>
               );
@@ -4585,16 +4721,16 @@ export default function App() {
               <div className="flex items-center gap-1 sm:gap-1.5">
                 <button
                   onClick={() => setIsLoginModalOpen(true)}
-                  className="flex items-center gap-1.5 bg-sky-50 border border-sky-200 text-sky-900 px-2 sm:px-3 py-2 rounded-lg text-xs font-semibold hover:bg-sky-100 transition-colors min-h-[40px] sm:min-h-[44px] touch-manipulation"
+                  className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 text-blue-300 px-2 sm:px-3 py-2 rounded-lg text-xs font-semibold hover:bg-slate-800 transition-colors min-h-[40px] sm:min-h-[44px] touch-manipulation"
                   title="Click to view client account details"
                 >
-                  <UserCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-sky-700 shrink-0" />
+                  <UserCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-400 shrink-0" />
                   <span className="hidden sm:inline max-w-[90px] xl:max-w-[130px] truncate">{clientAccount?.companyName || 'Verified Trade'}</span>
                   <span className="sm:hidden text-[11px] font-bold">Trade</span>
                 </button>
                 <button
                   onClick={handleClientLogout}
-                  className="p-2 sm:p-2 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center touch-manipulation"
+                  className="p-2 sm:p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-rose-400 hover:bg-rose-950/40 transition-colors min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center touch-manipulation"
                   title="Log out"
                 >
                   <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -4605,12 +4741,12 @@ export default function App() {
             {/* Cart Button */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 px-2.5 sm:px-3 py-2 rounded-lg font-bold transition-all shadow-sm active:scale-95 text-xs min-h-[40px] sm:min-h-[44px] touch-manipulation"
+              className="relative flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white px-2.5 sm:px-3 py-2 rounded-lg font-bold transition-all shadow-sm active:scale-95 text-xs min-h-[40px] sm:min-h-[44px] touch-manipulation"
             >
-              <ShoppingCart className="h-4 w-4 text-sky-700 shrink-0" />
+              <ShoppingCart className="h-4 w-4 text-blue-400 shrink-0" />
               <span className="hidden sm:inline">Cart</span>
               {cart.length > 0 && (
-                <span className="bg-sky-700 text-white font-mono text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                <span className="bg-blue-600 text-white font-mono text-[10px] px-1.5 py-0.5 rounded-full font-bold">
                   {cart.reduce((a, b) => a + b.quantity, 0)}
                 </span>
               )}
@@ -4619,7 +4755,7 @@ export default function App() {
             {/* Request a Quote Button */}
             <Link
               to="/contact"
-              className="hidden xl:inline-flex rounded-lg bg-brand-brown hover:bg-brand-brown/90 px-3 py-2 text-xs font-bold text-brand-ivory shadow-sm transition-all active:scale-95 whitespace-nowrap min-h-[40px] items-center touch-manipulation"
+              className="hidden xl:inline-flex rounded-lg bg-blue-600 hover:bg-blue-500 px-3 py-2 text-xs font-bold text-white shadow-md shadow-blue-600/20 transition-all active:scale-95 whitespace-nowrap min-h-[40px] items-center touch-manipulation"
             >
               Request a Quote
             </Link>
@@ -4628,7 +4764,7 @@ export default function App() {
             <button
               type="button"
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="p-2 sm:p-2.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 lg:hidden min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center touch-manipulation"
+              className="p-2 sm:p-2.5 rounded-lg border border-slate-800 text-slate-300 hover:bg-slate-900 lg:hidden min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center touch-manipulation"
               aria-label="Toggle navigation menu"
             >
               <Menu className="h-5 w-5" />
@@ -4639,7 +4775,7 @@ export default function App() {
 
         {/* Mobile Navigation Dropdown */}
         {mobileOpen && (
-          <nav className="border-t border-slate-200 bg-white p-4 space-y-2.5 lg:hidden shadow-lg animate-fadeIn max-h-[85vh] overflow-y-auto">
+          <nav className="border-t border-slate-800 bg-slate-950 p-4 space-y-2.5 lg:hidden shadow-2xl animate-fadeIn max-h-[85vh] overflow-y-auto">
             {navLinks.map((item) => {
               const isCatalog = item.to === '/storefront' || item.to === '/paddle-blinds';
               return (
@@ -4650,30 +4786,30 @@ export default function App() {
                   onClick={() => setMobileOpen(false)}
                   className={({ isActive }) =>
                     isCatalog
-                      ? `block px-3.5 py-3 rounded-xl text-sm font-black bg-amber-400 text-slate-950 flex items-center justify-between shadow-sm min-h-[48px] touch-manipulation`
+                      ? `block px-3.5 py-3 rounded-xl text-sm font-black bg-blue-600 text-white flex items-center justify-between shadow-md min-h-[48px] touch-manipulation`
                       : `block px-3.5 py-2.5 rounded-lg text-sm font-semibold min-h-[44px] flex items-center ${
-                          isActive ? 'bg-slate-100 text-sky-900 font-bold border border-slate-200' : 'text-slate-700 hover:bg-slate-50'
+                          isActive ? 'bg-slate-900 text-blue-400 font-bold border border-slate-800' : 'text-slate-300 hover:bg-slate-900'
                         } touch-manipulation`
                   }
                 >
                   <span>{item.label}</span>
-                  {isCatalog && <span className="bg-slate-950 text-amber-300 text-[10px] px-2 py-0.5 rounded-full font-black">FAST ORDER</span>}
+                  {isCatalog && <span className="bg-slate-900 text-blue-300 text-[10px] px-2 py-0.5 rounded-full font-black border border-blue-500/30">FAST ORDER</span>}
                 </NavLink>
               );
             })}
-            <div className="pt-2 border-t border-slate-200 space-y-2">
+            <div className="pt-2 border-t border-slate-800 space-y-2">
               <Link
                 to="/contact"
                 onClick={() => setMobileOpen(false)}
-                className="block w-full text-center rounded-xl bg-brand-brown py-3 text-sm font-bold text-brand-ivory shadow-sm min-h-[48px] flex items-center justify-center touch-manipulation"
+                className="block w-full text-center rounded-xl bg-blue-600 hover:bg-blue-500 py-3 text-sm font-bold text-white shadow-md shadow-blue-600/20 min-h-[48px] flex items-center justify-center touch-manipulation"
               >
                 Request a Quote
               </Link>
               <a
                 href="tel:+19792489266"
-                className="block w-full text-center rounded-xl bg-sky-50 border border-sky-200 py-2.5 text-xs font-bold text-sky-900 min-h-[44px] flex items-center justify-center gap-2 touch-manipulation"
+                className="block w-full text-center rounded-xl bg-slate-900 border border-slate-800 py-2.5 text-xs font-bold text-blue-400 min-h-[44px] flex items-center justify-center gap-2 touch-manipulation"
               >
-                <Phone className="h-4 w-4 text-sky-700" />
+                <Phone className="h-4 w-4 text-blue-400" />
                 <span>Call Shop: (979) 248-9266</span>
               </a>
             </div>
@@ -4705,7 +4841,7 @@ export default function App() {
       {/* -------------------------------------------------------------------- */}
       {/* GLOBAL WEBSITE FOOTER                                                */}
       {/* -------------------------------------------------------------------- */}
-      <footer className="border-t border-slate-300 bg-slate-900 text-slate-300 mt-12">
+      <footer className="border-t border-slate-800 bg-slate-950 text-slate-400 mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-2 space-y-3">
@@ -4713,7 +4849,7 @@ export default function App() {
                 <img
                   src={brandLogo}
                   alt="Iron Prairie Fabrication Group LLC"
-                  className="h-10 w-auto rounded border border-slate-700 bg-white p-0.5"
+                  className="h-10 w-auto rounded border border-slate-800 bg-slate-900 p-0.5"
                 />
                 <div>
                   <span className="font-display text-base font-bold uppercase tracking-wider text-white block">
@@ -4723,30 +4859,30 @@ export default function App() {
                 </div>
               </div>
               <p className="text-xs text-slate-400 max-w-md leading-relaxed">
-                Certified woman-owned metal fabrication enterprise based in Texas. Precision CNC plasma plate cutting, ASME B16.48 positive isolation paddle blinds, custom ranch gates, animal pens, tornado shelters, custom bunkers, and municipal infrastructure steelwork. Serving Lake Jackson, Brazoria County, and statewide Texas with rapid site delivery, plus daily nationwide shipping across all 50 states.
+                Certified woman-owned metal fabrication enterprise based in Bay City, Texas. Precision CNC plasma plate cutting, ASME B16.48 positive isolation paddle blinds, custom ranch gates, animal pens, tornado shelters, custom bunkers, and municipal infrastructure steelwork. Serving Bay City, Matagorda County, Texas Gulf Coast, and statewide Texas with rapid site delivery, plus daily nationwide shipping across all 50 states.
               </p>
             </div>
 
             <div>
               <div className="text-xs font-bold text-white uppercase tracking-wider mb-3">Quick Navigation</div>
               <ul className="space-y-1.5 text-xs text-slate-400">
-                <li><Link to="/about" className="hover:text-amber-400 transition-colors">About Our Shop</Link></li>
-                <li><Link to="/services" className="hover:text-amber-400 transition-colors">Fabrication Services</Link></li>
-                <li><Link to="/projects" className="hover:text-amber-400 transition-colors">Project Portfolio</Link></li>
-                <li><Link to="/woman-owned" className="hover:text-amber-400 transition-colors">Woman-Owned Enterprise</Link></li>
-                <li><Link to="/storefront" className="hover:text-amber-400 transition-colors">ASME B16.48 Paddle Blinds</Link></li>
-                <li><Link to="/shop-floor" className="hover:text-amber-400 transition-colors">Shop Floor Whiteboard</Link></li>
-                <li><Link to="/contact" className="hover:text-amber-400 transition-colors">Request a Quote</Link></li>
+                <li><Link to="/about" className="hover:text-blue-400 transition-colors">About Our Shop</Link></li>
+                <li><Link to="/services" className="hover:text-blue-400 transition-colors">Fabrication Services</Link></li>
+                <li><Link to="/projects" className="hover:text-blue-400 transition-colors">Project Portfolio</Link></li>
+                <li><Link to="/woman-owned" className="hover:text-blue-400 transition-colors">Woman-Owned Enterprise</Link></li>
+                <li><Link to="/storefront" className="hover:text-blue-400 transition-colors">ASME B16.48 Paddle Blinds</Link></li>
+                <li><Link to="/shop-floor" className="hover:text-blue-400 transition-colors">Shop Floor Whiteboard</Link></li>
+                <li><Link to="/contact" className="hover:text-blue-400 transition-colors">Request a Quote</Link></li>
               </ul>
             </div>
 
             <div>
               <div className="text-xs font-bold text-white uppercase tracking-wider mb-3">Facility &amp; Inquiries</div>
               <div className="space-y-2 text-xs text-slate-400">
-                <div>Phone: <a href="tel:+19792489266" className="text-white hover:text-amber-400 font-bold">(979) 248-9266</a></div>
-                <div>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="text-white hover:text-amber-400 underline">Sales@ironprairiefabrication.com</a></div>
-                <div>Facility: Lake Jackson, TX (Brazoria County)</div>
-                <div>Service Area: Texas Statewide &bull; <span className="text-amber-400 font-semibold">Nationwide Shipping (All 50 States)</span></div>
+                <div>Phone: <a href="tel:+19792489266" className="text-white hover:text-blue-400 font-bold">(979) 248-9266</a></div>
+                <div>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="text-white hover:text-blue-400 underline">Sales@ironprairiefabrication.com</a></div>
+                <div>Facility: 200 County Rd 170, Bay City, TX 77414 (Matagorda County)</div>
+                <div>Service Area: Texas Statewide &bull; <span className="text-blue-400 font-semibold">Nationwide Shipping (All 50 States)</span></div>
                 <div>Government Contractor: <span className="text-emerald-400 font-bold">SAM.gov Registered</span> &bull; <span className="font-mono text-slate-300 font-bold">UEI: XX7XCMGN9XD5</span></div>
                 <div className="pt-2 flex gap-4 text-[11px] text-slate-500">
                   <Link to="/privacy-policy" className="hover:text-slate-400 underline">Privacy Policy</Link>
@@ -4952,12 +5088,12 @@ export default function App() {
                   </div>
 
                   {/* Variable Machining Costs (Lathe Facing) */}
-                  <div className="p-3 bg-white border border-amber-200 rounded-xl space-y-2 shadow-sm col-span-2 sm:col-span-3">
+                  <div className="p-3 bg-white border border-blue-200 rounded-xl space-y-2 shadow-sm col-span-2 sm:col-span-3">
                     <div className="flex justify-between items-center">
-                      <label className="text-[10px] text-amber-900 font-bold uppercase">
+                      <label className="text-[10px] text-blue-900 font-bold uppercase">
                         ⚙️ Variable CNC Lathe Machining (Facing Adder):
                       </label>
-                      <span className="text-[10px] text-amber-700 font-mono">Scales with OD ($Setup + $Rate/in)</span>
+                      <span className="text-[10px] text-blue-700 font-mono">Scales with OD ($Setup + $Rate/in)</span>
                     </div>
                     <div className="grid grid-cols-2 gap-2.5">
                       <div>
@@ -4974,16 +5110,17 @@ export default function App() {
                         </div>
                       </div>
                       <div>
-                        <label className="text-[9px] text-slate-500 block mb-0.5">Machining Rate ($/in OD)</label>
+                        <label className="text-[9px] text-slate-500 block mb-0.5">Rate / Inch OD ($)</label>
                         <div className="flex items-center gap-1 bg-slate-50 border border-slate-200 rounded px-2 py-1">
                           <span className="text-slate-500">$</span>
                           <input
                             type="number"
-                            step="0.50"
-                            value={pricingConfig.machiningRatePerInch ?? 9.50}
-                            onChange={e => setPricingConfig(prev => ({ ...prev, machiningRatePerInch: parseFloat(e.target.value) || 9.50 }))}
+                            step="1"
+                            value={pricingConfig.machiningRatePerInchOD ?? 8}
+                            onChange={e => setPricingConfig(prev => ({ ...prev, machiningRatePerInchOD: parseFloat(e.target.value) || 8 }))}
                             className="w-full bg-transparent text-slate-900 font-bold focus:outline-none"
                           />
+                          <span className="text-slate-500 text-[10px]">/in</span>
                         </div>
                       </div>
                     </div>
@@ -5186,21 +5323,21 @@ export default function App() {
 
                 {/* Large Order Lead Time Callout Banner */}
                 {isLargeVolumeOrder && (
-                  <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs space-y-1">
-                    <div className="flex items-center gap-1.5 text-amber-800 font-bold uppercase">
-                      <Clock className="h-3.5 w-3.5 text-amber-700" /> High-Volume Mill Plate Sourcing
+                  <div className="mt-3 bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs space-y-1">
+                    <div className="flex items-center gap-1.5 text-blue-800 font-bold uppercase">
+                      <Clock className="h-3.5 w-3.5 text-blue-700" /> High-Volume Mill Plate Sourcing
                     </div>
-                    <p className="text-[11px] text-amber-900">
+                    <p className="text-[11px] text-blue-900">
                       Order total exceeds $10,000 / 1,000 lbs. Dedicated master plate staging lead time is 5–7 business days.
                     </p>
                   </div>
                 )}
 
-                {/* Hot Shot Courier Delivery (Champion Logistics) Selection in Cart */}
+                {/* Hot Shot Courier Delivery Selection in Cart */}
                 {isHotShotOrder ? (
                   <div className="mt-3 bg-rose-50 border border-rose-200 rounded-xl p-3.5 space-y-1">
                     <div className="flex items-center justify-between text-rose-900 font-bold text-xs">
-                      <span className="flex items-center gap-1.5"><Truck className="h-4 w-4 text-rose-600" /> Dedicated Hot Shot Courier (Champion Logistics)</span>
+                      <span className="flex items-center gap-1.5"><Truck className="h-4 w-4 text-rose-600" /> Dedicated Hot Shot Courier</span>
                       <span className="font-mono">+${pricingConfig.hotShotEmergencyFee.toFixed(2)}</span>
                     </div>
                     <div className="flex items-center justify-between text-[11px] text-rose-800">
@@ -5219,7 +5356,7 @@ export default function App() {
                       <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
                         <Truck className="h-3.5 w-3.5 text-sky-700" /> Need Same-Day Emergency Dispatch?
                       </div>
-                      <div className="text-[11px] text-slate-500">Call out Champion Logistics Hot Shot</div>
+                      <div className="text-[11px] text-slate-500">Call out Dedicated Hot Shot courier</div>
                     </div>
                     <button
                       onClick={() => setIsHotShotOrder(true)}
@@ -5306,7 +5443,7 @@ export default function App() {
                         setIsCartOpen(false);
                         handleOpenProposalForItems(cart);
                       }}
-                      className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-md text-xs sm:text-sm uppercase tracking-wider transition-all active:scale-98"
+                      className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-md shadow-blue-600/20 text-xs sm:text-sm uppercase tracking-wider transition-all active:scale-98"
                     >
                       <FileText className="h-4 w-4" /> Generate Official Proposal (Email PDF)
                     </button>
@@ -5985,8 +6122,8 @@ export default function App() {
       {/* -------------------------------------------------------------------- */}
       {notificationToast && (
         <div className="fixed bottom-5 right-5 z-50 max-w-md bg-slate-900 text-white p-4 rounded-2xl shadow-2xl border border-slate-700 flex items-start gap-3 animate-in fade-in slide-in-from-bottom-3 duration-200">
-          <div className="h-7 w-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 bg-sky-500/20 text-sky-400">
-            {notificationToast.type === 'email' ? <Mail className="h-4 w-4" /> : notificationToast.type === 'alert' ? <AlertCircle className="h-4 w-4 text-amber-400" /> : <CheckCircle2 className="h-4 w-4 text-emerald-400" />}
+          <div className="h-7 w-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 bg-cyan-500/20 text-cyan-400">
+            {notificationToast.type === 'email' ? <Mail className="h-4 w-4" /> : notificationToast.type === 'alert' ? <AlertCircle className="h-4 w-4 text-cyan-400" /> : <CheckCircle2 className="h-4 w-4 text-emerald-400" />}
           </div>
           <div className="flex-1 text-xs font-medium leading-snug">
             {notificationToast.message}

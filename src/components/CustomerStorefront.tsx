@@ -128,12 +128,12 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
   return (
     <div className="space-y-8 pb-16">
       {/* Rapid Delivery Trust Banner */}
-      <section className="relative overflow-hidden rounded-2xl border border-amber-500/30 bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/40 p-5 sm:p-6 shadow-xl">
+      <section className="relative overflow-hidden rounded-2xl border border-cyan-500/30 bg-gradient-to-r from-slate-900 via-slate-900 to-cyan-950/40 p-5 sm:p-6 shadow-xl">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">
-              <div className="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3 py-0.5 text-xs font-mono font-semibold text-amber-400">
-                <Flame className="h-3.5 w-3.5 animate-pulse text-amber-400" />
+              <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-0.5 text-xs font-mono font-semibold text-cyan-400">
+                <Flame className="h-3.5 w-3.5 animate-pulse text-cyan-400" />
                 <span>DIRECT CNC PLASMA CUTTING SHOP &bull; TEXAS</span>
               </div>
               <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-mono font-semibold text-emerald-400">
@@ -152,7 +152,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
           <div className="flex flex-wrap items-center gap-3 shrink-0">
             <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-3 text-center">
               <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Standard Dispatch</div>
-              <div className="font-mono text-sm font-bold text-amber-400">Same-Day / Next-Day</div>
+              <div className="font-mono text-sm font-bold text-cyan-400">Same-Day / Next-Day</div>
             </div>
             <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-3 text-center">
               <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Certified Spec</div>
@@ -170,14 +170,14 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
           <div className="rounded-2xl border border-slate-800 bg-slate-900/90 p-5 shadow-lg">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-500 text-xs font-black text-slate-950">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500 text-xs font-black text-slate-950">
                   1
                 </span>
                 <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200">
                   Select Pipe Size (Nominal Pipe Size - NPS)
                 </h2>
               </div>
-              <span className="font-mono text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/30">
+              <span className="font-mono text-xs font-bold text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/30">
                 Selected: {selectedNps} NPS
               </span>
             </div>
@@ -192,7 +192,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                     onClick={() => setSelectedNps(size)}
                     className={`flex flex-col items-center justify-center rounded-xl p-2.5 text-center transition-all ${
                       isSelected
-                        ? 'border-2 border-amber-500 bg-amber-500/20 text-amber-300 font-bold shadow-md scale-105 ring-1 ring-amber-500'
+                        ? 'border-2 border-cyan-500 bg-cyan-500/20 text-cyan-300 font-bold shadow-md scale-105 ring-1 ring-cyan-500'
                         : 'border border-slate-800 bg-slate-950 text-slate-300 hover:border-slate-700 hover:bg-slate-800/60'
                     }`}
                   >
@@ -210,7 +210,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
           <div className="rounded-2xl border border-slate-800 bg-slate-900/90 p-5 shadow-lg">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-500 text-xs font-black text-slate-950">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500 text-xs font-black text-slate-950">
                   2
                 </span>
                 <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200">
@@ -232,7 +232,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                     onClick={() => setSelectedClass(pClass)}
                     className={`flex flex-col items-center justify-center rounded-xl p-3 text-center transition-all ${
                       isSelected
-                        ? 'border-2 border-amber-500 bg-amber-500/20 text-amber-300 font-bold shadow-md ring-1 ring-amber-500'
+                        ? 'border-2 border-cyan-500 bg-cyan-500/20 text-cyan-300 font-bold shadow-md ring-1 ring-cyan-500'
                         : 'border border-slate-800 bg-slate-950 text-slate-300 hover:border-slate-700 hover:bg-slate-800/60'
                     }`}
                   >
@@ -254,14 +254,14 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
           <div className="rounded-2xl border border-slate-800 bg-slate-900/90 p-5 shadow-lg">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-500 text-xs font-black text-slate-950">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500 text-xs font-black text-slate-950">
                   3
                 </span>
                 <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200">
                   Select Certified Plate Material
                 </h2>
               </div>
-              <span className="font-mono text-xs font-bold text-amber-400">
+              <span className="font-mono text-xs font-bold text-cyan-400">
                 Rate: ${MATERIALS[selectedMaterial].ratePerLb.toFixed(2)}/lb
               </span>
             </div>
@@ -277,7 +277,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                     onClick={() => setSelectedMaterial(matId)}
                     className={`flex flex-col justify-between rounded-xl p-3.5 text-left transition-all ${
                       isSelected
-                        ? 'border-2 border-amber-500 bg-amber-500/15 shadow-md ring-1 ring-amber-500'
+                        ? 'border-2 border-cyan-500 bg-cyan-500/15 shadow-md ring-1 ring-cyan-500'
                         : 'border border-slate-800 bg-slate-950 hover:border-slate-700 hover:bg-slate-800/60'
                     }`}
                   >
@@ -295,7 +295,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                     </div>
                     <div className="mt-3 flex items-center justify-between border-t border-slate-800/60 pt-2 text-[10px] font-mono text-slate-400">
                       <span>Density: {mat.densityLbPerSqFt1In} lbs/ft² (1")</span>
-                      <span className="text-amber-400 font-semibold">{isSelected ? '✓ SELECTED' : 'SELECT'}</span>
+                      <span className="text-cyan-400 font-semibold">{isSelected ? '✓ SELECTED' : 'SELECT'}</span>
                     </div>
                   </button>
                 );
@@ -307,7 +307,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
           <div className="rounded-2xl border border-slate-800 bg-slate-900/90 p-5 shadow-lg">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-500 text-xs font-black text-slate-950">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500 text-xs font-black text-slate-950">
                   4
                 </span>
                 <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200">
@@ -326,7 +326,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                     onClick={() => setSelectedFacing(facingOpt.id)}
                     className={`rounded-xl p-3 text-left transition-all ${
                       isSelected
-                        ? 'border-2 border-amber-500 bg-amber-500/20 shadow-md ring-1 ring-amber-500'
+                        ? 'border-2 border-cyan-500 bg-cyan-500/20 shadow-md ring-1 ring-cyan-500'
                         : 'border border-slate-800 bg-slate-950 hover:border-slate-700'
                     }`}
                   >
@@ -342,7 +342,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
           <div className="rounded-2xl border border-slate-800 bg-slate-900/90 p-5 shadow-lg">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-500 text-xs font-black text-slate-950">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500 text-xs font-black text-slate-950">
                   5
                 </span>
                 <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200">
@@ -360,7 +360,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                 value={handleStamping}
                 onChange={(e) => setHandleStamping(e.target.value)}
                 placeholder="e.g. UNIT-4-ISO-01 or LINE-P102"
-                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 font-mono text-sm text-amber-300 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
+                className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-2.5 font-mono text-sm text-cyan-300 placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
               />
               <span className="absolute right-3 top-3 text-[10px] font-mono text-slate-500">
                 {handleStamping.length}/24 chars
@@ -420,7 +420,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                 onClick={() => setIncludeMTR(false)}
                 className={`flex items-start gap-3 rounded-xl p-3.5 cursor-pointer transition-all border ${
                   !includeMTR
-                    ? 'border-amber-500 bg-amber-500/15 ring-1 ring-amber-500 shadow-md'
+                    ? 'border-cyan-500 bg-cyan-500/15 ring-1 ring-cyan-500 shadow-md'
                     : 'border-slate-800 bg-slate-950/80 hover:border-slate-700'
                 }`}
               >
@@ -429,7 +429,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                   name="mtr-toggle"
                   checked={!includeMTR}
                   onChange={() => setIncludeMTR(false)}
-                  className="mt-1 h-4 w-4 text-amber-500 focus:ring-amber-400 bg-slate-900 border-slate-700"
+                  className="mt-1 h-4 w-4 text-cyan-500 focus:ring-cyan-400 bg-slate-900 border-slate-700"
                 />
                 <div>
                   <div className="text-sm font-bold text-slate-100">
@@ -447,7 +447,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
           <div className="rounded-2xl border border-slate-800 bg-slate-900/90 p-5 shadow-lg">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-500 text-xs font-black text-slate-950">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-cyan-500 text-xs font-black text-slate-950">
                   7
                 </span>
                 <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200">
@@ -457,8 +457,8 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
             </div>
 
             {isHeavyBlind && !addOns.liftingLug && (
-              <div className="mb-3 flex items-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-300">
-                <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />
+              <div className="mb-3 flex items-center gap-2 rounded-xl border border-cyan-500/30 bg-cyan-500/10 p-3 text-xs text-cyan-300">
+                <AlertTriangle className="h-4 w-4 shrink-0 text-cyan-400" />
                 <span>
                   <strong>Safety Recommendation:</strong> Blinds &ge;10" or weight &ge;60 lbs should include the Certified Heavy Rigging Lifting Lug.
                 </span>
@@ -473,7 +473,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                     key={addon.id}
                     className={`flex items-start gap-3 rounded-xl p-3.5 cursor-pointer transition-all border ${
                       isChecked
-                        ? 'border-amber-500 bg-amber-500/15 ring-1 ring-amber-500'
+                        ? 'border-cyan-500 bg-cyan-500/15 ring-1 ring-cyan-500'
                         : 'border-slate-800 bg-slate-950 hover:border-slate-700'
                     }`}
                   >
@@ -486,12 +486,12 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                           [addon.id]: e.target.checked
                         }))
                       }
-                      className="mt-1 h-4 w-4 rounded text-amber-500 focus:ring-amber-400 bg-slate-900 border-slate-700"
+                      className="mt-1 h-4 w-4 rounded text-cyan-500 focus:ring-cyan-400 bg-slate-900 border-slate-700"
                     />
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-slate-100">{addon.name}</span>
-                        <span className="font-mono text-xs font-bold text-amber-400">+${addon.price.toFixed(2)}</span>
+                        <span className="font-mono text-xs font-bold text-cyan-400">+${addon.price.toFixed(2)}</span>
                       </div>
                       <p className="text-[11px] text-slate-400 mt-0.5">{addon.description}</p>
                     </div>
@@ -512,7 +512,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div>
                 <h3 className="text-base font-bold text-slate-100">Live Engineering Specs</h3>
-                <span className="font-mono text-xs text-amber-400 font-bold">{currentConfig.sku}</span>
+                <span className="font-mono text-xs text-cyan-400 font-bold">{currentConfig.sku}</span>
               </div>
               <span className="rounded-md bg-slate-800 px-2 py-1 text-[10px] font-mono font-medium text-slate-300">
                 ASME B16.48
@@ -535,7 +535,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
               </div>
               <div className="flex justify-between py-1 border-b border-slate-800/60">
                 <span className="text-slate-400">Plate Thickness:</span>
-                <span className="font-bold text-amber-400">
+                <span className="font-bold text-cyan-400">
                   {currentConfig.dimensions.thicknessFraction} ({currentConfig.dimensions.nominalThickness.toFixed(3)}")
                 </span>
               </div>
@@ -555,7 +555,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
               </div>
               <div className="flex justify-between py-1">
                 <span className="text-slate-400">Freight Class:</span>
-                <span className="font-bold text-amber-300">
+                <span className="font-bold text-cyan-300">
                   {currentConfig.finishedWeightPerUnit >= 150 || parseNpsToInches(selectedNps) >= 14 ? 'Palletized LTL Freight' : 'UPS Direct Parcel'}
                 </span>
               </div>
@@ -566,7 +566,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
               {!isB2BAuthenticated ? (
                 /* Gated state */
                 <div className="space-y-3 text-center py-2">
-                  <div className="flex items-center justify-center gap-2 text-amber-400">
+                  <div className="flex items-center justify-center gap-2 text-cyan-400">
                     <Lock className="h-5 w-5" />
                     <span className="text-xs font-bold uppercase tracking-wider">
                       Wholesale B2B Pricing Gated
@@ -578,7 +578,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                   <button
                     type="button"
                     onClick={() => setIsB2BAuthenticated(true)}
-                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-amber-500 py-2.5 text-xs font-bold text-slate-950 hover:bg-amber-400 transition-all shadow-md active:scale-95"
+                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-cyan-500 py-2.5 text-xs font-bold text-slate-950 hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20 active:scale-95"
                   >
                     <Unlock className="h-4 w-4" />
                     <span>Instant B2B Trade Sign-In / Unlock</span>
@@ -617,7 +617,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                         min="1"
                         value={quantity}
                         onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                        className="h-8 w-14 rounded-lg border border-slate-700 bg-slate-900 text-center font-mono text-sm font-bold text-amber-400 focus:border-amber-500 focus:outline-none"
+                        className="h-8 w-14 rounded-lg border border-slate-700 bg-slate-900 text-center font-mono text-sm font-bold text-cyan-400 focus:border-cyan-500 focus:outline-none"
                       />
                       <button
                         type="button"
@@ -638,12 +638,12 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                     {currentConfig.addOnsTotalPerUnit > 0 && (
                       <div className="flex justify-between text-slate-400">
                         <span>Selected Add-ons (ea):</span>
-                        <span className="text-amber-400">+${currentConfig.addOnsTotalPerUnit.toFixed(2)}</span>
+                        <span className="text-cyan-400">+${currentConfig.addOnsTotalPerUnit.toFixed(2)}</span>
                       </div>
                     )}
                     <div className="flex justify-between text-slate-300 font-bold border-t border-slate-800/60 pt-1">
                       <span>Unit Commercial Price:</span>
-                      <span className="text-amber-400 text-sm">${currentConfig.unitPrice.toFixed(2)} / ea</span>
+                      <span className="text-cyan-400 text-sm">${currentConfig.unitPrice.toFixed(2)} / ea</span>
                     </div>
                     <div className="flex justify-between text-slate-100 font-black text-sm pt-1 border-t border-slate-800">
                       <span>Line Subtotal ({quantity}x):</span>
@@ -655,7 +655,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                   <button
                     type="button"
                     onClick={handleAddToCart}
-                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-amber-500 py-3 text-sm font-black text-slate-950 hover:bg-amber-400 transition-all shadow-lg active:scale-95"
+                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-cyan-500 py-3 text-sm font-black text-slate-950 hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20 active:scale-95"
                   >
                     {showAddSuccess ? (
                       <>
@@ -690,7 +690,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
               {/* Drawer Header */}
               <div className="flex items-center justify-between border-b border-slate-800 bg-slate-950 px-6 py-4">
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
                     <ShoppingCart className="h-5 w-5" />
                   </div>
                   <div>
@@ -726,7 +726,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                     >
                       <div className="flex items-start justify-between">
                         <div>
-                          <div className="font-mono text-xs font-bold text-amber-400">{item.sku}</div>
+                          <div className="font-mono text-xs font-bold text-cyan-400">{item.sku}</div>
                           <h4 className="text-sm font-bold text-slate-100">
                             {item.quantity}x {item.nps} {item.pressureClass} {item.material} ({item.facing})
                           </h4>
@@ -742,7 +742,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
 
                       <div className="text-xs text-slate-400 space-y-0.5 font-mono">
                         <div>OD: {item.dimensions.od.toFixed(3)}" &bull; Thk: {item.dimensions.thicknessFraction}</div>
-                        <div>Stamp: <span className="text-amber-300">{item.handleStamping}</span></div>
+                        <div>Stamp: <span className="text-cyan-300">{item.handleStamping}</span></div>
                         <div className="flex items-center gap-1.5 pt-0.5">
                           <span className={`text-[10px] font-sans px-1.5 py-0.2 rounded ${item.includeMTR ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-400'}`}>
                             {item.includeMTR ? '✓ MTR Included' : 'No MTR'}
@@ -767,10 +767,10 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                   <div className="rounded-xl border border-slate-800 bg-slate-900/80 p-3.5 text-xs space-y-1">
                     <div className="flex items-center justify-between font-bold">
                       <div className="flex items-center gap-1.5 text-slate-200">
-                        <Truck className="h-4 w-4 text-amber-400" />
+                        <Truck className="h-4 w-4 text-cyan-400" />
                         <span>{cartShipping.method}</span>
                       </div>
-                      <span className="font-mono text-amber-400">${cartShipping.cost.toFixed(2)}</span>
+                      <span className="font-mono text-cyan-400">${cartShipping.cost.toFixed(2)}</span>
                     </div>
                     <p className="text-[11px] text-slate-400">{cartShipping.carrierNote}</p>
                   </div>
@@ -837,7 +837,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                     <button
                       type="button"
                       onClick={() => setIsProposalModalOpen(true)}
-                      className="w-full flex items-center justify-center gap-2 rounded-xl border border-amber-500/40 bg-amber-500/10 py-2.5 text-xs font-bold text-amber-300 hover:bg-amber-500/20 transition-all"
+                      className="w-full flex items-center justify-center gap-2 rounded-xl border border-cyan-500/40 bg-cyan-500/10 py-2.5 text-xs font-bold text-cyan-300 hover:bg-cyan-500/20 transition-all"
                     >
                       <FileText className="h-4 w-4" />
                       <span>Generate Formal Proposal (Email PDF)</span>
@@ -849,12 +849,16 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                       onClick={() => setIsAmazonModalOpen(true)}
                       className="w-full flex items-center justify-center gap-2 rounded-xl border border-slate-800 bg-slate-900/60 py-2 text-[11px] font-semibold text-slate-400 hover:bg-slate-800 hover:text-slate-200 transition-all"
                     >
-                      <FileSpreadsheet className="h-3.5 w-3.5 text-amber-400" />
+                      <FileSpreadsheet className="h-3.5 w-3.5 text-cyan-400" />
                       <span>Export Amazon Flat-File Feed (.TSV)</span>
                     </button>
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
             </div>
           </div>
         </div>

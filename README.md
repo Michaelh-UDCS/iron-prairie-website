@@ -15,9 +15,16 @@ npm run dev
 
 Then open `http://localhost:5173` in your browser.
 
-### One-Click Launcher (Windows)
+### Desktop Shortcuts & Demo Launcher (Windows)
 
-Use the `Iron-Prairie-Website.bat` file in this folder to start the dev server and open the browser automatically. You can create a Desktop shortcut to that batch file for quick access.
+Two Desktop shortcuts are configured on your Windows Desktop:
+- **`Iron Prairie Website.lnk`**: Starts the live Vite dev server with hot reload and opens the marketing website (`http://localhost:5173`) in your browser.
+- **`Iron Prairie Operations.lnk`**: Launches directly into the ASME MTR Material Traceability & Operations Suite (`http://localhost:5173/operations`).
+
+To regenerate or restore desktop shortcuts anytime, simply run:
+```bash
+npm run shortcut
+```
 
 ### Pages
 

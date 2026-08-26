@@ -194,6 +194,17 @@ const routes = [
     ]
   },
   {
+    path: '/erp',
+    title: 'Enterprise Resource Planning Platform | Iron Prairie Group',
+    description: 'Internal ERP and shop floor manufacturing suite for Iron Prairie Group LLC.',
+    canonical: `${DOMAIN}/erp`,
+    robots: 'noindex, nofollow',
+    breadcrumbs: [
+      { name: 'Home', url: `${DOMAIN}/` },
+      { name: 'ERP Platform', url: `${DOMAIN}/erp` }
+    ]
+  },
+  {
     path: '/shop-floor',
     title: 'Shop Floor Production Whiteboard | Iron Prairie Fabrication',
     description: 'Owner operations and CNC plasma production board for Iron Prairie Fabrication Group LLC in Texas.',
@@ -239,22 +250,25 @@ function buildJsonLd(route) {
       "email": "Sales@ironprairiefabrication.com",
       "address": {
         "@type": "PostalAddress",
-        "addressLocality": "Lake Jackson",
+        "streetAddress": "200 County Rd 170",
+        "addressLocality": "Bay City",
         "addressRegion": "TX",
-        "postalCode": "77566",
+        "postalCode": "77414",
         "addressCountry": "US"
       },
       "geo": {
         "@type": "GeoCoordinates",
-        "latitude": 29.0339,
-        "longitude": -95.4344
+        "latitude": 28.9828,
+        "longitude": -95.9694
       },
       "areaServed": [
+        { "@type": "City", "name": "Bay City", "sameAs": "https://en.wikipedia.org/wiki/Bay_City,_Texas" },
         { "@type": "City", "name": "Lake Jackson", "sameAs": "https://en.wikipedia.org/wiki/Lake_Jackson,_Texas" },
         { "@type": "City", "name": "Freeport", "sameAs": "https://en.wikipedia.org/wiki/Freeport,_Texas" },
         { "@type": "City", "name": "Angleton", "sameAs": "https://en.wikipedia.org/wiki/Angleton,_Texas" },
         { "@type": "City", "name": "Pearland", "sameAs": "https://en.wikipedia.org/wiki/Pearland,_Texas" },
         { "@type": "City", "name": "Houston", "sameAs": "https://en.wikipedia.org/wiki/Houston" },
+        { "@type": "AdministrativeArea", "name": "Matagorda County, TX" },
         { "@type": "AdministrativeArea", "name": "Brazoria County, TX" },
         { "@type": "State", "name": "Texas" },
         { "@type": "Country", "name": "United States" }

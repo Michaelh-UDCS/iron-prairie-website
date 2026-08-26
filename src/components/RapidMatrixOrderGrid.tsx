@@ -186,6 +186,11 @@ export const RapidMatrixOrderGrid: React.FC<RapidMatrixOrderGridProps> = ({
   const activeSelectedItems = useMemo(() => {
     return matrixRows.filter(row => row.qty > 0).map(row => {
       const typeLabel = productType === 'figure8_blind' ? 'Figure 8 (Spectacle Blind)' : productType === 'paddle_spacer' ? 'Paddle Spacer (Ring)' : productType === 'bleeder_blind' ? 'Bleeder / Vented Blind' : 'Paddle Blind (Solid)';
+      const isOneEighth = thicknessOption === '1/8' || row.calcResult.thickness === 0.125 || row.calcResult.thicknessLabel?.includes('1/8');
+      const itemMaterialCode = (selectedMaterial === 'SA-516-70' && isOneEighth) ? '516-70' : selectedMaterial;
+      const rawMatName = materials[selectedMaterial]?.name || selectedMaterial;
+      const itemMaterialName = (selectedMaterial === 'SA-516-70' && isOneEighth) ? rawMatName.replace('SA-516', '516') : rawMatName;
+
       return {
         id: `BATCH-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
         partNumber: row.finalPartNumber,
@@ -193,9 +198,9 @@ export const RapidMatrixOrderGrid: React.FC<RapidMatrixOrderGridProps> = ({
         nps: row.nps,
         nominalSizeInches: parseFloat(row.nps.replace('"', '')) || 4,
         pressureClass: selectedClass,
-        materialCode: selectedMaterial,
-        material: selectedMaterial,
-        materialName: `${materials[selectedMaterial]?.name || selectedMaterial} (${typeLabel})`,
+        materialCode: itemMaterialCode,
+        material: itemMaterialCode,
+        materialName: `${itemMaterialName} (${typeLabel})`,
         facing: facingType,
         thickness: row.calcResult.thickness,
         thicknessLabel: row.calcResult.thicknessLabel,
@@ -223,7 +228,7 @@ export const RapidMatrixOrderGrid: React.FC<RapidMatrixOrderGridProps> = ({
         productType,
       };
     });
-  }, [matrixRows, productType, selectedClass, selectedMaterial, facingType, requireMTR, materials, batchTHandle, batchLockoutHole]);
+  }, [matrixRows, productType, selectedClass, selectedMaterial, thicknessOption, facingType, requireMTR, materials, batchTHandle, batchLockoutHole]);
 
   const totalSelectedCount = activeSelectedItems.reduce((sum, item) => sum + item.quantity, 0);
   const totalSelectedWeight = Math.round(activeSelectedItems.reduce((sum, item) => sum + (item.actualWeightLbs * item.quantity), 0) * 10) / 10;
@@ -386,6 +391,18 @@ export const RapidMatrixOrderGrid: React.FC<RapidMatrixOrderGridProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-1">
               {(['SA-516-70', 'SA-36', '304L', '316L', 'AL-6061'] as MaterialCode[]).map(code => {
                 const isSelected = selectedMaterial === code;
+                const isOneEighth = thicknessOption === '1/8';
+                const pillLabel = code === 'SA-516-70' ? (isOneEighth ? '516-70' : 'SA-516-70') : code === 'SA-36' ? 'A-36' : code;
+                const pillSub = code === 'SA-516-70'
+                  ? (isOneEighth ? '516-70 Carbon' : 'PVQ Carbon')
+                  : code === 'SA-36'
+                  ? 'CS Structural'
+                  : code === '304L'
+                  ? 'Dual SS'
+                  : code === '316L'
+                  ? 'Acid SS'
+                  : '6061-T6 AL';
+
                 return (
                   <button
                     key={code}
@@ -398,19 +415,11 @@ export const RapidMatrixOrderGrid: React.FC<RapidMatrixOrderGridProps> = ({
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-bold font-mono text-xs text-slate-900">{code === 'SA-36' ? 'A-36' : code}</span>
+                      <span className="font-bold font-mono text-xs text-slate-900">{pillLabel}</span>
                       {isSelected && <Check className="h-3 w-3 text-sky-700 shrink-0" />}
                     </div>
                     <div className="text-[9px] text-slate-500 truncate">
-                      {code === 'SA-516-70'
-                        ? 'PVQ Carbon'
-                        : code === 'SA-36'
-                        ? 'CS Structural'
-                        : code === '304L'
-                        ? 'Dual SS'
-                        : code === '316L'
-                        ? 'Acid SS'
-                        : '6061-T6 AL'}
+                      {pillSub}
                     </div>
                   </button>
                 );
@@ -643,7 +652,13 @@ export const RapidMatrixOrderGrid: React.FC<RapidMatrixOrderGridProps> = ({
                         <span>{row.nps} NPS</span>
                       </div>
                       <div className="text-[9px] text-slate-500 font-normal font-sans">
-                        {selectedClass}# {selectedMaterial === 'SA-36' ? 'A-36 CS' : selectedMaterial}
+                        {selectedClass}# {
+                          selectedMaterial === 'SA-516-70'
+                            ? (thicknessOption === '1/8' || row.calcResult.thickness === 0.125 || row.calcResult.thicknessLabel?.includes('1/8') ? '516-70' : 'SA-516-70')
+                            : selectedMaterial === 'SA-36'
+                            ? 'A-36 CS'
+                            : selectedMaterial
+                        }
                       </div>
                     </td>
 

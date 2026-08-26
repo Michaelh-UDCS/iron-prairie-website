@@ -68,7 +68,9 @@ export const LaserPaddlePreview: React.FC<LaserPaddlePreviewProps> = ({
   const handleTopY = centerY - radius - handleLength + 30;
 
   // Stamped text
-  const stampLine1 = `${nps} ${pressureClass} ${blind.material}`;
+  const isOneEighth = dimensions.nominalThickness === 0.125 || dimensions.thicknessFraction?.includes('1/8');
+  const displayMat = ((blind.material === 'SA-516-70' || blind.material === 'A516') && isOneEighth) ? '516-70' : blind.material;
+  const stampLine1 = `${nps} ${pressureClass} ${displayMat}`;
   const stampLine2 = handleStamping || `IPF-B16.48`;
   const stampLine3 = `HT: ${millHeatNumber}`;
 

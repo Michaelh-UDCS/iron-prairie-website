@@ -50,13 +50,13 @@ export const AmazonFlatFileModal: React.FC<AmazonFlatFileModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-800 bg-slate-950 px-6 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/30">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
               <FileSpreadsheet className="h-5 w-5" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-slate-100 flex items-center gap-2">
                 Amazon Flat-File Inventory Feed Generator
-                <span className="rounded bg-amber-500/20 px-2 py-0.5 text-xs font-mono font-medium text-amber-300">
+                <span className="rounded bg-cyan-500/20 px-2 py-0.5 text-xs font-mono font-medium text-cyan-300">
                   Seller Central Ready
                 </span>
               </h3>
@@ -83,7 +83,7 @@ export const AmazonFlatFileModal: React.FC<AmazonFlatFileModalProps> = ({
                 onClick={() => setFormat('tsv')}
                 className={`rounded-md px-3 py-1 text-xs font-medium transition-all ${
                   format === 'tsv'
-                    ? 'bg-amber-500 text-slate-950 font-bold shadow'
+                    ? 'bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/20'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -93,7 +93,7 @@ export const AmazonFlatFileModal: React.FC<AmazonFlatFileModalProps> = ({
                 onClick={() => setFormat('csv')}
                 className={`rounded-md px-3 py-1 text-xs font-medium transition-all ${
                   format === 'csv'
-                    ? 'bg-amber-500 text-slate-950 font-bold shadow'
+                    ? 'bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/20'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -117,7 +117,7 @@ export const AmazonFlatFileModal: React.FC<AmazonFlatFileModalProps> = ({
                 </>
               ) : (
                 <>
-                  <Copy className="h-4 w-4 text-amber-400" />
+                  <Copy className="h-4 w-4 text-cyan-400" />
                   <span>Copy Feed Data</span>
                 </>
               )}
@@ -125,7 +125,7 @@ export const AmazonFlatFileModal: React.FC<AmazonFlatFileModalProps> = ({
 
             <button
               onClick={handleDownload}
-              className="flex items-center gap-1.5 rounded-lg bg-amber-500 px-4 py-1.5 text-xs font-bold text-slate-950 hover:bg-amber-400 transition-all shadow-lg active:scale-95"
+              className="flex items-center gap-1.5 rounded-lg bg-cyan-500 px-4 py-1.5 text-xs font-bold text-slate-950 hover:bg-cyan-400 transition-all shadow-md shadow-cyan-500/20 active:scale-95"
             >
               <Download className="h-4 w-4" />
               <span>Download .{format.toUpperCase()}</span>
@@ -137,14 +137,14 @@ export const AmazonFlatFileModal: React.FC<AmazonFlatFileModalProps> = ({
         <div className="flex-1 overflow-auto p-6 space-y-4">
           {/* Instructions Box */}
           <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4 text-xs text-slate-300">
-            <div className="flex items-center gap-2 font-semibold text-amber-400 mb-1">
+            <div className="flex items-center gap-2 font-semibold text-cyan-400 mb-1">
               <HelpCircle className="h-4 w-4" />
               <span>Amazon Seller Central Upload Instructions</span>
             </div>
             <ol className="list-decimal list-inside space-y-1 text-slate-400 ml-1">
               <li>Open <strong>Amazon Seller Central</strong> &gt; <strong>Inventory</strong> &gt; <strong>Add Products via Upload</strong>.</li>
               <li>Select <strong>Upload your Inventory File</strong> &gt; File type: <em>Inventory Files for specific categories (Industrial / Pipe Blinds)</em>.</li>
-              <li>Upload the downloaded <code className="font-mono text-amber-300">.TSV</code> flat-file directly. All bullet points, ASME specs, weights, and dimensions are pre-filled.</li>
+              <li>Upload the downloaded <code className="font-mono text-cyan-300">.TSV</code> flat-file directly. All bullet points, ASME specs, weights, and dimensions are pre-filled.</li>
             </ol>
           </div>
 
@@ -166,7 +166,7 @@ export const AmazonFlatFileModal: React.FC<AmazonFlatFileModalProps> = ({
               <tbody className="divide-y divide-slate-800/60 text-slate-200">
                 {rows.map((row, idx) => (
                   <tr key={idx} className="hover:bg-slate-900/50 transition-colors">
-                    <td className="px-4 py-3 font-bold text-amber-400">{row.item_sku}</td>
+                    <td className="px-4 py-3 font-bold text-cyan-400">{row.item_sku}</td>
                     <td className="px-4 py-3 text-slate-300 max-w-xs truncate" title={row.item_name}>
                       {row.item_name}
                     </td>
@@ -174,7 +174,7 @@ export const AmazonFlatFileModal: React.FC<AmazonFlatFileModalProps> = ({
                     <td className="px-4 py-3">{row.quantity}</td>
                     <td className="px-4 py-3 text-slate-400">{row.material_type}</td>
                     <td className="px-4 py-3 text-sky-400">{row.outer_diameter}</td>
-                    <td className="px-4 py-3 text-amber-300">{row.item_weight} lbs</td>
+                    <td className="px-4 py-3 text-cyan-300">{row.item_weight} lbs</td>
                     <td className="px-4 py-3">
                       <span className="rounded bg-emerald-500/20 px-2 py-0.5 text-[10px] text-emerald-300 font-sans font-medium">
                         {row.compliance_certification}

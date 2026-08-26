@@ -66,11 +66,11 @@ export default function Services() {
     <div className="container-page space-y-10">
       
       {/* FEATURED: ASME B16.48 PADDLE BLIND ONLINE CATALOG BANNER */}
-      <div className="bg-gradient-to-br from-slate-900 via-sky-950 to-slate-900 border border-sky-800/40 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-2 max-w-2xl">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30 text-xs font-mono font-bold uppercase tracking-wider">
-              <Zap className="h-3.5 w-3.5 text-amber-400" /> Featured Turnaround Capability
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30 text-xs font-mono font-bold uppercase tracking-wider">
+              <Zap className="h-3.5 w-3.5 text-blue-400" /> Featured Turnaround Capability
             </span>
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 px-2.5 py-1 text-xs font-bold text-emerald-300 font-mono">
               <Truck className="h-3 w-3 text-emerald-400" /> Ships Nationwide Daily
@@ -84,22 +84,23 @@ export default function Services() {
           </p>
           <div className="flex flex-wrap gap-4 pt-1 text-xs text-slate-300 font-mono">
             <span className="flex items-center gap-1"><ShieldCheck className="h-4 w-4 text-emerald-400" /> 1/2" to 24" (150# - 1500#)</span>
-            <span className="flex items-center gap-1"><Flame className="h-4 w-4 text-amber-400" /> Domestic Staged Plate</span>
-            <span className="flex items-center gap-1"><Truck className="h-4 w-4 text-sky-400" /> UPS Parcel &amp; LTL Freight</span>
+            <span className="flex items-center gap-1"><Flame className="h-4 w-4 text-blue-400" /> Domestic Staged Plate</span>
+            <span className="flex items-center gap-1"><Truck className="h-4 w-4 text-blue-400" /> UPS Parcel &amp; LTL Freight</span>
           </div>
         </div>
 
         <div className="flex flex-col sm:flex-row md:flex-col gap-3 w-full md:w-auto shrink-0">
           <Link
             to="/storefront"
-            className="inline-flex items-center justify-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-6 py-3.5 rounded-2xl text-xs sm:text-sm uppercase tracking-wider shadow-lg transition-all active:scale-95 text-center"
+            className="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3.5 rounded-2xl text-xs sm:text-sm uppercase tracking-wider shadow-lg shadow-blue-600/20 transition-all active:scale-95 text-center"
           >
-            <span>⚡ Launch Paddle Blind Catalog</span>
+            <Zap className="h-4 w-4 fill-white" />
+            <span>Launch Paddle Blind Catalog</span>
             <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
             to="/contact"
-            className="inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold px-6 py-3 rounded-2xl text-xs tracking-wider transition-all text-center"
+            className="inline-flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold px-6 py-3 rounded-2xl text-xs tracking-wider transition-all text-center"
           >
             Custom RFQ &amp; Drawings
           </Link>
@@ -107,13 +108,13 @@ export default function Services() {
       </div>
 
       <section className="max-w-3xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-brown/80">
+        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700 font-mono">
           Services &amp; Capabilities
         </p>
-        <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-brand-brown md:text-4xl">
+        <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
           Fabrication that matches real-world needs.
         </h1>
-        <p className="mt-4 text-sm leading-relaxed text-slate-800">
+        <p className="mt-4 text-sm leading-relaxed text-slate-700">
           Iron Prairie focuses on practical steel work that keeps operations moving. From CNC plasma-cut
           parts to custom pens, blinds, secure steel builds, and public infrastructure components,
           we support projects that are too specific for off-the-shelf solutions and too important
@@ -124,24 +125,24 @@ export default function Services() {
       {/* SERVICE TILES */}
       <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {sections.map((section) => (
-          <div key={section.title} className="flex flex-col justify-between rounded-2xl bg-white/80 p-5 shadow-sm border border-slate-200/70">
+          <div key={section.title} className="flex flex-col justify-between rounded-2xl bg-white p-5 shadow-sm border border-slate-200">
             <div>
-              <div className="text-[10px] font-mono font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 mb-2 inline-block">
+              <div className="text-[10px] font-mono font-bold text-blue-800 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 mb-2 inline-block">
                 {section.logistics}
               </div>
-              <h2 className="text-sm font-semibold text-brand-brown">{section.title}</h2>
-              <p className="mt-2 text-xs text-slate-700 leading-relaxed">{section.summary}</p>
-              <ul className="mt-3 space-y-1 text-xs text-slate-800">
+              <h2 className="text-sm font-bold text-slate-900">{section.title}</h2>
+              <p className="mt-2 text-xs text-slate-600 leading-relaxed">{section.summary}</p>
+              <ul className="mt-3 space-y-1 text-xs text-slate-700">
                 {section.items.map((item) => (
                   <li key={item} className="flex gap-2">
-                    <span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-brand-brown/70 shrink-0" />
+                    <span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-blue-600 shrink-0" />
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
             <div className="pt-4 mt-4 border-t border-slate-100">
-              <Link to="/contact" className="text-xs font-bold text-brand-brown hover:text-brand-brown/80 flex items-center gap-1">
+              <Link to="/contact" className="text-xs font-bold text-blue-700 hover:text-blue-800 flex items-center gap-1">
                 Request Service Quote <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
@@ -150,10 +151,10 @@ export default function Services() {
       </section>
 
       {/* DEDICATED LOGISTICS & NATIONWIDE SHIPPING SUMMARY */}
-      <section className="rounded-2xl border border-slate-200 bg-slate-900 text-white p-6 sm:p-8 shadow-lg">
+      <section className="rounded-2xl border border-slate-800 bg-slate-950 text-white p-6 sm:p-8 shadow-lg">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-amber-400 uppercase tracking-wider mb-1">
+            <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-blue-400 uppercase tracking-wider mb-1">
               <Truck className="h-4 w-4" /> Full Spectrum Logistics
             </div>
             <h2 className="text-xl sm:text-2xl font-bold text-white">
@@ -162,26 +163,26 @@ export default function Services() {
           </div>
           <Link
             to="/contact"
-            className="self-start md:self-auto inline-flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition-all"
+            className="self-start md:self-auto inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition-all shadow-md shadow-blue-600/20"
           >
             Inquire on Shipping Rates
           </Link>
         </div>
 
         <div className="grid gap-4 mt-6 sm:grid-cols-3 text-xs">
-          <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800 space-y-2">
-            <div className="font-bold text-amber-400 flex items-center gap-1.5 text-sm">
-              <Flame className="h-4 w-4 text-amber-400" />
+          <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+            <div className="font-bold text-blue-400 flex items-center gap-1.5 text-sm">
+              <Zap className="h-4 w-4 text-blue-400" />
               <span>Texas Emergency Hot-Shot</span>
             </div>
             <p className="text-slate-300 leading-relaxed">
-              2-4 hour emergency burn &amp; direct truck courier service for refineries, chemical plants, and pipeline shutdowns across Lake Jackson, Freeport, Houston, Texas City, and statewide.
+              2-4 hour emergency burn &amp; direct truck courier service for refineries, chemical plants, and pipeline shutdowns across Bay City, Freeport, Lake Jackson, Houston, Texas City, and statewide.
             </p>
           </div>
 
-          <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800 space-y-2">
-            <div className="font-bold text-sky-400 flex items-center gap-1.5 text-sm">
-              <PackageCheck className="h-4 w-4 text-sky-400" />
+          <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+            <div className="font-bold text-blue-400 flex items-center gap-1.5 text-sm">
+              <PackageCheck className="h-4 w-4 text-blue-400" />
               <span>UPS Ground &amp; Air (Nationwide)</span>
             </div>
             <p className="text-slate-300 leading-relaxed">
@@ -189,7 +190,7 @@ export default function Services() {
             </p>
           </div>
 
-          <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800 space-y-2">
+          <div className="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
             <div className="font-bold text-emerald-400 flex items-center gap-1.5 text-sm">
               <Truck className="h-4 w-4 text-emerald-400" />
               <span>Palletized Freight &amp; Flatbed</span>
@@ -202,16 +203,16 @@ export default function Services() {
       </section>
 
       {/* PROCUREMENT & AGENCY SUPPORT */}
-      <section className="rounded-2xl bg-brand-brown/95 p-6 text-brand-ivory shadow-md">
-        <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-brand-ivory/80">
+      <section className="rounded-2xl bg-slate-900 border border-slate-800 p-6 text-white shadow-md">
+        <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-300 font-mono">
           Agency and procurement support
         </h2>
-        <p className="mt-3 text-sm leading-relaxed">
+        <p className="mt-3 text-sm leading-relaxed text-slate-200">
           We are building this site and capability stack to better support public entities at every
           level. That includes state and park work in Texas now, plus expanded nationwide federal support as SAM.gov
           registration and agency onboarding are finalized.
         </p>
-        <p className="mt-3 text-xs text-brand-ivory/85">
+        <p className="mt-3 text-xs text-slate-400">
           If you have a scope package, drawing set, or procurement requirements, we can align quote
           details, delivery timelines, and certified compliance to your process.
         </p>

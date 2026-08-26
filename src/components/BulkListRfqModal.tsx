@@ -78,12 +78,12 @@ export const BulkListRfqModal: React.FC<BulkListRfqModalProps> = ({
         {/* Header */}
         <div className="flex items-start justify-between pb-4 border-b border-slate-200">
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 bg-amber-50 border border-amber-200 rounded-2xl flex items-center justify-center text-amber-700 shadow-sm shrink-0">
+            <div className="h-12 w-12 bg-cyan-50 border border-cyan-200 rounded-2xl flex items-center justify-center text-cyan-700 shadow-sm shrink-0">
               <FileSpreadsheet className="h-6 w-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="bg-amber-400 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded font-mono uppercase tracking-wider">
+                <span className="bg-cyan-500 text-slate-950 font-black text-[10px] px-2 py-0.5 rounded font-mono uppercase tracking-wider shadow-sm">
                   Save 10% Direct
                 </span>
                 <span className="text-xs text-sky-700 font-bold font-mono">Turnaround RFQ &amp; Amazon Reorder</span>
@@ -285,7 +285,7 @@ export const BulkListRfqModal: React.FC<BulkListRfqModalProps> = ({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-2/3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl shadow-md text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-98"
+                className="w-2/3 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black py-3 rounded-xl shadow-md shadow-cyan-500/20 text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 active:scale-98"
               >
                 {isSubmitting ? (
                   <span>Processing BOM &amp; Activating 10%...</span>

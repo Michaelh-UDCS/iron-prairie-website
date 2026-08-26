@@ -195,7 +195,11 @@ export const JobPacketModal: React.FC<JobPacketModalProps> = ({ job, isOpen, onC
                       <tr key={idx} className="hover:bg-slate-900/40">
                         <td className="px-4 py-3 font-bold text-amber-400 print:text-black text-sm">{item.quantity}x</td>
                         <td className="px-4 py-3 font-semibold text-slate-100 print:text-black">
-                          {item.nps} {item.pressureClass} {item.material} {item.facing}
+                          {(() => {
+                            const isOneEighth = item.dimensions?.nominalThickness === 0.125 || item.dimensions?.thicknessFraction?.includes('1/8') || item.thickness === 0.125 || item.thicknessLabel?.includes('1/8');
+                            const displayMat = ((item.material === 'SA-516-70' || item.material === 'A516') && isOneEighth) ? '516-70' : item.material;
+                            return `${item.nps} ${item.pressureClass} ${displayMat} ${item.facing}`;
+                          })()}
                         </td>
                         <td className="px-4 py-3 font-bold text-sky-400 print:text-black">{item.dimensions.od.toFixed(3)}"</td>
                         <td className="px-4 py-3 text-slate-300 print:text-black">
@@ -259,7 +263,7 @@ export const JobPacketModal: React.FC<JobPacketModalProps> = ({ job, isOpen, onC
                   </h2>
                   <p className="text-xs text-slate-400 print:text-stone-700 mt-1">
                     Direct CNC Plasma &amp; Machining Facility<br />
-                    Texas &bull; Phone: (979) 248-9266<br />
+                    200 County Rd 170, Bay City, TX 77414 &bull; Phone: (979) 248-9266<br />
                     sales@ironprairiefabrication.com
                   </p>
                 </div>
@@ -322,7 +326,11 @@ export const JobPacketModal: React.FC<JobPacketModalProps> = ({ job, isOpen, onC
                         <td className="px-4 py-3">
                           <div className="font-bold text-amber-400 print:text-black">{item.sku}</div>
                           <div className="text-slate-400 print:text-stone-700 font-sans">
-                            {item.nps} ASME B16.48 {item.pressureClass} {item.material} ({item.facing}) - Tag: {item.handleStamping}
+                            {(() => {
+                              const isOneEighth = item.dimensions?.nominalThickness === 0.125 || item.dimensions?.thicknessFraction?.includes('1/8') || item.thickness === 0.125 || item.thicknessLabel?.includes('1/8');
+                              const displayMat = ((item.material === 'SA-516-70' || item.material === 'A516') && isOneEighth) ? '516-70' : item.material;
+                              return `${item.nps} ASME B16.48 ${item.pressureClass} ${displayMat} (${item.facing}) - Tag: ${item.handleStamping}`;
+                            })()}
                           </div>
                         </td>
                         <td className="px-4 py-3 text-emerald-400 print:text-black font-bold">

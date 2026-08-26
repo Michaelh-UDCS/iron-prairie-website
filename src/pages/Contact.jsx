@@ -8,17 +8,17 @@ export default function Contact() {
     <div className="container-page grid gap-10 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
       <section>
         <div className="flex items-center gap-2 mb-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-brown/80">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700 font-mono">
             Request a Quote &bull; Local &amp; Nationwide
           </p>
-          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 border border-slate-300 px-2 py-0.5 text-[10px] font-bold text-slate-700 font-mono">
+          <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 border border-blue-200 px-2.5 py-0.5 text-[10px] font-bold text-blue-900 font-mono">
             Direct Estimating
           </span>
         </div>
-        <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-brand-brown md:text-4xl">
+        <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
           Tell us what you need built or shipped.
         </h1>
-        <p className="mt-4 text-sm leading-relaxed text-slate-800">
+        <p className="mt-4 text-sm leading-relaxed text-slate-700">
           Use this form for fabrication requests, replacement parts, ASME B16.48 paddle blinds, and public procurement bids. Whether you need local jobsite delivery in Texas or crated freight shipped nationwide, we provide fast, accurate quotes.
         </p>
 
@@ -51,7 +51,7 @@ export default function Contact() {
                   type="text"
                   autoComplete="name"
                   required
-                  className="mt-1 w-full rounded-md border border-brand-brown/30 bg-white/80 px-3 py-2 text-sm shadow-sm outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/40"
+                  className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                   placeholder="Your name"
                 />
               </div>
@@ -64,7 +64,7 @@ export default function Contact() {
                   name="organization"
                   type="text"
                   autoComplete="organization"
-                  className="mt-1 w-full rounded-md border border-brand-brown/30 bg-white/80 px-3 py-2 text-sm shadow-sm outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/40"
+                  className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                   placeholder="Ranch, plant, contractor, or agency"
                 />
               </div>
@@ -81,7 +81,7 @@ export default function Contact() {
                   type="tel"
                   autoComplete="tel"
                   required
-                  className="mt-1 w-full rounded-md border border-brand-brown/30 bg-white/80 px-3 py-2 text-sm shadow-sm outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/40"
+                  className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                   placeholder="Best number to reach you"
                 />
               </div>
@@ -95,7 +95,7 @@ export default function Contact() {
                   type="email"
                   autoComplete="email"
                   required
-                  className="mt-1 w-full rounded-md border border-brand-brown/30 bg-white/80 px-3 py-2 text-sm shadow-sm outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/40"
+                  className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                   placeholder="you@example.com"
                 />
               </div>
@@ -109,7 +109,7 @@ export default function Contact() {
                 <select
                   id="contact-project-type"
                   name="projectType"
-                  className="mt-1 w-full rounded-md border border-brand-brown/30 bg-white/80 px-3 py-2 text-sm shadow-sm outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/40"
+                  className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                 >
                   <option>ASME B16.48 Paddle Blinds / Spacers</option>
                   <option>CNC Plasma Cutting / Weldment</option>
@@ -130,11 +130,11 @@ export default function Contact() {
                 <select
                   id="contact-logistics"
                   name="logisticsPreference"
-                  className="mt-1 w-full rounded-md border border-brand-brown/30 bg-white/80 px-3 py-2 text-sm shadow-sm outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/40"
+                  className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                 >
                   <option>Local Texas Regional Delivery / Jobsite Drop-Off</option>
-                  <option>Local Shop Pickup (Lake Jackson, TX)</option>
-                  <option>🔥 Texas Emergency Hot-Shot Courier (2-4 Hr Burn)</option>
+                  <option>Local Shop Pickup (200 County Rd 170, Bay City, TX 77414)</option>
+                  <option>⚡ Texas Emergency Hot-Shot Courier (2-4 Hr Burn)</option>
                   <option>📦 Nationwide UPS Ground Parcel (All 50 States)</option>
                   <option>🚛 Nationwide Palletized LTL Freight with Liftgate (All 50 States)</option>
                   <option>🚚 Dedicated Flatbed Truckload (Out-of-State / Heavy Steel)</option>
@@ -151,7 +151,7 @@ export default function Contact() {
                   id="contact-location"
                   name="location"
                   type="text"
-                  className="mt-1 w-full rounded-md border border-brand-brown/30 bg-white/80 px-3 py-2 text-sm shadow-sm outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/40"
+                  className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                   placeholder="e.g. Freeport TX 77541 or Denver CO 80202"
                 />
               </div>
@@ -163,7 +163,7 @@ export default function Contact() {
                   id="contact-bid-ref"
                   name="bidReference"
                   type="text"
-                  className="mt-1 w-full rounded-md border border-brand-brown/30 bg-white/80 px-3 py-2 text-sm shadow-sm outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/40"
+                  className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                   placeholder="RFP, IFB, internal project code, or PO#"
                 />
               </div>
@@ -177,7 +177,7 @@ export default function Contact() {
                 id="contact-details"
                 name="projectDetails"
                 rows={4}
-                className="mt-1 w-full rounded-md border border-brand-brown/30 bg-white/80 px-3 py-2 text-sm shadow-sm outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown/40"
+                className="mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600"
                 placeholder="Sizes, plate thicknesses, materials (A516-70, 304L, 316L), target dates, and shipping destination details."
               />
             </div>
@@ -188,7 +188,7 @@ export default function Contact() {
 
             <button
               type="submit"
-              className="mt-2 inline-flex items-center justify-center rounded-full bg-brand-brown px-6 py-3 text-sm font-semibold text-brand-ivory shadow-sm hover:bg-brand-brown/90 focus:outline-none focus:ring-2 focus:ring-brand-brown/50 active:scale-95 transition-all"
+              className="mt-2 inline-flex items-center justify-center rounded-full bg-blue-600 px-6 py-3 text-sm font-bold text-white shadow-md shadow-blue-600/20 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 active:scale-95 transition-all"
             >
               Submit Quote Request
             </button>
@@ -198,23 +198,23 @@ export default function Contact() {
 
       {/* SIDEBAR */}
       <aside className="space-y-6">
-        <div className="rounded-2xl bg-white/80 p-5 shadow-sm border border-slate-200/70 space-y-3">
-          <h2 className="text-sm font-bold text-brand-brown uppercase tracking-wide">Direct Shop Inquiries</h2>
+        <div className="rounded-2xl bg-white p-5 shadow-sm border border-slate-200 space-y-3">
+          <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wide">Direct Shop Inquiries</h2>
           <div className="space-y-2 text-xs text-slate-800">
             <div className="flex items-center gap-2">
-              <Phone className="h-4 w-4 text-sky-700 shrink-0" />
-              <span>Phone: <a href="tel:+19792489266" className="font-bold text-brand-brown underline hover:text-brand-brown/80">(979) 248-9266</a></span>
+              <Phone className="h-4 w-4 text-blue-600 shrink-0" />
+              <span>Phone: <a href="tel:+19792489266" className="font-bold text-blue-700 underline hover:text-blue-800">(979) 248-9266</a></span>
             </div>
             <div className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-sky-700 shrink-0" />
-              <span>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="font-bold text-brand-brown underline hover:text-brand-brown/80">Sales@ironprairiefabrication.com</a></span>
+              <Mail className="h-4 w-4 text-blue-600 shrink-0" />
+              <span>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="font-bold text-blue-700 underline hover:text-blue-800">Sales@ironprairiefabrication.com</a></span>
             </div>
             <div className="flex items-start gap-2 pt-1">
-              <MapPin className="h-4 w-4 text-sky-700 shrink-0 mt-0.5" />
+              <MapPin className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
               <div>
-                <div className="font-bold">Facility Location:</div>
-                <div className="text-slate-600">Lake Jackson, TX 77566 (Brazoria County)</div>
-                <a href="https://maps.app.goo.gl/uDPSYSvFs3xX5isU7" target="_blank" rel="noopener noreferrer" className="text-[11px] font-semibold text-sky-800 underline hover:text-sky-900 block mt-0.5">
+                <div className="font-bold text-slate-900">Facility Location:</div>
+                <div className="text-slate-600">200 County Rd 170, Bay City, TX 77414 (Matagorda County)</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=200+County+Rd+170,+Bay+City,+TX+77414" target="_blank" rel="noopener noreferrer" className="text-[11px] font-semibold text-blue-600 underline hover:text-blue-700 block mt-0.5">
                   View on Google Maps &rarr;
                 </a>
               </div>
@@ -222,9 +222,9 @@ export default function Contact() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-amber-500/10 border border-amber-500/30 p-5 shadow-sm space-y-2.5">
-          <div className="flex items-center gap-2 text-amber-900 font-bold text-xs uppercase tracking-wider">
-            <BadgeCheck className="h-4 w-4 text-amber-700" />
+        <div className="rounded-2xl bg-blue-50/80 border border-blue-200 p-5 shadow-sm space-y-2.5">
+          <div className="flex items-center gap-2 text-blue-950 font-bold text-xs uppercase tracking-wider">
+            <BadgeCheck className="h-4 w-4 text-blue-700" />
             <span>Government &amp; Agency Procurement</span>
           </div>
           <div className="text-xs text-slate-800 space-y-1.5">
@@ -234,7 +234,7 @@ export default function Contact() {
             </div>
             <div>
               <span className="text-slate-600 block text-[11px]">Unique Entity Identifier (UEI):</span>
-              <span className="font-mono text-xs font-black text-slate-950 bg-white px-2.5 py-1 rounded-md border border-amber-300 inline-block tracking-wider mt-0.5">
+              <span className="font-mono text-xs font-black text-blue-900 bg-white px-2.5 py-1 rounded-md border border-blue-300 inline-block tracking-wider mt-0.5">
                 XX7XCMGN9XD5
               </span>
             </div>
@@ -244,15 +244,15 @@ export default function Contact() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-slate-900 text-white p-5 shadow-sm space-y-3">
-          <div className="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase tracking-wider">
-            <Truck className="h-4 w-4" />
+        <div className="rounded-2xl border border-slate-800 bg-slate-950 text-white p-5 shadow-sm space-y-3">
+          <div className="flex items-center gap-2 text-blue-400 font-bold text-xs uppercase tracking-wider">
+            <Truck className="h-4 w-4 text-blue-400" />
             <span>Fulfillment &amp; Shipping Reach</span>
           </div>
           <div className="space-y-2 text-xs text-slate-300">
             <div>
               <strong className="text-white block">Texas Regional Service Area:</strong>
-              <span>Lake Jackson, Freeport, Angleton, Pearland, Houston, Texas City, Bay City, and statewide Texas. Same-day emergency hot-shot courier available.</span>
+              <span>Bay City, Matagorda, Freeport, Lake Jackson, Angleton, Pearland, Houston, Texas City, and statewide Texas. Same-day emergency hot-shot courier available.</span>
             </div>
             <div className="pt-2 border-t border-slate-800">
               <strong className="text-white block">Nationwide Shipping (All 50 States):</strong>

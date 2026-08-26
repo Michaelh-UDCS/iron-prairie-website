@@ -247,7 +247,7 @@ export default function PublicMtrViewer() {
         <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-[11px] text-slate-600">
           <div>
             <div>Certified QA/QC Record &bull; <strong>Iron Prairie Fabrication Group LLC</strong></div>
-            <div>Texas &bull; <a href="mailto:Sales@ironprairiefabrication.com" className="text-sky-700 underline">Sales@ironprairiefabrication.com</a></div>
+            <div>200 County Rd 170, Bay City, TX 77414 &bull; <a href="mailto:Sales@ironprairiefabrication.com" className="text-sky-700 underline">Sales@ironprairiefabrication.com</a></div>
           </div>
           <div className="text-right">
             <div>Certified Date: <strong>{mtr.certifiedDate}</strong></div>

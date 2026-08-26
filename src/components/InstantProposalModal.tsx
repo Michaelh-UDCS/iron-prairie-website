@@ -148,7 +148,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                 {generatedProposal ? `Official Proposal #${generatedProposal.proposalId}` : 'Generate Instant Official Proposal'}
               </h3>
               <p className="text-xs text-slate-300">
-                {generatedProposal ? '30-Day Guaranteed Price Lock &bull; Sent from Sales@ironprairiefabrication.com' : 'ASME B16.48 Precision Plasma Cutting &bull; Texas Facility'}
+                {generatedProposal ? '30-Day Guaranteed Price Lock &bull; Sent from Sales@ironprairiefabrication.com' : 'ASME B16.48 Precision Plasma Cutting &bull; Bay City, TX Facility'}
               </p>
             </div>
           </div>
@@ -178,12 +178,17 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                   </span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono text-slate-600">
-                  {items.map((item, idx) => (
-                    <div key={idx} className="bg-white border border-slate-200 rounded-lg p-2.5 flex justify-between">
-                      <span>{item.quantity}x {item.nps} {item.pressureClass}# {item.materialCode || item.material}</span>
-                      <span className="text-slate-400 font-sans">{item.thicknessLabel || '11 Ga'}</span>
-                    </div>
-                  ))}
+                  {items.map((item, idx) => {
+                    const isOneEighth = item.thickness === 0.125 || item.thicknessLabel?.includes('1/8');
+                    const rawMat = item.materialCode || item.material;
+                    const displayMat = (rawMat === 'SA-516-70' && isOneEighth) ? '516-70' : rawMat;
+                    return (
+                      <div key={idx} className="bg-white border border-slate-200 rounded-lg p-2.5 flex justify-between">
+                        <span>{item.quantity}x {item.nps} {item.pressureClass}# {displayMat}</span>
+                        <span className="text-slate-400 font-sans">{item.thicknessLabel || '11 Ga'}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -206,7 +211,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                       <span className="font-mono text-rose-700">+$250.00</span>
                     </div>
                     <p className="text-slate-600 text-[11px] mt-0.5">
-                      Direct truck courier (e.g. Champion Logistics) dispatched straight to your plant gate upon plasma cut completion.
+                      Direct truck courier dispatched straight to your plant gate upon plasma cut completion.
                     </p>
                   </div>
                 </label>
@@ -395,7 +400,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                         ASME B16.48 Paddle Blinds &bull; Precision CNC Plasma Cutting &bull; Certified Woman-Owned
                       </div>
                       <div className="text-xs text-slate-500">
-                        Texas Facility &bull; Phone: (979) 248-9266 &bull; {IPG_SALES_EMAIL}
+                        200 County Rd 170, Bay City, TX 77414 &bull; Phone: (979) 248-9266 &bull; {IPG_SALES_EMAIL}
                       </div>
                     </div>
                   </div>
@@ -451,7 +456,13 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                               <div className="text-[10px] text-amber-700 font-sans font-bold">♾️ Figure 8 Spectacle</div>
                             )}
                           </td>
-                          <td className="py-2.5 px-3 text-slate-700">{item.materialCode || item.material}</td>
+                          <td className="py-2.5 px-3 text-slate-700">
+                            {(() => {
+                              const isOneEighth = item.thickness === 0.125 || item.thicknessLabel?.includes('1/8');
+                              const rawMat = item.materialCode || item.material;
+                              return (rawMat === 'SA-516-70' && isOneEighth) ? '516-70' : rawMat;
+                            })()}
+                          </td>
                           <td className="py-2.5 px-3 text-slate-800">
                             <div>{item.thicknessLabel || '11 Ga (0.120")'}</div>
                             {item.addTHadle && <span className="text-[9px] bg-sky-100 text-sky-800 px-1 rounded mr-1">T-Handle</span>}
