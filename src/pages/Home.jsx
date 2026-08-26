@@ -10,73 +10,73 @@ export default function Home() {
       <section className="grid gap-8 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:items-stretch md:gap-10">
         <div className="order-2 md:order-1">
           <div className="flex flex-wrap items-center gap-2 mb-2">
-            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-blue-700 font-mono">
+            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-brown-light font-mono">
               Built in Texas &bull; Shipped Nationwide
             </span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 border border-emerald-300 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800 font-mono">
-              <Truck className="h-3 w-3 text-emerald-700" />
+            <span className="inline-flex items-center gap-1 rounded-full bg-brand-panel-muted border border-brand-border px-2.5 py-0.5 text-[11px] font-bold text-brand-bone font-mono">
+              <Truck className="h-3 w-3 text-brand-brown-light" />
               <span>Ships All 50 States</span>
             </span>
           </div>
-          <h1 className="mt-2 font-display text-4xl font-bold tracking-tight text-slate-900 md:text-5xl">
+          <h1 className="mt-2 font-display text-4xl font-bold tracking-tight text-brand-bone md:text-5xl">
             Built-to-last fabrication for ranches, industry, and agencies.
           </h1>
-          <p className="mt-4 max-w-xl text-sm leading-relaxed text-slate-600">
+          <p className="mt-4 max-w-xl text-sm leading-relaxed text-stone-300">
             Iron Prairie Fabrication Group LLC delivers CNC plasma plate cutting, ASME B16.48 positive isolation paddle blinds, practical welding, and custom metal fabrication. Proudly based in Bay City, Texas (200 County Rd 170) with fast regional delivery across the Gulf Coast, and <strong>nationwide freight &amp; parcel shipping across all 50 states</strong>.
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link
               to="/storefront"
-              className="rounded-full bg-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-md hover:bg-blue-500 flex items-center gap-1.5 transition-all active:scale-95 shadow-blue-600/20"
+              className="rounded-full bg-brand-brown px-5 py-2.5 text-sm font-bold text-brand-ivory shadow-sm hover:bg-brand-brown-light flex items-center gap-1.5 transition-all active:scale-95"
             >
-              <Zap className="h-4 w-4 fill-white" />
+              <Zap className="h-4 w-4 fill-current text-brand-ivory" />
               <span>Paddle Blinds Catalog</span>
             </Link>
             <Link
               to="/contact"
-              className="rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 transition-all"
+              className="rounded-full bg-brand-panel-muted border border-brand-border px-5 py-2.5 text-sm font-semibold text-brand-bone hover:bg-brand-panel transition-all"
             >
               Request a Quote
             </Link>
             <Link
               to="/services"
-              className="rounded-full border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50/50 transition-all"
+              className="rounded-full border border-brand-border px-5 py-2.5 text-sm font-semibold text-stone-300 hover:border-brand-brown hover:text-brand-bone hover:bg-brand-panel transition-all"
             >
               View Services
             </Link>
           </div>
-          <div className="mt-6 grid gap-4 text-xs text-slate-800 sm:grid-cols-3">
-            <div className="rounded-lg bg-white p-4 shadow-sm border border-slate-200">
-              <div className="font-bold text-blue-900">Agriculture &amp; Ranch</div>
-              <p className="mt-1 text-slate-600">
+          <div className="mt-6 grid gap-4 text-xs text-stone-300 sm:grid-cols-3">
+            <div className="rounded-xl bg-brand-panel p-4 shadow-sm border border-brand-border">
+              <div className="font-bold text-brand-bone">Agriculture &amp; Ranch</div>
+              <p className="mt-1 text-stone-400">
                 Custom hog and livestock pens, farm equipment, ranch gates, and fence-line steel fabrication.
               </p>
             </div>
-            <Link to="/storefront" className="rounded-lg bg-blue-50/70 border border-blue-200 p-4 shadow-sm block hover:bg-blue-100/70 transition-colors group">
-              <div className="font-bold text-blue-950 flex items-center justify-between">
+            <Link to="/storefront" className="rounded-xl bg-brand-panel-muted border border-brand-border p-4 shadow-sm block hover:border-brand-brown transition-colors group">
+              <div className="font-bold text-brand-bone flex items-center justify-between">
                 <span>O&amp;G &amp; Paddle Blinds</span>
-                <span className="text-[10px] bg-blue-600 text-white px-1.5 py-0.5 rounded font-black">FAST ORDER</span>
+                <span className="text-[10px] bg-brand-brown text-brand-ivory px-1.5 py-0.5 rounded font-bold">CATALOG</span>
               </div>
-              <p className="mt-1 text-slate-700">
+              <p className="mt-1 text-stone-400">
                 ASME B16.48 paddle blinds &amp; spacers. Fast turnaround grid ordering, traceable MTRs, and direct shipping.
               </p>
             </Link>
-            <div className="rounded-lg bg-white p-4 shadow-sm border border-slate-200">
-              <div className="font-bold text-blue-900">Public Agencies</div>
-              <p className="mt-1 text-slate-600">
+            <div className="rounded-xl bg-brand-panel p-4 shadow-sm border border-brand-border">
+              <div className="font-bold text-brand-bone">Public Agencies</div>
+              <p className="mt-1 text-stone-400">
                 Fire rings, fire pits, handrails, and park infrastructure for TPWD, National Parks, and municipal entities.
               </p>
             </div>
-            <div className="rounded-lg bg-white p-4 shadow-sm border border-slate-200 sm:col-span-3">
-              <div className="font-bold text-blue-900">Secure Specialty Builds</div>
-              <p className="mt-1 text-slate-600">
+            <div className="rounded-xl bg-brand-panel p-4 shadow-sm border border-brand-border sm:col-span-3">
+              <div className="font-bold text-brand-bone">Secure Specialty Builds</div>
+              <p className="mt-1 text-stone-400">
                 Custom bunkers, tornado shelter steelwork, and large built-in safes for properties and protected storage.
               </p>
             </div>
           </div>
         </div>
 
-        <div className="order-1 flex min-h-0 flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl md:order-2">
+        <div className="order-1 flex min-h-0 flex-col overflow-hidden rounded-3xl border border-brand-border bg-brand-panel shadow-xl md:order-2">
           <img
             src={gatePhoto}
             alt="Custom fabricated ranch gate and fence installation"
@@ -85,19 +85,19 @@ export default function Home() {
             fetchpriority="high"
             className="h-[min(52vh,22rem)] w-full min-h-[20rem] flex-1 object-cover object-center sm:h-[min(56vh,26rem)] sm:min-h-[22rem] md:min-h-[28rem] md:h-[min(78vh,40rem)]"
           />
-          <div className="space-y-2 bg-white px-5 py-4 border-t border-slate-100">
+          <div className="space-y-2 bg-brand-panel px-5 py-4 border-t border-brand-border">
             <div className="flex items-center justify-between">
-              <div className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700 font-mono">
+              <div className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-brown-light font-mono">
                 Registered Government Contractor
               </div>
-              <span className="text-[10px] font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded">
+              <span className="text-[10px] font-mono font-bold bg-brand-panel-muted text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded">
                 UEI: XX7XCMGN9XD5
               </span>
             </div>
-            <p className="text-sm leading-relaxed text-slate-700">
+            <p className="text-sm leading-relaxed text-stone-300">
               Certified woman-owned enterprise with verified SAM.gov registration, traceable MTR documentation, and proven schedule discipline for state, municipal, and federal procurement.
             </p>
-            <p className="text-xs text-slate-600 font-mono">
+            <p className="text-xs text-stone-400 font-mono">
               Ready for DOD, DOE, USACE, TPWD, and tier-1 prime contractor supplier diversity goals.
             </p>
           </div>
@@ -105,40 +105,40 @@ export default function Home() {
       </section>
 
       {/* DUAL-SCOPE GEOGRAPHIC DOMINANCE: LOCAL TEXAS SERVICE AREA + NATIONWIDE SHIPPING */}
-      <section className="rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white p-6 sm:p-8 shadow-xl">
+      <section className="rounded-3xl border border-brand-border bg-brand-panel text-stone-300 p-6 sm:p-8 shadow-xl">
         <div className="max-w-4xl space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs font-mono font-bold uppercase tracking-wider">
-            <MapPin className="h-3.5 w-3.5 text-blue-400" /> Geographic Coverage &bull; Local &amp; Nationwide
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-panel-muted text-brand-bone border border-brand-border text-xs font-mono font-bold uppercase tracking-wider">
+            <MapPin className="h-3.5 w-3.5 text-brand-brown-light" /> Geographic Coverage &bull; Local &amp; Nationwide
           </div>
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-brand-bone">
             Local Texas Regional Delivery &amp; Nationwide Freight Dispatch
           </h2>
-          <p className="text-sm text-slate-300 leading-relaxed">
+          <p className="text-sm text-stone-300 leading-relaxed">
             Whether you need a same-day hot-shot emergency paddle blind dropped at a Texas Gulf Coast refinery or crated custom fabrication delivered to an industrial site anywhere in the country, Iron Prairie is equipped to fulfill your schedule.
           </p>
         </div>
 
         <div className="mt-8 grid gap-6 md:grid-cols-2">
           {/* Card 1: Local Texas Service Area */}
-          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-6 flex flex-col justify-between space-y-4">
+          <div className="rounded-2xl border border-brand-border bg-brand-panel-muted p-6 flex flex-col justify-between space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400">
+                  <div className="h-8 w-8 rounded-lg bg-brand-panel border border-brand-border flex items-center justify-center text-brand-brown-light">
                     <MapPin className="h-4 w-4" />
                   </div>
-                  <h3 className="text-lg font-bold text-white">Texas Regional Service Area</h3>
+                  <h3 className="text-lg font-bold text-brand-bone">Texas Regional Service Area</h3>
                 </div>
-                <span className="text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded">
+                <span className="text-[10px] font-mono font-bold bg-brand-panel text-brand-brown-light border border-brand-border px-2 py-0.5 rounded">
                   Local Priority
                 </span>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-stone-300 leading-relaxed">
                 Direct shop manufacturing and rapid order fulfillment for agricultural operators, refineries, chemical plants, and municipal entities across the Texas Gulf Coast and statewide.
               </p>
-              <div className="space-y-2 pt-2 border-t border-slate-800">
-                <div className="text-[11px] font-bold text-blue-300 uppercase tracking-wider">Core Local Service Regions:</div>
-                <div className="grid grid-cols-2 gap-1.5 text-xs text-slate-300">
+              <div className="space-y-2 pt-2 border-t border-brand-border">
+                <div className="text-[11px] font-bold text-brand-bone uppercase tracking-wider">Core Local Service Regions:</div>
+                <div className="grid grid-cols-2 gap-1.5 text-xs text-stone-300">
                   <div className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" /> Bay City &amp; Matagorda County</div>
                   <div className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" /> Freeport Petrochemical Hub</div>
                   <div className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" /> Lake Jackson &amp; Angleton</div>
@@ -149,53 +149,53 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 font-mono">
+            <div className="pt-3 border-t border-brand-border flex items-center justify-between text-xs text-stone-400 font-mono">
               <span>⚡ 2-4 Hr Hot-Shot Courier Available</span>
-              <Link to="/contact" className="text-blue-400 hover:text-blue-300 font-bold flex items-center gap-1">
+              <Link to="/contact" className="text-brand-bone hover:text-brand-brown-light font-bold flex items-center gap-1">
                 Local Quote <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
           </div>
 
           {/* Card 2: Nationwide Shipping & Freight */}
-          <div className="rounded-2xl border border-blue-900/60 bg-slate-900/80 p-6 flex flex-col justify-between space-y-4">
+          <div className="rounded-2xl border border-brand-border bg-brand-panel-muted p-6 flex flex-col justify-between space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-lg bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400">
+                  <div className="h-8 w-8 rounded-lg bg-brand-panel border border-brand-border flex items-center justify-center text-brand-brown-light">
                     <Truck className="h-4 w-4" />
                   </div>
-                  <h3 className="text-lg font-bold text-white">Nationwide Shipping (All 50 States)</h3>
+                  <h3 className="text-lg font-bold text-brand-bone">Nationwide Shipping (All 50 States)</h3>
                 </div>
-                <span className="text-[10px] font-mono font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded">
+                <span className="text-[10px] font-mono font-bold bg-brand-panel text-brand-bone border border-brand-border px-2 py-0.5 rounded">
                   Daily Dispatch
                 </span>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-stone-300 leading-relaxed">
                 We crate, package, and ship ASME B16.48 paddle blinds, CNC plasma cut plate components, custom steel hardware, and modular assemblies anywhere in the United States.
               </p>
-              <div className="space-y-2 pt-2 border-t border-slate-800">
-                <div className="text-[11px] font-bold text-blue-300 uppercase tracking-wider">Multi-Tier Nationwide Freight Logistics:</div>
-                <ul className="space-y-1.5 text-xs text-slate-300">
+              <div className="space-y-2 pt-2 border-t border-brand-border">
+                <div className="text-[11px] font-bold text-brand-bone uppercase tracking-wider">Multi-Tier Nationwide Freight Logistics:</div>
+                <ul className="space-y-1.5 text-xs text-stone-300">
                   <li className="flex items-start gap-2">
-                    <PackageCheck className="h-3.5 w-3.5 text-blue-400 shrink-0 mt-0.5" />
+                    <PackageCheck className="h-3.5 w-3.5 text-brand-brown-light shrink-0 mt-0.5" />
                     <span><strong>UPS Ground &amp; Express Parcel:</strong> Foam-wrapped and heavy-duty boxed dispatch for items under 150 lbs.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <Truck className="h-3.5 w-3.5 text-blue-400 shrink-0 mt-0.5" />
+                    <Truck className="h-3.5 w-3.5 text-brand-brown-light shrink-0 mt-0.5" />
                     <span><strong>Palletized LTL Freight:</strong> Banded, shrink-wrapped, and protected pallet transport with liftgate delivery nationwide.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <ShieldCheck className="h-3.5 w-3.5 text-blue-400 shrink-0 mt-0.5" />
+                    <ShieldCheck className="h-3.5 w-3.5 text-brand-brown-light shrink-0 mt-0.5" />
                     <span><strong>Traceable Paperwork:</strong> EN 10204 3.1 MTRs and packing slips included with every out-of-state order.</span>
                   </li>
                 </ul>
               </div>
             </div>
 
-            <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 font-mono">
+            <div className="pt-3 border-t border-brand-border flex items-center justify-between text-xs text-stone-400 font-mono">
               <span>⚡ Daily UPS &amp; Freight Carrier Pickups</span>
-              <Link to="/storefront" className="text-blue-400 hover:text-blue-300 font-bold flex items-center gap-1">
+              <Link to="/storefront" className="text-brand-bone hover:text-brand-brown-light font-bold flex items-center gap-1">
                 Storefront Catalog <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
@@ -204,52 +204,52 @@ export default function Home() {
       </section>
 
       {/* CAPABILITY SNAPSHOT */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-2xl border border-brand-border bg-brand-panel p-6 shadow-sm">
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-700 font-mono">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-brown-light font-mono">
               Capability Snapshot
             </p>
-            <h2 className="mt-2 font-display text-2xl font-bold text-slate-900 md:text-3xl">
+            <h2 className="mt-2 font-display text-2xl font-bold text-brand-bone md:text-3xl">
               Professional delivery for private and public buyers
             </h2>
-            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-700">
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-stone-300">
               Iron Prairie Fabrication Group LLC provides structural steel fabrication, high-definition CNC plasma plate cutting, custom livestock pens, tornado shelters, custom bunkers, and municipal infrastructure metalwork across Bay City, Matagorda County, the Texas Gulf Coast, and statewide Texas with schedule discipline, plus seamless nationwide logistics across the United States.
             </p>
           </div>
           <Link
             to="/contact"
-            className="inline-flex rounded-full border border-blue-600 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50 transition-all"
+            className="inline-flex rounded-full border border-brand-border px-4 py-2 text-sm font-semibold text-brand-bone hover:border-brand-brown hover:bg-brand-panel-muted transition-all"
           >
             Discuss Scope
           </Link>
         </div>
 
         <div className="mt-5 grid gap-4 text-sm md:grid-cols-4">
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <h3 className="font-semibold text-slate-900">Quality Fabrication</h3>
-            <p className="mt-2 text-xs leading-relaxed text-slate-700">
+          <div className="rounded-xl border border-brand-border bg-brand-panel-muted p-4">
+            <h3 className="font-semibold text-brand-bone">Quality Fabrication</h3>
+            <p className="mt-2 text-xs leading-relaxed text-stone-400">
               CNC plasma cutting, weldment, gates, fences, bunkers, shelters, safes, and custom steel
               builds designed for long service life.
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <h3 className="font-semibold text-slate-900">Schedule Discipline</h3>
-            <p className="mt-2 text-xs leading-relaxed text-slate-700">
+          <div className="rounded-xl border border-brand-border bg-brand-panel-muted p-4">
+            <h3 className="font-semibold text-brand-bone">Schedule Discipline</h3>
+            <p className="mt-2 text-xs leading-relaxed text-stone-400">
               Clear scope confirmation, practical lead times, and status updates to reduce project
               uncertainty locally and nationwide.
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <h3 className="font-semibold text-slate-900">Procurement Alignment</h3>
-            <p className="mt-2 text-xs leading-relaxed text-slate-700">
+          <div className="rounded-xl border border-brand-border bg-brand-panel-muted p-4">
+            <h3 className="font-semibold text-brand-bone">Procurement Alignment</h3>
+            <p className="mt-2 text-xs leading-relaxed text-stone-400">
               Support for PO, bid, and agency workflow expectations from local Texas public work through
               federal-ready growth.
             </p>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <h3 className="font-semibold text-slate-900">Nationwide Logistics</h3>
-            <p className="mt-2 text-xs leading-relaxed text-slate-700">
+          <div className="rounded-xl border border-brand-border bg-brand-panel-muted p-4">
+            <h3 className="font-semibold text-brand-bone">Nationwide Logistics</h3>
+            <p className="mt-2 text-xs leading-relaxed text-stone-400">
               Daily UPS Ground parcel, LTL freight, and hot-shot delivery across Texas and all 50 states with certified MTR compliance.
             </p>
           </div>

@@ -4632,10 +4632,10 @@ export default function App() {
             {location.pathname === '/shop-floor' && (
               <button
                 onClick={() => setIsOwnerPricingModalOpen(true)}
-                className="flex items-center gap-1.5 text-blue-300 font-mono text-[10px] sm:text-[11px] bg-blue-950/80 hover:bg-blue-900 px-2 sm:px-2.5 py-0.5 rounded-full border border-blue-800 font-bold transition-colors shadow-sm flex-shrink-0"
+                className="flex items-center gap-1.5 text-brand-bone font-mono text-[10px] sm:text-[11px] bg-brand-panel-muted hover:bg-brand-panel px-2 sm:px-2.5 py-0.5 rounded-full border border-brand-border font-bold transition-colors shadow-sm flex-shrink-0"
                 title="Click to adjust Owner Pricing Matrix"
               >
-                <Settings className="h-3 w-3 text-blue-400 shrink-0" />
+                <Settings className="h-3 w-3 text-brand-brown-light shrink-0" />
                 <span className="hidden md:inline">⚙️ Owner Mode: SA-516 ${(pricingConfig.sa516PricePerLb ?? DEFAULT_PRICING_CONFIG.sa516PricePerLb).toFixed(2)}/lb | 304L ${(pricingConfig.ss304LPricePerLb ?? DEFAULT_PRICING_CONFIG.ss304LPricePerLb).toFixed(2)}/lb ({pricingConfig.globalMarkupPct > 0 ? `+${pricingConfig.globalMarkupPct}%` : `${pricingConfig.globalMarkupPct}%`})</span>
                 <span className="md:hidden">Owner Mode</span>
               </button>
@@ -4643,18 +4643,18 @@ export default function App() {
 
             <Link
               to="/erp"
-              className="font-mono font-bold text-slate-300 hover:text-blue-400 transition-colors text-[11px] flex items-center gap-1 flex-shrink-0 py-0.5 px-2 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800"
+              className="font-mono font-bold text-stone-300 hover:text-brand-bone transition-colors text-[11px] flex items-center gap-1 flex-shrink-0 py-0.5 px-2 rounded-md bg-brand-panel hover:bg-brand-panel-muted border border-brand-border"
               title="Launch Iron Prairie Internal ERP & Desktop Operations"
             >
-              <span className="text-blue-400 font-bold">⚡</span>
+              <span className="text-brand-brown-light font-bold">⚡</span>
               <span>Internal ERP</span>
             </Link>
 
             <a
               href="tel:+19792489266"
-              className="font-mono font-bold text-blue-400 hover:text-blue-300 transition-colors text-xs flex items-center gap-1.5 flex-shrink-0 py-1 px-1.5 rounded-md hover:bg-slate-900 touch-manipulation min-h-[32px]"
+              className="font-mono font-bold text-brand-bone hover:text-brand-brown-light transition-colors text-xs flex items-center gap-1.5 flex-shrink-0 py-1 px-1.5 rounded-md hover:bg-brand-panel touch-manipulation min-h-[32px]"
             >
-              <Phone className="h-3.5 w-3.5 text-blue-400 shrink-0" />
+              <Phone className="h-3.5 w-3.5 text-brand-brown-light shrink-0" />
               <span>(979) 248-9266</span>
             </a>
           </div>
@@ -4664,7 +4664,7 @@ export default function App() {
       {/* -------------------------------------------------------------------- */}
       {/* HEADER & MAIN NAVIGATION                                             */}
       {/* -------------------------------------------------------------------- */}
-      <header className="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/95 backdrop-blur-md shadow-md w-full">
+      <header className="sticky top-0 z-40 border-b border-brand-border bg-brand-panel/95 backdrop-blur-md shadow-md w-full">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-4 min-w-0">
           
           {/* Logo & Company Name */}
@@ -4672,13 +4672,13 @@ export default function App() {
             <img
               src={brandLogo}
               alt="Iron Prairie Fabrication Group LLC logo"
-              className="h-9 sm:h-11 w-auto rounded-lg border border-slate-800 bg-slate-900 p-1 shadow-sm object-contain flex-shrink-0"
+              className="h-9 sm:h-11 w-auto rounded-lg border border-brand-border bg-brand-panel-muted p-1 shadow-sm object-contain flex-shrink-0"
             />
             <div className="leading-tight min-w-0">
-              <span className="text-sm sm:text-base lg:text-lg font-display font-bold uppercase tracking-wide text-white group-hover:text-blue-400 transition-colors whitespace-nowrap block truncate">
+              <span className="text-sm sm:text-base lg:text-lg font-display font-bold uppercase tracking-wide text-brand-bone group-hover:text-brand-brown-light transition-colors whitespace-nowrap block truncate">
                 Iron Prairie
               </span>
-              <span className="hidden sm:block text-[10px] text-slate-400 font-sans tracking-wide whitespace-nowrap truncate">
+              <span className="hidden sm:block text-[10px] text-brand-muted font-sans tracking-wide whitespace-nowrap truncate">
                 Fabrication Group LLC &bull; Texas Shop &bull; Nationwide Shipping
               </span>
             </div>
@@ -4695,19 +4695,19 @@ export default function App() {
                   end={item.to === '/'}
                   className={({ isActive }) =>
                     isCatalog
-                      ? `px-2 xl:px-3 py-1.5 text-xs font-black rounded-xl transition-all whitespace-nowrap shadow-md flex items-center gap-1.5 ${
+                      ? `px-2.5 xl:px-3.5 py-1.5 text-xs font-bold rounded-xl transition-all whitespace-nowrap shadow-sm flex items-center gap-1.5 ${
                           isActive
-                            ? 'bg-blue-600 text-white ring-2 ring-blue-400 shadow-blue-600/30'
-                            : 'bg-blue-600 hover:bg-blue-500 text-white hover:scale-105 shadow-blue-600/20'
+                            ? 'bg-brand-brown text-brand-ivory ring-2 ring-brand-brown-light shadow-md'
+                            : 'bg-brand-brown hover:bg-brand-brown-light text-brand-ivory shadow-sm'
                         }`
-                      : `px-1.5 xl:px-2.5 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
+                      : `px-2 xl:px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap ${
                           isActive
-                            ? 'bg-slate-900 text-blue-400 font-bold border border-slate-800'
-                            : 'text-slate-300 hover:text-white hover:bg-slate-900'
+                            ? 'bg-brand-panel-muted text-brand-bone font-bold border border-brand-border'
+                            : 'text-stone-400 hover:text-brand-bone hover:bg-brand-panel-muted'
                         }`
                   }
                 >
-                  {isCatalog && <Zap className="h-3.5 w-3.5 fill-white text-white" />}
+                  {isCatalog && <Zap className="h-3.5 w-3.5 fill-current text-brand-ivory" />}
                   {item.label}
                 </NavLink>
               );
@@ -4721,16 +4721,16 @@ export default function App() {
               <div className="flex items-center gap-1 sm:gap-1.5">
                 <button
                   onClick={() => setIsLoginModalOpen(true)}
-                  className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 text-blue-300 px-2 sm:px-3 py-2 rounded-lg text-xs font-semibold hover:bg-slate-800 transition-colors min-h-[40px] sm:min-h-[44px] touch-manipulation"
+                  className="flex items-center gap-1.5 bg-brand-panel-muted border border-brand-border text-brand-bone px-2 sm:px-3 py-2 rounded-lg text-xs font-semibold hover:bg-brand-panel transition-colors min-h-[40px] sm:min-h-[44px] touch-manipulation"
                   title="Click to view client account details"
                 >
-                  <UserCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-blue-400 shrink-0" />
+                  <UserCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-brand-brown-light shrink-0" />
                   <span className="hidden sm:inline max-w-[90px] xl:max-w-[130px] truncate">{clientAccount?.companyName || 'Verified Trade'}</span>
                   <span className="sm:hidden text-[11px] font-bold">Trade</span>
                 </button>
                 <button
                   onClick={handleClientLogout}
-                  className="p-2 sm:p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-rose-400 hover:bg-rose-950/40 transition-colors min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center touch-manipulation"
+                  className="p-2 sm:p-2 rounded-lg bg-brand-panel-muted border border-brand-border text-stone-400 hover:text-rose-400 hover:bg-rose-950/40 transition-colors min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center touch-manipulation"
                   title="Log out"
                 >
                   <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -4741,12 +4741,12 @@ export default function App() {
             {/* Cart Button */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-white px-2.5 sm:px-3 py-2 rounded-lg font-bold transition-all shadow-sm active:scale-95 text-xs min-h-[40px] sm:min-h-[44px] touch-manipulation"
+              className="relative flex items-center gap-1.5 bg-brand-panel hover:bg-brand-panel-muted border border-brand-border text-brand-bone px-2.5 sm:px-3 py-2 rounded-lg font-bold transition-all shadow-sm active:scale-95 text-xs min-h-[40px] sm:min-h-[44px] touch-manipulation"
             >
-              <ShoppingCart className="h-4 w-4 text-blue-400 shrink-0" />
+              <ShoppingCart className="h-4 w-4 text-brand-brown-light shrink-0" />
               <span className="hidden sm:inline">Cart</span>
               {cart.length > 0 && (
-                <span className="bg-blue-600 text-white font-mono text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                <span className="bg-brand-brown text-brand-ivory font-mono text-[10px] px-1.5 py-0.5 rounded-full font-bold">
                   {cart.reduce((a, b) => a + b.quantity, 0)}
                 </span>
               )}
@@ -4755,7 +4755,7 @@ export default function App() {
             {/* Request a Quote Button */}
             <Link
               to="/contact"
-              className="hidden xl:inline-flex rounded-lg bg-blue-600 hover:bg-blue-500 px-3 py-2 text-xs font-bold text-white shadow-md shadow-blue-600/20 transition-all active:scale-95 whitespace-nowrap min-h-[40px] items-center touch-manipulation"
+              className="hidden xl:inline-flex rounded-full bg-brand-brown hover:bg-brand-brown-light px-4 py-2 text-xs font-bold text-brand-ivory shadow-sm transition-all active:scale-95 whitespace-nowrap min-h-[40px] items-center touch-manipulation"
             >
               Request a Quote
             </Link>
@@ -4764,7 +4764,7 @@ export default function App() {
             <button
               type="button"
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="p-2 sm:p-2.5 rounded-lg border border-slate-800 text-slate-300 hover:bg-slate-900 lg:hidden min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center touch-manipulation"
+              className="p-2 sm:p-2.5 rounded-lg border border-brand-border text-stone-300 hover:bg-brand-panel-muted lg:hidden min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center touch-manipulation"
               aria-label="Toggle navigation menu"
             >
               <Menu className="h-5 w-5" />
@@ -4775,7 +4775,7 @@ export default function App() {
 
         {/* Mobile Navigation Dropdown */}
         {mobileOpen && (
-          <nav className="border-t border-slate-800 bg-slate-950 p-4 space-y-2.5 lg:hidden shadow-2xl animate-fadeIn max-h-[85vh] overflow-y-auto">
+          <nav className="border-t border-brand-border bg-brand-panel p-4 space-y-2.5 lg:hidden shadow-2xl animate-fadeIn max-h-[85vh] overflow-y-auto">
             {navLinks.map((item) => {
               const isCatalog = item.to === '/storefront' || item.to === '/paddle-blinds';
               return (
@@ -4786,30 +4786,30 @@ export default function App() {
                   onClick={() => setMobileOpen(false)}
                   className={({ isActive }) =>
                     isCatalog
-                      ? `block px-3.5 py-3 rounded-xl text-sm font-black bg-blue-600 text-white flex items-center justify-between shadow-md min-h-[48px] touch-manipulation`
-                      : `block px-3.5 py-2.5 rounded-lg text-sm font-semibold min-h-[44px] flex items-center ${
-                          isActive ? 'bg-slate-900 text-blue-400 font-bold border border-slate-800' : 'text-slate-300 hover:bg-slate-900'
+                      ? `block px-3.5 py-3 rounded-xl text-sm font-bold bg-brand-brown text-brand-ivory flex items-center justify-between shadow-sm min-h-[48px] touch-manipulation`
+                      : `block px-3.5 py-2.5 rounded-lg text-sm font-medium min-h-[44px] flex items-center ${
+                          isActive ? 'bg-brand-panel-muted text-brand-bone font-bold border border-brand-border' : 'text-stone-300 hover:bg-brand-panel-muted'
                         } touch-manipulation`
                   }
                 >
                   <span>{item.label}</span>
-                  {isCatalog && <span className="bg-slate-900 text-blue-300 text-[10px] px-2 py-0.5 rounded-full font-black border border-blue-500/30">FAST ORDER</span>}
+                  {isCatalog && <span className="bg-brand-panel text-brand-ivory text-[10px] px-2 py-0.5 rounded-full font-bold border border-brand-border">CATALOG</span>}
                 </NavLink>
               );
             })}
-            <div className="pt-2 border-t border-slate-800 space-y-2">
+            <div className="pt-2 border-t border-brand-border space-y-2">
               <Link
                 to="/contact"
                 onClick={() => setMobileOpen(false)}
-                className="block w-full text-center rounded-xl bg-blue-600 hover:bg-blue-500 py-3 text-sm font-bold text-white shadow-md shadow-blue-600/20 min-h-[48px] flex items-center justify-center touch-manipulation"
+                className="block w-full text-center rounded-full bg-brand-brown hover:bg-brand-brown-light py-3 text-sm font-bold text-brand-ivory shadow-sm min-h-[48px] flex items-center justify-center touch-manipulation"
               >
                 Request a Quote
               </Link>
               <a
                 href="tel:+19792489266"
-                className="block w-full text-center rounded-xl bg-slate-900 border border-slate-800 py-2.5 text-xs font-bold text-blue-400 min-h-[44px] flex items-center justify-center gap-2 touch-manipulation"
+                className="block w-full text-center rounded-xl bg-brand-panel-muted border border-brand-border py-2.5 text-xs font-bold text-brand-bone min-h-[44px] flex items-center justify-center gap-2 touch-manipulation"
               >
-                <Phone className="h-4 w-4 text-blue-400" />
+                <Phone className="h-4 w-4 text-brand-brown-light" />
                 <span>Call Shop: (979) 248-9266</span>
               </a>
             </div>
@@ -4841,7 +4841,7 @@ export default function App() {
       {/* -------------------------------------------------------------------- */}
       {/* GLOBAL WEBSITE FOOTER                                                */}
       {/* -------------------------------------------------------------------- */}
-      <footer className="border-t border-slate-800 bg-slate-950 text-slate-400 mt-12">
+      <footer className="border-t border-brand-border bg-brand-panel text-stone-400 mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="md:col-span-2 space-y-3">
@@ -4849,44 +4849,44 @@ export default function App() {
                 <img
                   src={brandLogo}
                   alt="Iron Prairie Fabrication Group LLC"
-                  className="h-10 w-auto rounded border border-slate-800 bg-slate-900 p-0.5"
+                  className="h-10 w-auto rounded border border-brand-border bg-brand-panel-muted p-0.5"
                 />
                 <div>
-                  <span className="font-display text-base font-bold uppercase tracking-wider text-white block">
+                  <span className="font-display text-base font-bold uppercase tracking-wider text-brand-bone block">
                     Iron Prairie Fabrication Group LLC
                   </span>
-                  <span className="text-[11px] text-slate-400 block">ASME B16.48 Paddle Blinds &bull; Industrial Metal Fabrication</span>
+                  <span className="text-[11px] text-brand-muted block">ASME B16.48 Paddle Blinds &bull; Industrial Metal Fabrication</span>
                 </div>
               </div>
-              <p className="text-xs text-slate-400 max-w-md leading-relaxed">
+              <p className="text-xs text-stone-400 max-w-md leading-relaxed">
                 Certified woman-owned metal fabrication enterprise based in Bay City, Texas. Precision CNC plasma plate cutting, ASME B16.48 positive isolation paddle blinds, custom ranch gates, animal pens, tornado shelters, custom bunkers, and municipal infrastructure steelwork. Serving Bay City, Matagorda County, Texas Gulf Coast, and statewide Texas with rapid site delivery, plus daily nationwide shipping across all 50 states.
               </p>
             </div>
 
             <div>
-              <div className="text-xs font-bold text-white uppercase tracking-wider mb-3">Quick Navigation</div>
-              <ul className="space-y-1.5 text-xs text-slate-400">
-                <li><Link to="/about" className="hover:text-blue-400 transition-colors">About Our Shop</Link></li>
-                <li><Link to="/services" className="hover:text-blue-400 transition-colors">Fabrication Services</Link></li>
-                <li><Link to="/projects" className="hover:text-blue-400 transition-colors">Project Portfolio</Link></li>
-                <li><Link to="/woman-owned" className="hover:text-blue-400 transition-colors">Woman-Owned Enterprise</Link></li>
-                <li><Link to="/storefront" className="hover:text-blue-400 transition-colors">ASME B16.48 Paddle Blinds</Link></li>
-                <li><Link to="/shop-floor" className="hover:text-blue-400 transition-colors">Shop Floor Whiteboard</Link></li>
-                <li><Link to="/contact" className="hover:text-blue-400 transition-colors">Request a Quote</Link></li>
+              <div className="text-xs font-bold text-brand-bone uppercase tracking-wider mb-3">Quick Navigation</div>
+              <ul className="space-y-1.5 text-xs text-stone-400">
+                <li><Link to="/about" className="hover:text-brand-bone transition-colors">About Our Shop</Link></li>
+                <li><Link to="/services" className="hover:text-brand-bone transition-colors">Fabrication Services</Link></li>
+                <li><Link to="/projects" className="hover:text-brand-bone transition-colors">Project Portfolio</Link></li>
+                <li><Link to="/woman-owned" className="hover:text-brand-bone transition-colors">Woman-Owned Enterprise</Link></li>
+                <li><Link to="/storefront" className="hover:text-brand-bone transition-colors">ASME B16.48 Paddle Blinds</Link></li>
+                <li><Link to="/shop-floor" className="hover:text-brand-bone transition-colors">Shop Floor Whiteboard</Link></li>
+                <li><Link to="/contact" className="hover:text-brand-bone transition-colors">Request a Quote</Link></li>
               </ul>
             </div>
 
             <div>
-              <div className="text-xs font-bold text-white uppercase tracking-wider mb-3">Facility &amp; Inquiries</div>
-              <div className="space-y-2 text-xs text-slate-400">
-                <div>Phone: <a href="tel:+19792489266" className="text-white hover:text-blue-400 font-bold">(979) 248-9266</a></div>
-                <div>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="text-white hover:text-blue-400 underline">Sales@ironprairiefabrication.com</a></div>
+              <div className="text-xs font-bold text-brand-bone uppercase tracking-wider mb-3">Facility &amp; Inquiries</div>
+              <div className="space-y-2 text-xs text-stone-400">
+                <div>Phone: <a href="tel:+19792489266" className="text-brand-bone hover:text-brand-brown-light font-bold">(979) 248-9266</a></div>
+                <div>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="text-brand-bone hover:text-brand-brown-light underline">Sales@ironprairiefabrication.com</a></div>
                 <div>Facility: 200 County Rd 170, Bay City, TX 77414 (Matagorda County)</div>
-                <div>Service Area: Texas Statewide &bull; <span className="text-blue-400 font-semibold">Nationwide Shipping (All 50 States)</span></div>
-                <div>Government Contractor: <span className="text-emerald-400 font-bold">SAM.gov Registered</span> &bull; <span className="font-mono text-slate-300 font-bold">UEI: XX7XCMGN9XD5</span></div>
-                <div className="pt-2 flex gap-4 text-[11px] text-slate-500">
-                  <Link to="/privacy-policy" className="hover:text-slate-400 underline">Privacy Policy</Link>
-                  <Link to="/terms-of-service" className="hover:text-slate-400 underline">Terms of Service</Link>
+                <div>Service Area: Texas Statewide &bull; <span className="text-brand-bone font-semibold">Nationwide Shipping (All 50 States)</span></div>
+                <div>Government Contractor: <span className="text-emerald-400 font-bold">SAM.gov Registered</span> &bull; <span className="font-mono text-stone-300 font-bold">UEI: XX7XCMGN9XD5</span></div>
+                <div className="pt-2 flex gap-4 text-[11px] text-stone-500">
+                  <Link to="/privacy-policy" className="hover:text-brand-bone underline">Privacy Policy</Link>
+                  <Link to="/terms-of-service" className="hover:text-brand-bone underline">Terms of Service</Link>
                 </div>
               </div>
             </div>

@@ -13,7 +13,7 @@ body {
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
-  @apply bg-slate-100 text-slate-900 font-body antialiased;
+  @apply bg-brand-ink text-stone-300 font-body antialiased;
 }
 
 #root {

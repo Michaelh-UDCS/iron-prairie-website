@@ -4,23 +4,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Core Cobalt & Deep Blue Accents
-        'brand-cobalt': '#1d4ed8',
-        'brand-blue': '#2563eb',
-        'brand-cobalt-light': '#3b82f6',
-        'brand-sky': '#38bdf8',
-        // Legacy fallback alias mapped to cobalt
-        'brand-brown': '#1d4ed8',
-        // Deep Dark Mode UI Surfaces (Industrial Navy / Slate)
-        'brand-navy': '#0a0f1d',
-        'brand-ink': '#060913',
-        'brand-panel': '#0f172a',
-        'brand-panel-muted': '#1e293b',
-        'brand-border': '#334155',
-        // Text & Contrast Elements
-        'brand-bone': '#f8fafc',
-        'brand-muted': '#94a3b8',
-        'brand-ivory': '#ffffff',
+        // Core brand (rustic anchor)
+        'brand-brown': '#6b3b2a',
+        'brand-brown-light': '#8a4d37',
+        // Dark UI surfaces (professional / industrial)
+        'brand-ink': '#161413',
+        'brand-panel': '#1f1c1a',
+        'brand-panel-muted': '#2a2623',
+        'brand-border': '#3d3834',
+        // Text + accents — neutral bone + steel blue (no peach tones)
+        'brand-bone': '#e8e4de',
+        'brand-muted': '#9c9690',
+        'brand-ivory': '#f5f4f2',
+        'brand-blue': '#6d92a3',
       },
       fontFamily: {
         display: ['"Playfair Display"', 'serif'],
