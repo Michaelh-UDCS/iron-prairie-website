@@ -9,6 +9,14 @@
     ],
     "rewrites": [
       {
+        "source": "/api/create-checkout-session",
+        "function": "createStripeCheckoutSession"
+      },
+      {
+        "source": "/api/stripe-webhook",
+        "function": "stripeWebhook"
+      },
+      {
         "source": "/googlef0aac9a4843c12ca.html",
         "destination": "/googlef0aac9a4843c12ca.html"
       },
@@ -25,11 +33,11 @@
           { "key": "X-Frame-Options", "value": "DENY" },
           { "key": "X-XSS-Protection", "value": "1; mode=block" },
           { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-          { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
-          { "key": "Cross-Origin-Resource-Policy", "value": "same-origin" },
-          { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), fullscreen=(self), payment=(), screen-wake-lock=(), web-share=()" },
+          { "key": "Cross-Origin-Opener-Policy", "value": "same-origin-allow-popups" },
+          { "key": "Cross-Origin-Resource-Policy", "value": "cross-origin" },
+          { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), fullscreen=(self), payment=*, screen-wake-lock=(), web-share=()" },
           { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains; preload" },
-          { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://*.firebaseio.com https://*.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://api.indexnow.org; frame-ancestors 'none'; base-uri 'self'; form-action 'self';" }
+          { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://www.googletagmanager.com https://*.firebaseio.com https://*.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https:; connect-src 'self' https://api.stripe.com https://*.googleapis.com https://*.firebaseio.com https://api.indexnow.org; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com;" }
         ]
       },
       {
@@ -39,6 +47,10 @@
         ]
       }
     ]
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs18"
   },
   "firestore": {
     "rules": "firestore.rules"

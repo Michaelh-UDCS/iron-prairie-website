@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ConfiguredBlind, ShopJob } from '../types';
 import { calculateShipping } from '../data/paddleBlindData';
+import { initiateStripeCheckout, isStripeConfigured } from '../services/stripeService';
 import {
   X,
   CheckCircle2,
@@ -10,7 +11,9 @@ import {
   Lock,
   ArrowRight,
   Sparkles,
-  Zap
+  Zap,
+  ExternalLink,
+  Info
 } from 'lucide-react';
 
 interface StripeInstantCheckoutModalProps {
@@ -28,9 +31,10 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
   onOrderSubmitted,
   onViewShopBoard
 }) => {
-  const [paymentType, setPaymentType] = useState<'card' | 'ach'>('card');
+  const [paymentType, setPaymentType] = useState<'card' | 'ach' | 'all'>('card');
   const [isProcessing, setIsProcessing] = useState(false);
   const [submittedJob, setSubmittedJob] = useState<ShopJob | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Form Fields
   const [buyerName, setBuyerName] = useState('');
@@ -38,7 +42,7 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
   const [companyName, setCompanyName] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   
-  // Card Inputs
+  // Card Inputs (for in-modal input simulation)
   const [cardNumber, setCardNumber] = useState('');
   const [cardExp, setCardExp] = useState('');
   const [cardCvc, setCardCvc] = useState('');
@@ -51,6 +55,7 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
 
   if (!isOpen) return null;
 
+  const isLiveStripe = isStripeConfigured();
   const shippingInfo = calculateShipping(cartItems);
   const itemsSubtotal = cartItems.reduce((sum, item) => sum + item.lineTotal, 0);
   const totalWeight = cartItems.reduce((sum, item) => sum + item.totalFinishedWeight, 0);
@@ -61,48 +66,47 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
   const achDiscountAmount = paymentType === 'ach' ? Math.round((itemsSubtotal * achDiscountRate) * 100) / 100 : 0;
   const rawTotal = itemsSubtotal + shippingInfo.cost;
   const finalTotalAmount = Math.round((rawTotal - achDiscountAmount) * 100) / 100;
-  const isLargeOrder = itemsSubtotal >= 2500;
 
-  const handlePaySubmit = (e: React.FormEvent) => {
+  const handlePaySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
+
     if (!buyerEmail.trim() || !buyerName.trim()) {
-      alert('Please provide your name and email.');
+      setErrorMessage('Please provide your contact name and work email.');
       return;
     }
 
     setIsProcessing(true);
 
-    // Simulate Stripe payment processing
-    setTimeout(() => {
-      setIsProcessing(false);
-      const todayStr = new Date().toISOString().split('T')[0];
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      const shipDateStr = tomorrow.toISOString().split('T')[0];
-      const poNum = `STRIPE-${Date.now().toString().slice(-6)}`;
-
-      const newJob: ShopJob = {
-        id: `job-stripe-${Date.now()}`,
-        poNumber: poNum,
-        customerName: companyName.trim() || buyerName.trim(),
+    try {
+      const result = await initiateStripeCheckout({
+        cartItems,
         buyerEmail: buyerEmail.trim(),
-        deliveryAddress: deliveryAddress.trim() || 'Direct Facility Receiving',
-        orderDate: todayStr,
-        scheduledShipDate: shipDateStr,
-        status: 'queued',
-        items: [...cartItems],
-        millHeatNumber: 'A516-HEAT-' + Math.floor(1000 + Math.random() * 9000),
-        heatCertNumber: hasMTR ? `MTR-TX-${Date.now().toString().slice(-5)}` : undefined,
-        carrier: shippingInfo.isLTL ? 'LTL Freight' : 'UPS Ground Priority',
-        totalWeightLbs: Math.round(totalWeight * 10) / 10,
-        totalAmount: finalTotalAmount,
-        mtrRequired: hasMTR,
-        notes: `Stripe Checkout (${paymentType === 'card' ? 'Credit Card / Apple Pay - Paid in Full' : `Stripe ACH Instant Direct Debit - 3% Cash Discount Applied (-$${achDiscountAmount.toFixed(2)}) - Settling to Bluevine`}) | Auth: ch_${Math.random().toString(36).substring(2, 11)}`
-      };
+        buyerName: buyerName.trim(),
+        companyName: companyName.trim(),
+        deliveryAddress: deliveryAddress.trim(),
+        paymentType,
+        shippingCost: shippingInfo.cost,
+        shippingMethod: shippingInfo.method,
+        hasMTR
+      });
 
-      onOrderSubmitted(newJob);
-      setSubmittedJob(newJob);
-    }, 1200);
+      if (result.success) {
+        if (result.redirectUrl) {
+          // Directing to Stripe Hosted Session
+          return;
+        } else if (result.job) {
+          onOrderSubmitted(result.job);
+          setSubmittedJob(result.job);
+        }
+      } else if (result.error) {
+        setErrorMessage(result.error);
+      }
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Unable to process checkout. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -119,8 +123,13 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
                 <h3 className="text-lg font-bold text-slate-100">
                   Instant E-Commerce Checkout
                 </h3>
-                <span className="rounded bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 font-mono text-[10px] font-bold px-2 py-0.5">
-                  POWERED BY STRIPE
+                <span className="rounded bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 font-mono text-[10px] font-bold px-2 py-0.5 flex items-center gap-1">
+                  <span>STRIPE ENGINE</span>
+                  {isLiveStripe ? (
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  ) : (
+                    <span className="text-[9px] text-amber-400">(SANDBOX READY)</span>
+                  )}
                 </span>
               </div>
               <p className="text-xs text-slate-400">
@@ -203,6 +212,13 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
           ) : (
             /* Checkout Form */
             <form onSubmit={handlePaySubmit} className="space-y-4">
+              {errorMessage && (
+                <div className="rounded-xl border border-rose-500/40 bg-rose-950/40 p-3 text-xs text-rose-300 flex items-center gap-2">
+                  <Info className="h-4 w-4 text-rose-400 shrink-0" />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
+
               {/* Order quick overview */}
               <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-4">
                 <div className="flex items-center justify-between text-xs">
@@ -351,7 +367,6 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
                   <div>
                     <input
                       type="text"
-                      required
                       value={cardNumber}
                       onChange={(e) => setCardNumber(e.target.value)}
                       placeholder="4242 •••• •••• 4242"
@@ -362,7 +377,6 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
                   <div className="grid grid-cols-3 gap-2">
                     <input
                       type="text"
-                      required
                       value={cardExp}
                       onChange={(e) => setCardExp(e.target.value)}
                       placeholder="MM / YY"
@@ -370,7 +384,6 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
                     />
                     <input
                       type="text"
-                      required
                       value={cardCvc}
                       onChange={(e) => setCardCvc(e.target.value)}
                       placeholder="CVC / CVV"
@@ -378,7 +391,6 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
                     />
                     <input
                       type="text"
-                      required
                       value={cardZip}
                       onChange={(e) => setCardZip(e.target.value)}
                       placeholder="Billing ZIP"
@@ -414,7 +426,6 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
                   <div className="grid grid-cols-2 gap-2 pt-1">
                     <input
                       type="text"
-                      required
                       value={routingNumber}
                       onChange={(e) => setRoutingNumber(e.target.value)}
                       placeholder="Bank Routing # (9 digits)"
@@ -422,7 +433,6 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
                     />
                     <input
                       type="text"
-                      required
                       value={accountNumber}
                       onChange={(e) => setAccountNumber(e.target.value)}
                       placeholder="Account Number"
@@ -447,7 +457,7 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
                   ) : (
                     <>
                       <Lock className="h-4 w-4" />
-                      <span>Pay ${totalAmount.toFixed(2)} &amp; Dispatch to CNC Plasma Queue</span>
+                      <span>Pay ${finalTotalAmount.toFixed(2)} &amp; Dispatch to CNC Plasma Queue</span>
                     </>
                   )}
                 </button>

@@ -89,6 +89,23 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
   const [isPOModalOpen, setIsPOModalOpen] = useState(false);
   const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
   const [showAddSuccess, setShowAddSuccess] = useState(false);
+  const [stripeSuccessNotice, setStripeSuccessNotice] = useState<string | null>(null);
+
+  // Check for Stripe Checkout return redirect parameters
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const orderStatus = params.get('order_status');
+    const poNum = params.get('po');
+    const sessionId = params.get('session_id');
+
+    if (orderStatus === 'paid' && (poNum || sessionId)) {
+      setStripeSuccessNotice(`Payment Confirmed via Stripe (${poNum || 'Paid in Full'}). Order Queued on Shop Whiteboard.`);
+      setCart([]);
+      // Clean up URL query parameters without reloading
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+  }, [setCart]);
 
   // Calculate live configured blind
   const currentConfig: ConfiguredBlind = useMemo(() => {
@@ -161,6 +178,40 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
           </div>
         </div>
       </section>
+
+      {/* Stripe Payment Success Notification Banner */}
+      {stripeSuccessNotice && (
+        <div className="rounded-2xl border-2 border-emerald-500/50 bg-emerald-950/80 p-4 shadow-xl flex items-center justify-between gap-4 animate-fadeIn">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+              <CheckCircle2 className="h-6 w-6" />
+            </div>
+            <div>
+              <div className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">
+                Stripe Payment Authorized &bull; Bluevine Settlement
+              </div>
+              <div className="text-sm font-semibold text-slate-100 mt-0.5">
+                {stripeSuccessNotice}
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={onViewShopBoard}
+              className="rounded-xl bg-amber-500 px-4 py-2 text-xs font-bold text-slate-950 hover:bg-amber-400 transition-all flex items-center gap-1.5 shadow"
+            >
+              <span>View Whiteboard</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </button>
+            <button
+              onClick={() => setStripeSuccessNotice(null)}
+              className="rounded-lg p-1.5 text-slate-400 hover:text-slate-200"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main Interactive Workspace Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

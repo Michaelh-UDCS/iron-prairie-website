@@ -9,9 +9,11 @@
     "preview": "vite preview",
     "shortcut": "powershell -ExecutionPolicy Bypass -File scripts/create-desktop-shortcuts.ps1",
     "indexnow": "node scripts/post-deploy-indexnow.mjs",
-    "deploy:hosting": "npm run build && npx --yes firebase-tools deploy --only hosting && npm run indexnow"
+    "deploy:hosting": "npm run build && npx --yes firebase-tools deploy --only hosting && npm run indexnow",
+    "deploy:all": "npm run build && npx --yes firebase-tools deploy && npm run indexnow"
   },
   "dependencies": {
+    "@stripe/stripe-js": "^9.14.0",
     "firebase": "^12.12.0",
     "lucide-react": "^1.33.0",
     "react": "^18.2.0",
