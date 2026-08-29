@@ -35,7 +35,7 @@
 ## Procurement & Trust Signals
 - SAM.gov registered government contractor (UEI XX7XCMGN9XD5)
 - Certified woman-owned business positioning for SBE / WBE / HUB participation goals
-- Traceable mill heat documentation and public MTR viewer routes (`/traceability`, `/mtr`)
+- Mill heat documentation and certified MTRs provided with qualifying ASME shipments (managed in internal ERP)
 - Commercial purchasing: Net 30 PO, ACH debit, credit card checkout via Stripe
 
 ## Primary Indexable Routes
@@ -47,7 +47,6 @@
 - https://ironprairiefabrication.com/contact
 - https://ironprairiefabrication.com/storefront
 - https://ironprairiefabrication.com/paddle-blinds
-- https://ironprairiefabrication.com/traceability
 - https://ironprairiefabrication.com/privacy-policy
 - https://ironprairiefabrication.com/terms-of-service
 

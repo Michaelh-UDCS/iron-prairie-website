@@ -183,26 +183,6 @@ const routes = [
     ]
   },
   {
-    path: '/traceability',
-    title: 'ASME MTR Traceability Portal | Bay City, TX Iron Prairie',
-    description: 'Verify Iron Prairie mill test reports, UG-77 stampings, and delivery dockets for ASME B16.48 paddle blinds and isolation spacers online today now.',
-    canonical: `${DOMAIN}/traceability`,
-    breadcrumbs: [
-      { name: 'Home', url: `${DOMAIN}/` },
-      { name: 'ASME Traceability & MTRs', url: `${DOMAIN}/traceability` }
-    ]
-  },
-  {
-    path: '/mtr',
-    title: 'Certified Mill Test Report Vault | Iron Prairie Fab',
-    description: 'Search certified ASME chemical and tensile mill test reports for Texas-cut paddle blinds and positive isolation spacer rings from Iron Prairie TX.',
-    canonical: `${DOMAIN}/mtr`,
-    breadcrumbs: [
-      { name: 'Home', url: `${DOMAIN}/` },
-      { name: 'MTR Vault', url: `${DOMAIN}/mtr` }
-    ]
-  },
-  {
     path: '/404',
     title: '404 Not Found | Iron Prairie Fabrication Bay City TX',
     description: 'Page not found. Return to Iron Prairie Fabrication Group LLC for custom metal fabrication and welding in Bay City, TX with nationwide shipping now.',

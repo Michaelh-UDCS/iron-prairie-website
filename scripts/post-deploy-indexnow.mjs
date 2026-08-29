@@ -14,7 +14,6 @@ const URL_LIST = [
   `https://${HOST}/projects`,
   `https://${HOST}/woman-owned`,
   `https://${HOST}/contact`,
-  `https://${HOST}/traceability`,
   `https://${HOST}/privacy-policy`,
   `https://${HOST}/terms-of-service`,
   `https://${HOST}/llms.txt`,

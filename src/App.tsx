@@ -11,7 +11,6 @@ const Contact = lazy(() => import('./pages/Contact.jsx'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy.jsx'));
 const TermsOfService = lazy(() => import('./pages/TermsOfService.jsx'));
 const NotFound = lazy(() => import('./pages/NotFound.jsx'));
-const PublicMtrViewer = lazy(() => import('./pages/PublicMtrViewer'));
 
 function RouteFallback() {
   return (
@@ -583,7 +582,6 @@ const navLinks = [
   { to: '/projects', label: 'Projects' },
   { to: '/woman-owned', label: 'Woman-Owned' },
   { to: '/storefront', label: 'Paddle Blinds (B2B)' },
-  { to: '/traceability', label: 'ASME Traceability / MTR' },
   { to: '/contact', label: 'Contact' },
 ];
 
@@ -2023,11 +2021,6 @@ export default function App() {
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/storefront" element={renderStorefrontView()} />
             <Route path="/paddle-blinds" element={renderStorefrontView()} />
-            <Route path="/mtr/:heatNumber" element={<PublicMtrViewer />} />
-            <Route path="/mtr" element={<PublicMtrViewer />} />
-            <Route path="/traceability/:refId" element={<PublicMtrViewer />} />
-            <Route path="/traceability" element={<PublicMtrViewer />} />
-            <Route path="/mtr-lookup" element={<PublicMtrViewer />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

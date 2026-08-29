@@ -9,19 +9,22 @@
 - **GitHub push**: `Michaelh-UDCS`
 
 ### Current Phase
-- **Credit Card Checkout Fix — DEPLOYED** (2026-08-29)
+- **Remove Public ASME Traceability / MTR Page — DONE** (2026-08-29)
 
-### Active Task — Credit Card Checkout Fix
-1. [x] Diagnose card vs ACH path
-2. [x] Harden backend card sessions (card-only methods; no ACH opts on card; hotShotFee + surcharge; paymentType metadata)
-3. [x] Harden frontend (no silent sandbox fallback; real errors; pass hotShotFee)
-4. [x] Local Stripe verify (card-only session)
-5. [x] Deploy as `michael@universal-dynamic.com` → hosting + `createStripeCheckoutSession` + `stripeWebhook`
+### Active Task — Hide MTR Traceability from Public Site
+1. [x] Locate nav link + routes (`/traceability`, `/mtr`) and `PublicMtrViewer`
+2. [x] Remove public nav entry so typical users never see it
+3. [x] Remove/disable public routes + sitemap/prerender SEO entries
+4. [x] Keep ERP/operations MTR vault intact (internal only)
+5. [x] Verify no public nav still points at the page
 
 ### Status Update (Latest)
-- Firebase reauth completed as **michael@universal-dynamic.com** only.
-- Deploy complete to `iron-prairie-website` (hosting + Stripe checkout/webhook functions).
-- Card checkout: select **Credit Card** in modal → Stripe hosted page with card fields + 3.5% surcharge line.
+- Removed **"ASME Traceability / MTR"** from main-site nav.
+- Removed public routes: `/traceability`, `/mtr`, `/mtr-lookup` (+ param variants).
+- Deleted `src/pages/PublicMtrViewer.tsx`.
+- Cleaned sitemap, prerender, IndexNow, and llms.txt references.
+- ERP MTR vault (`/operations`, ERP screens) unchanged — internal only.
+- **Not deployed yet** — needs Firebase Hosting deploy to go live.
 
 ### Notes
 - **Live Stripe**: `acct_1Tzf7K2NddnbOHqL`
