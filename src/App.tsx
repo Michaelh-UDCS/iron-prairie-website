@@ -1483,13 +1483,14 @@ export default function App() {
   const [checkoutBankRouting, setCheckoutBankRouting] = useState<string>('');
   const [checkoutBankAccount, setCheckoutBankAccount] = useState<string>('');
 
-  // Checkout Payment Method Selection & Net 30 ACH Mandate State
-  const [checkoutPaymentMethod, setCheckoutPaymentMethod] = useState<PaymentMethodType>('net30_po');
+  // Checkout Payment Method Selection (Bluevine ACH & Credit Card)
+  const [checkoutPaymentMethod, setCheckoutPaymentMethod] = useState<PaymentMethodType>('ach');
   const [achAgreementChecked, setAchAgreementChecked] = useState<boolean>(false);
 
   // Reset checkout fields to blank whenever checkout modal opens
   useEffect(() => {
     if (isCheckoutOpen) {
+      setCheckoutPaymentMethod('ach');
       setCheckoutCompanyName('');
       setCheckoutContactName('');
       setCheckoutEmail('');
@@ -2323,13 +2324,13 @@ export default function App() {
   const handlePlaceOrder = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    let payLabel: 'Credit Card' | 'ACH Direct Debit' | 'Net 30 Commercial PO' = 'Net 30 Commercial PO';
-    let payStatus: 'Paid in Full' | 'ACH Clearing' | 'Net 30 Authorized' = 'Net 30 Authorized';
+    let payLabel: 'Credit Card' | 'ACH Direct Debit' | 'Net 30 Commercial PO' = 'ACH Direct Debit';
+    let payStatus: 'Paid in Full' | 'ACH Clearing' | 'Net 30 Authorized' = 'ACH Clearing';
 
     if (checkoutPaymentMethod === 'credit_card') {
       payLabel = 'Credit Card';
       payStatus = 'Paid in Full';
-    } else if (checkoutPaymentMethod === 'ach') {
+    } else {
       payLabel = 'ACH Direct Debit';
       payStatus = 'ACH Clearing';
     }
@@ -4167,33 +4168,18 @@ export default function App() {
               <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider mb-2">
                 Select Payment &amp; Terms Option:
               </label>
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setCheckoutPaymentMethod('net30_po')}
-                  className={`p-3 rounded-xl border text-left transition-all ${
-                    checkoutPaymentMethod === 'net30_po'
-                      ? 'bg-sky-50 border-sky-600 text-sky-950 shadow-sm ring-1 ring-sky-500'
-                      : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
-                  }`}
-                >
-                  <div className="font-bold text-xs flex items-center gap-1.5">
-                    <FileCheck className="h-3.5 w-3.5 text-sky-700" /> Net 30 PO
-                  </div>
-                  <div className="text-[10px] text-emerald-700 font-bold mt-0.5">0% Surcharge</div>
-                </button>
-
+              <div className="grid grid-cols-2 gap-2.5">
                 <button
                   type="button"
                   onClick={() => setCheckoutPaymentMethod('ach')}
-                  className={`p-3 rounded-xl border text-left transition-all ${
+                  className={`p-3.5 rounded-xl border text-left transition-all ${
                     checkoutPaymentMethod === 'ach'
                       ? 'bg-emerald-50 border-emerald-600 text-emerald-950 shadow-sm ring-1 ring-emerald-500'
                       : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
                   }`}
                 >
                   <div className="font-bold text-xs flex items-center gap-1.5">
-                    <Building className="h-3.5 w-3.5 text-emerald-700" /> Bluevine ACH
+                    <Building className="h-4 w-4 text-emerald-700" /> Bluevine ACH
                   </div>
                   <div className="text-[10px] text-emerald-700 font-bold mt-0.5">0% Fee (Preferred)</div>
                 </button>
@@ -4201,14 +4187,14 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setCheckoutPaymentMethod('credit_card')}
-                  className={`p-3 rounded-xl border text-left transition-all ${
+                  className={`p-3.5 rounded-xl border text-left transition-all ${
                     checkoutPaymentMethod === 'credit_card'
                       ? 'bg-rose-50 border-rose-600 text-rose-950 shadow-sm ring-1 ring-rose-500'
                       : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
                   }`}
                 >
                   <div className="font-bold text-xs flex items-center gap-1.5">
-                    <CreditCard className="h-3.5 w-3.5 text-rose-700" /> Credit Card
+                    <CreditCard className="h-4 w-4 text-rose-700" /> Credit Card
                   </div>
                   <div className="text-[10px] text-rose-700 font-bold mt-0.5">+3.5% Card Fee</div>
                 </button>
@@ -4359,29 +4345,6 @@ export default function App() {
                       className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono"
                     />
                   </div>
-                </div>
-              )}
-
-              {checkoutPaymentMethod === 'net30_po' && (
-                <div className="p-3.5 bg-sky-50 rounded-xl border border-sky-200 space-y-2.5">
-                  <div className="flex items-center justify-between text-sky-950 font-bold">
-                    <span className="flex items-center gap-1.5"><FileCheck className="h-4 w-4 text-sky-700" /> Commercial Net 30 Terms + ACH Authorization</span>
-                    <span className="text-[10px] text-emerald-700 font-mono font-bold">Trade Credit Approved</span>
-                  </div>
-                  
-                  {/* Explicit ACH Agreement Checkbox */}
-                  <label className="flex items-start gap-2.5 cursor-pointer bg-white p-2.5 rounded-lg border border-slate-200">
-                    <input
-                      type="checkbox"
-                      required
-                      checked={achAgreementChecked}
-                      onChange={e => setAchAgreementChecked(e.target.checked)}
-                      className="mt-0.5 h-4 w-4 rounded border-slate-300 text-sky-600 focus:ring-sky-500"
-                    />
-                    <span className="text-[11px] text-slate-700 leading-snug">
-                      I accept Iron Prairie Fabrication Group LLC <strong>Net 30 Invoicing Terms</strong> and authorize electronic ACH Direct Debit payment upon invoice maturity.
-                    </span>
-                  </label>
                 </div>
               )}
 

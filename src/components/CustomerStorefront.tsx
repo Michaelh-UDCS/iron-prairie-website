@@ -875,15 +875,6 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                       <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold">ACH (0% FEE)</span>
                     </div>
 
-                    {/* SECONDARY: Commercial B2B Net 30 PO Checkout */}
-                    <button
-                      type="button"
-                      onClick={() => setIsPOModalOpen(true)}
-                      className="w-full flex items-center justify-center gap-2 rounded-xl bg-sky-800/90 py-2.5 text-xs font-bold text-sky-100 hover:bg-sky-700 transition-all shadow border border-sky-600/40 active:scale-95"
-                    >
-                      <ShieldCheck className="h-4 w-4 text-sky-300" />
-                      <span>1-Click Industrial PO Checkout (Net 30 Terms)</span>
-                    </button>
 
                     {/* TERTIARY: Official Proposal PDF */}
                     <button
