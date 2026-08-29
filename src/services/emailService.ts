@@ -10,12 +10,9 @@ export interface EmailRecipient {
 
 export const IPG_SALES_EMAIL = 'Sales@ironprairiefabrication.com';
 
-// Full IPG Internal Notification Distribution List
+// Full IPG Internal Notification Distribution List (Primary alias forwarding to all IPG personnel)
 export const OWNER_NOTIFICATION_RECIPIENTS: EmailRecipient[] = [
-  { name: 'IPG Sales Desk', email: 'Sales@ironprairiefabrication.com' },
-  { name: 'Alicia Huerta', email: 'Alicia@ironprairiefabrication.com' },
-  { name: 'Russell Huerta', email: 'Russell@ironprairiefabrication.com' },
-  { name: 'Michael Huerta', email: 'mhuerta@ironprairiefabrication.com' }
+  { name: 'IPG Sales & Operations', email: 'Sales@ironprairiefabrication.com' }
 ];
 
 export interface EmailNotificationRecord {
