@@ -821,7 +821,7 @@ exports.cspReport = onRequest({ cors: false }, async (req, res) => {
     for (const entry of reports.slice(0, 20)) {
       const csp = entry['csp-report'] || entry.body || entry;
       console.warn('[csp-report]', JSON.stringify({
-        documentURI: csp.documentURI || csp.document-uri || csp.sourceFile,
+        documentURI: csp.documentURI || csp['document-uri'] || csp.sourceFile,
         violatedDirective: csp.violatedDirective || csp['violated-directive'] || csp.effectiveDirective,
         blockedURI: csp.blockedURI || csp['blocked-uri'],
         disposition: csp.disposition,

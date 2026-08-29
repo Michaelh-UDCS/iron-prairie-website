@@ -146,7 +146,8 @@ body {
 /* Full-bleed home hero */
 .home-hero {
   position: relative;
-  min-height: min(100svh, 52rem);
+  /* Fill remaining viewport under sticky status bar + nav (~130px) */
+  min-height: calc(100svh - 8.25rem);
   display: flex;
   align-items: flex-end;
   overflow: hidden;
@@ -177,13 +178,13 @@ body {
   width: 100%;
   max-width: 72rem;
   margin: 0 auto;
-  padding: clamp(5.5rem, 12vh, 8rem) 1.25rem 3.5rem;
+  padding: clamp(4.5rem, 10vh, 6.5rem) 1.25rem clamp(1.75rem, 4vh, 2.75rem);
 }
 
 .home-hero__brand {
   font-family: 'Playfair Display', Georgia, serif;
   font-weight: 700;
-  font-size: clamp(2.35rem, 5.2vw, 4.25rem);
+  font-size: clamp(2.1rem, 4.6vw, 3.75rem);
   line-height: 1.05;
   letter-spacing: -0.02em;
   color: var(--color-ivory);
@@ -191,15 +192,15 @@ body {
 }
 
 .home-hero__support {
-  margin-top: var(--space-4);
+  margin-top: var(--space-3);
   max-width: 34rem;
   font-size: var(--text-sm);
-  line-height: 1.65;
+  line-height: 1.6;
   color: color-mix(in srgb, var(--color-bone) 92%, transparent);
 }
 
 .home-hero__ctas {
-  margin-top: var(--space-8);
+  margin-top: var(--space-6);
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
