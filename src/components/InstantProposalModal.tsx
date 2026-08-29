@@ -19,7 +19,10 @@ import {
 import {
   ProposalPayload,
   triggerProposalEmailNotification,
-  IPG_SALES_EMAIL
+  IPG_SALES_EMAIL,
+  IPG_CC_EMAIL,
+  IPG_PHONE,
+  IPG_ADDRESS
 } from '../services/emailService';
 import { generateNextProposalNumber, generateNextPoNumber } from '../utils/orderNumberGenerator';
 import brandLogo from '../../Logo.jpg';
@@ -420,7 +423,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                         ASME B16.48 Paddle Blinds &bull; Precision CNC Plasma Cutting &bull; Certified Woman-Owned
                       </div>
                       <div className="text-xs text-slate-500">
-                        200 County Rd 170, Bay City, TX 77414 &bull; Phone: (979) 248-9266 &bull; {IPG_SALES_EMAIL}
+                        {IPG_ADDRESS} &bull; Phone: {IPG_PHONE} &bull; Main: <span className="font-semibold text-slate-700">{IPG_SALES_EMAIL}</span> (CC: {IPG_CC_EMAIL})
                       </div>
                     </div>
                   </div>

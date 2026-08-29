@@ -9,10 +9,14 @@ export interface EmailRecipient {
 }
 
 export const IPG_SALES_EMAIL = 'Sales@ironprairiefabrication.com';
+export const IPG_CC_EMAIL = 'Alicia@ironprairiefabrication.com';
+export const IPG_PHONE = '(979) 248-9266';
+export const IPG_ADDRESS = '200 County Rd 170, Bay City, TX 77414';
 
 // Full IPG Internal Notification Distribution List (Primary alias forwarding to all IPG personnel)
 export const OWNER_NOTIFICATION_RECIPIENTS: EmailRecipient[] = [
-  { name: 'IPG Sales & Operations', email: 'Sales@ironprairiefabrication.com' }
+  { name: 'IPG Sales Desk', email: 'Sales@ironprairiefabrication.com' },
+  { name: 'Alicia - Operations (CC)', email: 'Alicia@ironprairiefabrication.com' }
 ];
 
 export interface EmailNotificationRecord {
@@ -421,16 +425,16 @@ export function generateClientProposalEmailHtml(proposal: ProposalPayload): stri
         <div style="background: #0f172a; padding: 20px 24px; text-align: center; color: #ffffff;">
           <div style="font-size: 14px; font-weight: bold; margin-bottom: 8px;">Ready to lock in your production table slot?</div>
           <div style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">
-            Simply reply to this email with your PO number or call our shop desk at (979) 248-9266.
+            Simply reply to this email (${IPG_SALES_EMAIL}, CC: ${IPG_CC_EMAIL}) with your PO number or call our shop desk at ${IPG_PHONE}.
           </div>
-          <a href="mailto:${IPG_SALES_EMAIL}?subject=Confirm%20PO%20for%20Proposal%20${proposal.proposalId}%20(Request%20ACH%20Discount)" style="display:inline-block; background: #f59e0b; color: #0f172a; font-weight: bold; font-size: 13px; text-decoration: none; padding: 10px 20px; border-radius: 8px;">
+          <a href="mailto:${IPG_SALES_EMAIL}?cc=${IPG_CC_EMAIL}&subject=Confirm%20PO%20for%20Proposal%20${proposal.proposalId}%20(Request%20ACH%20Discount)" style="display:inline-block; background: #f59e0b; color: #0f172a; font-weight: bold; font-size: 13px; text-decoration: none; padding: 10px 20px; border-radius: 8px;">
             Confirm Purchase Order (Lock In 3% ACH Discount)
           </a>
         </div>
 
         <!-- Signoff -->
         <div style="background: #090d16; padding: 14px 24px; text-align: center; font-size: 11px; color: #64748b;">
-          Iron Prairie Fabrication Group LLC &bull; 200 County Rd 170, Bay City, TX 77414 &bull; (979) 248-9266 &bull; ${IPG_SALES_EMAIL}
+          Iron Prairie Fabrication Group LLC &bull; ${IPG_ADDRESS} &bull; ${IPG_PHONE} &bull; ${IPG_SALES_EMAIL} (CC: ${IPG_CC_EMAIL})
         </div>
 
       </div>
@@ -454,6 +458,9 @@ Proposal Reference: ${proposal.proposalId}
 Date Generated:     ${proposal.createdAt}
 Valid Through:      ${proposal.expiresAt} (30-Day Price Lock)
 Prepared From:      ${IPG_SALES_EMAIL}
+CC Distribution:    ${IPG_CC_EMAIL}
+Facility Address:   ${IPG_ADDRESS}
+Direct Shop Phone:  ${IPG_PHONE}
 
 CLIENT DETAILS:
 Company:            ${proposal.companyName}
@@ -728,10 +735,9 @@ https://ironprairiefabrication.com`;
  * Generate a direct mailto URL to launch default mail app addressed to Sales@ironprairiefabrication.com
  */
 export function generateOrderMailtoUrl(orderOrRecord: any): string {
-  const recipients = OWNER_NOTIFICATION_RECIPIENTS.map(r => r.email).join(',');
   const subject = orderOrRecord.subject || `${orderOrRecord.isHotShot ? '🔥 [HOT SHOT RUSH] ' : ''}NEW ORDER #${orderOrRecord.poNumber} - ${orderOrRecord.companyName}`;
   const body = orderOrRecord.rawText || generateOrderEmailText(orderOrRecord);
-  return `mailto:${encodeURIComponent(recipients)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  return `mailto:${encodeURIComponent(IPG_SALES_EMAIL)}?cc=${encodeURIComponent(IPG_CC_EMAIL)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
 /**

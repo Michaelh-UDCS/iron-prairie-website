@@ -63,13 +63,13 @@ export const JobPacketModal: React.FC<JobPacketModalProps> = ({ order, isOpen, o
               />
               <div>
                 <div className="text-sm font-black text-cyan-400 print:text-black tracking-wider uppercase">
-                  IRON PRAIRIE GROUP LLC
+                  IRON PRAIRIE FABRICATION GROUP LLC
                 </div>
                 <div className="text-[11px] text-slate-300 print:text-black">
-                  200 County Rd 170, Bay City, TX 77414 &bull; Phone: (979) 248-9266
+                  200 County Rd 170, Bay City, TX 77414 &bull; Phone: (979) 248-9266 &bull; Sales@ironprairiefabrication.com
                 </div>
                 <div className="text-[10px] text-slate-400 print:text-black font-semibold">
-                  ASME Section VIII Div 1 &amp; ASME B16.48 Quality Program
+                  ASME Section VIII Div 1 &amp; ASME B16.48 Quality Program &bull; CC: Alicia@ironprairiefabrication.com
                 </div>
               </div>
             </div>

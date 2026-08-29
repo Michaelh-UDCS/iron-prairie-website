@@ -266,6 +266,7 @@ exports.sendEmailNotification = onRequest({ cors: true }, async (req, res) => {
           body: JSON.stringify({
             from: 'Iron Prairie Sales <Sales@ironprairiefabrication.com>',
             to: Array.isArray(to) ? to : [to],
+            cc: ['Alicia@ironprairiefabrication.com'],
             reply_to: clientEmail || 'Sales@ironprairiefabrication.com',
             subject: subject,
             html: html || `<pre>${text}</pre>`,
