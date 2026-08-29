@@ -131,6 +131,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
   const handleAddToCart = () => {
     setCart((prev) => [...prev, { ...currentConfig, id: `item-${Date.now()}` }]);
     setShowAddSuccess(true);
+    setIsCartOpen(true);
     setTimeout(() => setShowAddSuccess(false), 2000);
   };
 

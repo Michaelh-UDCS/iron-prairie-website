@@ -5575,14 +5575,24 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-slate-700 font-bold uppercase mb-1">Commercial Work Email</label>
                   <input
                     required
                     type="email"
                     name="email"
-                    defaultValue={clientAccount?.email || 'buyer@dow.com'}
+                    defaultValue={clientAccount?.email || 'michael@universal-dynamic.com'}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white font-medium min-h-[44px]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-slate-700 font-bold uppercase mb-1">Contact Phone</label>
+                  <input
+                    required
+                    type="tel"
+                    name="phone"
+                    defaultValue="979-417-6489"
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white font-medium min-h-[44px]"
                   />
                 </div>
