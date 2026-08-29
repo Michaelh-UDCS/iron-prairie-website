@@ -128,7 +128,7 @@ exports.createStripeCheckoutSession = onRequest({ cors: true }, async (req, res)
         payment_method_types: payment_method_types,
         customer_email: buyerEmail || undefined,
         line_items: line_items,
-        discounts: discounts.length > 0 ? discounts : undefined,
+
         mode: 'payment',
         payment_method_options: {
           us_bank_account: {
@@ -231,6 +231,52 @@ exports.stripeWebhook = onRequest({ cors: false }, async (req, res) => {
       // Persist to Firestore ERP collection
       await db.collection('orders').doc(jobRecord.id).set(jobRecord, { merge: true });
       console.log(`Successfully recorded order ${jobRecord.id} in Firestore.`);
+
+      // Dispatch email notification to IPG shop team via Resend
+      try {
+        const subject = `NEW STRIPE ORDER #${orderRefId} - ${jobRecord.customerName} ($${jobRecord.totalAmount.toFixed(2)})`;
+        const text = `
+CONFIRMED STRIPE ORDER — IRON PRAIRIE FABRICATION
+==================================================
+Order:    ${orderRefId}
+Customer: ${jobRecord.customerName}
+Email:    ${jobRecord.buyerEmail}
+Address:  ${jobRecord.deliveryAddress}
+Total:    $${jobRecord.totalAmount.toFixed(2)}
+Payment:  ${jobRecord.paymentMethod} (${jobRecord.paymentStatus})
+MTR:      ${jobRecord.mtrRequired ? 'YES - MTR PACKET REQUIRED' : 'No'}
+Session:  ${session.id}
+==================================================
+ACTION: Pull stock plate, queue CNC plasma table, stamp heat numbers, and stage for carrier pickup.
+        `.trim();
+
+        const resendApiKey = process.env.RESEND_API_KEY;
+        if (resendApiKey) {
+          const webhookRecipients = Array.from(new Set([
+            'Sales@ironprairiefabrication.com',
+            jobRecord.buyerEmail
+          ])).filter(Boolean);
+
+          await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${resendApiKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              from: 'Iron Prairie Sales <Sales@ironprairiefabrication.com>',
+              to: webhookRecipients,
+              cc: ['Alicia@ironprairiefabrication.com'],
+              reply_to: jobRecord.buyerEmail || 'Sales@ironprairiefabrication.com',
+              subject,
+              text
+            })
+          });
+          console.log(`Email notification dispatched for order ${orderRefId}`);
+        }
+      } catch (emailErr) {
+        console.error('Email notification failed (non-fatal):', emailErr);
+      }
     } catch (dbError) {
       console.error('Error writing order to Firestore:', dbError);
     }
@@ -255,6 +301,13 @@ exports.sendEmailNotification = onRequest({ cors: true }, async (req, res) => {
 
       console.log(`Email notification trigger received for ${to} | Subject: ${subject}`);
 
+      // Assemble unified recipient list with Sales@ and purchaser email
+      const targetRecipients = Array.from(new Set([
+        'Sales@ironprairiefabrication.com',
+        ...(Array.isArray(to) ? to : (to ? [to] : [])),
+        ...(clientEmail ? [clientEmail] : [])
+      ])).filter(Boolean);
+
       // 1. If Resend API key is configured
       if (resendApiKey) {
         const response = await fetch('https://api.resend.com/emails', {
@@ -265,7 +318,7 @@ exports.sendEmailNotification = onRequest({ cors: true }, async (req, res) => {
           },
           body: JSON.stringify({
             from: 'Iron Prairie Sales <Sales@ironprairiefabrication.com>',
-            to: Array.isArray(to) ? to : [to],
+            to: targetRecipients,
             cc: ['Alicia@ironprairiefabrication.com'],
             reply_to: clientEmail || 'Sales@ironprairiefabrication.com',
             subject: subject,

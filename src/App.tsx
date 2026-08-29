@@ -88,6 +88,7 @@ import { RapidMatrixOrderGrid } from './components/RapidMatrixOrderGrid';
 import { InstantProposalModal } from './components/InstantProposalModal';
 import { generateNextPoNumber, generateNextProposalNumber, generateNextWorkOrderNumber } from './utils/orderNumberGenerator';
 import { BulkListRfqModal } from './components/BulkListRfqModal';
+import { initiateStripeCheckout } from './services/stripeService';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -171,7 +172,7 @@ interface ConfiguredItem {
 
 interface CustomerOrder {
   orderId: string;
-  orderSource: 'Website B2B' | 'Amazon Business' | 'Direct PO';
+  orderSource: 'Website B2B' | 'Website B2B (Stripe)' | 'Amazon Business' | 'Direct PO';
   createdAt: string;
   companyName: string;
   contactName: string;
@@ -195,6 +196,7 @@ interface CustomerOrder {
   scheduledShipDate: string;
   carrierName: string;
   trackingNumber: string;
+  stripeSessionId?: string;
 }
 
 interface ClientAccount {
@@ -1468,6 +1470,7 @@ export default function App() {
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false);
   const [confirmedOrder, setConfirmedOrder] = useState<CustomerOrder | null>(null);
+  const [checkoutIsLoading, setCheckoutIsLoading] = useState<boolean>(false);
   const [isAmazonExportOpen, setIsAmazonExportOpen] = useState<boolean>(false);
 
   // Controlled Checkout Form State (Always initialized to blank for every customer session)
@@ -1561,6 +1564,65 @@ export default function App() {
       console.error(e);
     }
   }, [abandonedCarts]);
+
+  // Handle Stripe Checkout return — fires when Stripe redirects back to /?order_status=paid
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const orderStatus = params.get('order_status');
+    const sessionId = params.get('session_id');
+
+    if (orderStatus === 'paid' && sessionId) {
+      // Restore the pending order we stashed before redirecting to Stripe
+      try {
+        const pendingRaw = localStorage.getItem('ipf_pending_stripe_order');
+        if (pendingRaw) {
+          const pending = JSON.parse(pendingRaw);
+          const restoredOrder: CustomerOrder = {
+            orderId: pending.poNumber,
+            orderSource: 'Website B2B (Stripe)',
+            createdAt: new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }),
+            companyName: pending.companyName,
+            contactName: pending.contactName,
+            email: pending.email,
+            jobsiteAddress: pending.address,
+            poNumber: pending.poNumber,
+            items: pending.cart,
+            subtotal: pending.subtotal,
+            shippingCost: pending.shippingCost,
+            hotShotFee: pending.hotShotFee || 0,
+            totalAmount: pending.grandTotal,
+            totalWeightLbs: pending.totalWeightLbs,
+            shippingMethod: pending.shippingMethod,
+            isHotShot: pending.isHotShot || false,
+            isLargeOrder: pending.isLargeOrder || false,
+            leadTimeEstimate: pending.leadTimeEstimate,
+            paymentMethod: pending.paymentType === 'card' ? 'Credit Card' : 'ACH Direct Debit',
+            paymentStatus: pending.paymentType === 'card' ? 'Paid in Full' : 'ACH Clearing',
+            status: 'queued',
+            millHeatNumber: 'Pending Shop Staging',
+            scheduledShipDate: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+            carrierName: pending.totalWeightLbs > 150 ? 'Southeastern Freight' : 'UPS Ground',
+            trackingNumber: 'PENDING-LABEL',
+            stripeSessionId: sessionId,
+          };
+          setOrders(prev => [restoredOrder, ...prev]);
+          setConfirmedOrder(restoredOrder);
+          triggerOrderEmailNotification(restoredOrder);
+          localStorage.removeItem('ipf_pending_stripe_order');
+        }
+      } catch (err) {
+        console.error('Failed to restore Stripe pending order:', err);
+      }
+      // Clean URL params without page reload
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+
+    if (orderStatus === 'cancelled') {
+      setNotificationToast({ type: 'alert', message: '⚠️ Checkout cancelled. Your cart is still saved.' });
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Live Calculating Spec for Active Storefront Configuration
   const liveSpec = useMemo(() => {
@@ -2320,20 +2382,10 @@ export default function App() {
     });
   };
 
-  // Submit Multi-Payment Checkout & Push into Order State
+  // Submit Multi-Payment Checkout → Redirects to Stripe Checkout
   const handlePlaceOrder = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    let payLabel: 'Credit Card' | 'ACH Direct Debit' | 'Net 30 Commercial PO' = 'ACH Direct Debit';
-    let payStatus: 'Paid in Full' | 'ACH Clearing' | 'Net 30 Authorized' = 'ACH Clearing';
-
-    if (checkoutPaymentMethod === 'credit_card') {
-      payLabel = 'Credit Card';
-      payStatus = 'Paid in Full';
-    } else {
-      payLabel = 'ACH Direct Debit';
-      payStatus = 'ACH Clearing';
-    }
+    setCheckoutIsLoading(true);
 
     const companyName = checkoutCompanyName.trim() || 'Commercial Buyer';
     const contactName = checkoutContactName.trim() || 'Plant Sourcing Contact';
@@ -2342,52 +2394,110 @@ export default function App() {
     const address = checkoutAddress.trim() || 'Direct Facility Receiving';
     const rawPo = checkoutPoNumber.trim();
     const poNumber = rawPo || (isHotShotOrder ? generateNextPoNumber('IPF-HOT') : generateNextPoNumber('IPF-PO'));
+    const paymentType = checkoutPaymentMethod === 'credit_card' ? 'card' : 'ach';
+    const hasMTR = cart.some(item => item.requireMTR || item.includeMTR);
+    const shippingMethod = isHotShotOrder ? 'Emergency Hot Shot Courier' : cartTotalWeight > 150 ? 'LTL Palletized Freight' : 'UPS Ground Parcel';
 
-    const newOrder: CustomerOrder = {
-      orderId: poNumber,
-      orderSource: 'Website B2B',
-      createdAt: new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }),
+    // Stash full order context so we can restore it when Stripe redirects back
+    const pendingOrder = {
+      poNumber,
       companyName,
       contactName,
       email,
-      jobsiteAddress: address,
-      poNumber,
-      items: [...cart],
+      phone,
+      address,
+      cart,
       subtotal: cartSubtotal,
       shippingCost: shippingEstimate,
       hotShotFee: activeHotShotFee,
-      totalAmount: grandTotal,
+      grandTotal,
       totalWeightLbs: cartTotalWeight,
-      shippingMethod: isHotShotOrder ? 'Emergency Hot Shot Courier' : cartTotalWeight > 150 ? 'LTL Palletized Freight' : 'UPS Ground Parcel',
+      shippingMethod,
+      paymentType,
       isHotShot: isHotShotOrder,
       isLargeOrder: isLargeVolumeOrder,
       leadTimeEstimate: activeLeadTimeText,
-      paymentMethod: payLabel,
-      paymentStatus: payStatus,
-      status: 'queued',
-      millHeatNumber: isLargeVolumeOrder ? 'Mill Plate Allocation In Progress' : 'Pending Shop Staging',
-      scheduledShipDate: isHotShotOrder ? `${new Date().toISOString().split('T')[0]} (TODAY RUSH)` : isLargeVolumeOrder ? '5-7 Business Days' : new Date(Date.now() + 86400000).toISOString().split('T')[0],
-      carrierName: isHotShotOrder ? 'Iron Prairie Hot-Shot Dedicated' : cartTotalWeight > 150 ? 'Southeastern Freight' : 'UPS Ground',
-      trackingNumber: isHotShotOrder ? 'HOT-SHOT-DIRECT-TRUCK' : 'PENDING-LABEL',
     };
+    try {
+      localStorage.setItem('ipf_pending_stripe_order', JSON.stringify(pendingOrder));
+    } catch (_) { /* storage full or private mode — proceed anyway */ }
 
-    setOrders(prev => [newOrder, ...prev]);
+    try {
+      const result = await initiateStripeCheckout({
+        cartItems: cart as any,
+        buyerEmail: email,
+        buyerName: contactName,
+        companyName,
+        deliveryAddress: address,
+        paymentType,
+        shippingCost: shippingEstimate,
+        shippingMethod,
+        hasMTR,
+      });
 
-    // AUTOMATED ORDER NOTIFICATION DISPATCH TO RUSSELL & ALICIA
-    await triggerOrderEmailNotification(newOrder);
+      // initiateStripeCheckout redirects the browser when successful.
+      // If we are still here it means either:
+      //  a) Stripe functions are not yet deployed (pre-Blaze) → result.isSimulated is true
+      //  b) An unexpected error occurred.
+      if (result.isSimulated || !result.redirectUrl) {
+        // Pre-deployment fallback: save locally and show confirmation as before
+        const payLabel: 'Credit Card' | 'ACH Direct Debit' = paymentType === 'card' ? 'Credit Card' : 'ACH Direct Debit';
+        const payStatus: 'Paid in Full' | 'ACH Clearing' = paymentType === 'card' ? 'Paid in Full' : 'ACH Clearing';
 
-    // If client had an abandoned cart, mark it recovered
-    setAbandonedCarts(prev => prev.map(c => c.companyName === companyName || c.email === email ? { ...c, status: 'Recovered' } : c));
+        const newOrder: CustomerOrder = {
+          orderId: poNumber,
+          orderSource: 'Website B2B',
+          createdAt: new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }),
+          companyName,
+          contactName,
+          email,
+          jobsiteAddress: address,
+          poNumber,
+          items: [...cart],
+          subtotal: cartSubtotal,
+          shippingCost: shippingEstimate,
+          hotShotFee: activeHotShotFee,
+          totalAmount: grandTotal,
+          totalWeightLbs: cartTotalWeight,
+          shippingMethod,
+          isHotShot: isHotShotOrder,
+          isLargeOrder: isLargeVolumeOrder,
+          leadTimeEstimate: activeLeadTimeText,
+          paymentMethod: payLabel,
+          paymentStatus: payStatus,
+          status: 'queued',
+          millHeatNumber: isLargeVolumeOrder ? 'Mill Plate Allocation In Progress' : 'Pending Shop Staging',
+          scheduledShipDate: isHotShotOrder
+            ? `${new Date().toISOString().split('T')[0]} (TODAY RUSH)`
+            : isLargeVolumeOrder ? '5-7 Business Days'
+            : new Date(Date.now() + 86400000).toISOString().split('T')[0],
+          carrierName: isHotShotOrder ? 'Iron Prairie Hot-Shot Dedicated' : cartTotalWeight > 150 ? 'Southeastern Freight' : 'UPS Ground',
+          trackingNumber: isHotShotOrder ? 'HOT-SHOT-DIRECT-TRUCK' : 'PENDING-LABEL',
+        };
 
-    setCart([]);
-    setIsCheckoutOpen(false);
-    setIsHotShotOrder(false);
-    setConfirmedOrder(newOrder);
-
-    setNotificationToast({
-      type: 'email',
-      message: `✉️ Order #${newOrder.poNumber} confirmed! Notification dispatched to ${email} & sales@ironprairiefabrication.com`
-    });
+        setOrders(prev => [newOrder, ...prev]);
+        await triggerOrderEmailNotification(newOrder);
+        setAbandonedCarts(prev => prev.map(c =>
+          c.companyName === companyName || c.email === email ? { ...c, status: 'Recovered' } : c
+        ));
+        setCart([]);
+        setIsCheckoutOpen(false);
+        setIsHotShotOrder(false);
+        setConfirmedOrder(newOrder);
+        setNotificationToast({
+          type: 'email',
+          message: `✉️ Order #${newOrder.poNumber} queued! Note: live payment will be active after deployment.`,
+        });
+        localStorage.removeItem('ipf_pending_stripe_order');
+      }
+      // If redirect happened, browser navigates away — nothing else runs here.
+    } catch (err) {
+      console.error('Checkout error:', err);
+      setNotificationToast({ type: 'alert', message: '⚠️ Checkout error. Please try again or contact us directly.' });
+      localStorage.removeItem('ipf_pending_stripe_order');
+    } finally {
+      setCheckoutIsLoading(false);
+    }
   };
 
   // Move Kanban Order Forward
@@ -4326,24 +4436,14 @@ export default function App() {
               )}
 
               {checkoutPaymentMethod === 'ach' && (
-                <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2.5">
+                <div className="p-3.5 bg-emerald-50 rounded-xl border border-emerald-200 space-y-2">
                   <div className="flex items-center justify-between text-slate-800 font-bold">
-                    <span className="flex items-center gap-1.5"><Building className="h-4 w-4 text-emerald-700" /> Instant ACH Direct Debit</span>
+                    <span className="flex items-center gap-1.5"><Building className="h-4 w-4 text-emerald-700" /> ACH Direct Debit via Stripe</span>
                     <span className="text-[10px] text-emerald-700 font-mono font-semibold">0% Processing Surcharge</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      placeholder="Bank Routing (ABA)"
-                      value={checkoutBankRouting}
-                      onChange={e => setCheckoutBankRouting(e.target.value)}
-                      className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono"
-                    />
-                    <input
-                      placeholder="Account Number"
-                      value={checkoutBankAccount}
-                      onChange={e => setCheckoutBankAccount(e.target.value)}
-                      className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono"
-                    />
+                  <div className="flex items-start gap-2.5 text-[11px] text-emerald-900 bg-white border border-emerald-200 rounded-lg p-2.5">
+                    <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>Your bank account is connected <strong>securely through Stripe</strong> on the next step. You will be redirected to enter your bank credentials — we never see or store your routing or account numbers.</span>
                   </div>
                 </div>
               )}
@@ -4386,15 +4486,27 @@ export default function App() {
                 <button
                   type="button"
                   onClick={() => setIsCheckoutOpen(false)}
-                  className="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl border border-slate-300"
+                  disabled={checkoutIsLoading}
+                  className="w-1/3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 rounded-xl border border-slate-300 disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="w-2/3 bg-sky-700 hover:bg-sky-800 text-white font-bold py-3 rounded-xl shadow-sm text-xs uppercase tracking-wider"
+                  disabled={checkoutIsLoading}
+                  className="w-2/3 bg-sky-700 hover:bg-sky-800 text-white font-bold py-3 rounded-xl shadow-sm text-xs uppercase tracking-wider disabled:opacity-60 flex items-center justify-center gap-2 transition-all"
                 >
-                  Confirm &amp; Queue Order for Burning
+                  {checkoutIsLoading ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                      Redirecting to Secure Checkout…
+                    </>
+                  ) : (
+                    <>Confirm &amp; Proceed to Secure Payment</>
+                  )}
                 </button>
               </div>
             </form>

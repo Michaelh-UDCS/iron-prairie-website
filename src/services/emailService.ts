@@ -608,7 +608,7 @@ export async function triggerOrderEmailNotification(order: any): Promise<EmailNo
   const sentAt = new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
   const rawHtml = generateOrderEmailHtml(order);
   const rawText = generateOrderEmailText(order);
-  const recipients = OWNER_NOTIFICATION_RECIPIENTS.map(r => r.email);
+  const recipients = [...OWNER_NOTIFICATION_RECIPIENTS.map(r => r.email), order.email].filter(Boolean);
 
   const isRush = order.isHotShot;
   const isLarge = order.isLargeOrder;
