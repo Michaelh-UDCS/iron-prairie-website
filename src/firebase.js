@@ -1,5 +1,6 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getAnalytics, isSupported } from 'firebase/analytics';
+import { getFirestore } from 'firebase/firestore';
 
 const measurementId = import.meta.env.VITE_FIREBASE_MEASUREMENT_ID;
 
@@ -20,9 +21,11 @@ function coreConfigComplete() {
 
 let app = null;
 let analytics = null;
+let db = null;
 
 if (coreConfigComplete()) {
   app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+  db = getFirestore(app);
   if (typeof window !== 'undefined' && measurementId) {
     isSupported()
       .then((ok) => {
@@ -36,5 +39,5 @@ if (coreConfigComplete()) {
   );
 }
 
-export { app, analytics };
+export { app, analytics, db };
 export const isFirebaseConfigured = Boolean(app);

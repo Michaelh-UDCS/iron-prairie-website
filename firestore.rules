@@ -2,8 +2,28 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // checkout_leads: written by frontend before Stripe redirect (unauthenticated)
+    // No read/update/delete from client — sales team queries via Firebase Console or Admin SDK
+    match /checkout_leads/{docId} {
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
+
+    // orders: written by Firebase Cloud Functions (Admin SDK bypasses these rules)
+    // notifications: fallback log from Cloud Functions
+    match /orders/{docId} {
+      allow read, write: if false;
+    }
+
+    match /notifications/{docId} {
+      allow read, write: if false;
+    }
+
+    // Default deny all other documents
     match /{document=**} {
       allow read, write: if false;
     }
   }
 }
+

@@ -616,9 +616,127 @@ export const RapidMatrixOrderGrid: React.FC<RapidMatrixOrderGridProps> = ({
 
       </div>
 
-      {/* 2. Rapid Multi-Size Tabular Matrix */}
+      {/* 2. Rapid Multi-Size Tabular Matrix / Mobile Responsive Grid */}
       <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden w-full">
-        <div className="overflow-x-auto w-full">
+        {/* Mobile Dedicated Touch-Friendly Cards (Visible on mobile screens < 640px) */}
+        <div className="sm:hidden divide-y divide-slate-200">
+          {matrixRows.map(row => {
+            const hasQty = row.qty > 0;
+            return (
+              <div
+                key={`mobile-${row.nps}`}
+                className={`p-3.5 space-y-2.5 transition-colors ${
+                  hasQty ? 'bg-sky-50/90 border-l-4 border-l-sky-600' : 'hover:bg-slate-50/60'
+                }`}
+              >
+                {/* Top row: NPS Size + Price */}
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-sky-600 shrink-0"></span>
+                      <span className="font-mono font-black text-base text-slate-900">{row.nps} NPS</span>
+                      <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 font-bold">
+                        {selectedClass}#
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-500 font-sans mt-0.5">
+                      {materials[selectedMaterial]?.name?.split('(')[0] || selectedMaterial} &bull; {row.calcResult.thicknessLabel}
+                    </div>
+                  </div>
+
+                  <div className="text-right">
+                    {isClientLoggedIn ? (
+                      <div>
+                        <div className="flex items-center justify-end gap-1 font-mono">
+                          <span className="text-[10px] text-slate-400 line-through">${row.listPrice.toFixed(2)}</span>
+                          <span className="text-sm font-black text-slate-900">${row.wholesalePrice.toFixed(2)}</span>
+                        </div>
+                        <div className="text-[9px] font-mono text-emerald-800 font-bold bg-emerald-100 px-1.5 py-0.5 rounded border border-emerald-300 w-fit ml-auto mt-0.5">
+                          10% TRADE ACTIVE
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="font-mono text-base font-black text-slate-900">${row.listPrice.toFixed(2)}</div>
+                        <button
+                          type="button"
+                          onClick={onOpenLoginModal}
+                          className="mt-0.5 inline-flex items-center gap-1 text-[10px] font-bold text-sky-800 bg-sky-50 border border-sky-300 px-1.5 py-0.5 rounded"
+                        >
+                          <Lock className="h-2.5 w-2.5 text-sky-600" />
+                          <span>10% Trade: ${row.wholesalePrice.toFixed(2)}</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Middle row: Engineering specs pill strip */}
+                <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-slate-600 bg-slate-50 p-2 rounded-lg border border-slate-200/80">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span><strong>OD:</strong> {row.geom.od.toFixed(3)}"</span>
+                    <span>&bull;</span>
+                    <span><strong>BC:</strong> {row.geom.boltCircle.toFixed(3)}"</span>
+                    <span>&bull;</span>
+                    <span><strong>Weight:</strong> {row.unitWeight} lbs</span>
+                  </div>
+                  {hasQty && (
+                    <span className="text-sky-800 font-bold">
+                      Total: ${(row.qty * (isClientLoggedIn ? row.wholesalePrice : row.listPrice)).toFixed(2)}
+                    </span>
+                  )}
+                </div>
+
+                {/* Bottom row: Line ID / Stamp input + Quantity Stepper */}
+                <div className="flex items-center justify-between gap-2.5 pt-1">
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      maxLength={18}
+                      value={row.customStamp}
+                      onChange={e => handleStampChange(row.nps, e.target.value)}
+                      placeholder={`Line ID / Stamp (e.g. ISO-${row.nps.replace('"', '')})`}
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:border-sky-600 focus:outline-none min-h-[44px] font-mono"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleQtyChange(row.nps, row.qty - 1)}
+                      disabled={row.qty === 0}
+                      aria-label={`Decrease quantity for ${row.nps}`}
+                      className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed touch-manipulation active:scale-90 shadow-sm"
+                    >
+                      <Minus className="h-4 w-4" />
+                    </button>
+                    <input
+                      type="number"
+                      min="0"
+                      max="2000"
+                      value={row.qty === 0 ? '' : row.qty}
+                      onChange={e => handleQtyChange(row.nps, parseInt(e.target.value) || 0)}
+                      placeholder="0"
+                      aria-label={`Quantity for ${row.nps}`}
+                      className="h-11 w-14 rounded-xl border border-slate-300 bg-white text-center font-bold text-sm text-slate-900 focus:border-sky-600 focus:outline-none font-mono"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleQtyChange(row.nps, row.qty + 1)}
+                      aria-label={`Increase quantity for ${row.nps}`}
+                      className="flex h-11 w-11 items-center justify-center rounded-xl border border-sky-600 bg-sky-600 text-white hover:bg-sky-500 touch-manipulation active:scale-90 shadow-sm"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Desktop / Tablet Full 9-Column Table (Visible on sm and above) */}
+        <div className="hidden sm:block overflow-x-auto w-full">
           <table className="w-full min-w-[760px] text-left border-collapse text-xs font-mono">
             <thead>
               <tr className="bg-slate-900 text-slate-200 font-sans uppercase text-[10px] sm:text-[11px] tracking-wider border-b border-slate-800">
@@ -831,9 +949,9 @@ export const RapidMatrixOrderGrid: React.FC<RapidMatrixOrderGridProps> = ({
         )}
       </div>
 
-      {/* 3. Sticky Bottom Action Bar for Multi-Item Batch (Safe-Area Aware) */}
+      {/* 3. Sticky Bottom Action Bar for Multi-Item Batch (Safe-Area Aware & Fixed on Mobile) */}
       {totalSelectedCount > 0 && (
-        <div className="sticky bottom-0 sm:bottom-4 z-40 bg-slate-950/95 backdrop-blur-md text-white rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-800 p-3.5 sm:p-5 shadow-2xl animate-fadeIn flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4 pb-[max(14px,env(safe-area-inset-bottom))]">
+        <div className="fixed sm:sticky bottom-0 sm:bottom-4 inset-x-0 sm:inset-x-auto z-50 bg-slate-950/98 backdrop-blur-lg text-white rounded-t-2xl sm:rounded-2xl border-t sm:border border-slate-800 p-3 sm:p-5 shadow-2xl animate-fadeIn flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5 sm:gap-4 pb-[max(16px,env(safe-area-inset-bottom))] max-w-7xl mx-auto">
           
           <div className="space-y-0.5 text-center lg:text-left min-w-0">
             <div className="flex items-center gap-2 justify-center lg:justify-start flex-wrap">
