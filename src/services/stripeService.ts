@@ -40,6 +40,8 @@ export interface StripeCheckoutPayload {
   shippingCost: number;
   shippingMethod: string;
   hasMTR: boolean;
+  /** Shared order ref used by client stash, Firestore lead, and Stripe metadata */
+  orderRefId?: string;
 }
 
 export interface CheckoutResult {
@@ -67,7 +69,8 @@ export const initiateStripeCheckout = async (
     paymentType,
     shippingCost,
     shippingMethod,
-    hasMTR
+    hasMTR,
+    orderRefId
   } = payload;
 
   const itemsSubtotal = cartItems.reduce((sum, item: any) => sum + (Number(item.lineTotal) || (Number(item.unitPrice) * Number(item.quantity)) || 0), 0);
@@ -99,6 +102,7 @@ export const initiateStripeCheckout = async (
           shippingCost,
           shippingMethod,
           hasMTR,
+          orderRefId,
           originUrl: window.location.origin,
         }),
       });

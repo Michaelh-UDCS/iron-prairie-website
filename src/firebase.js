@@ -1,8 +1,10 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 import { getFirestore } from 'firebase/firestore';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 
 const measurementId = import.meta.env.VITE_FIREBASE_MEASUREMENT_ID;
+const appCheckSiteKey = import.meta.env.VITE_FIREBASE_APPCHECK_SITE_KEY;
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -22,10 +24,25 @@ function coreConfigComplete() {
 let app = null;
 let analytics = null;
 let db = null;
+let appCheck = null;
 
 if (coreConfigComplete()) {
   app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
   db = getFirestore(app);
+
+  if (typeof window !== 'undefined' && appCheckSiteKey) {
+    try {
+      appCheck = initializeAppCheck(app, {
+        provider: new ReCaptchaEnterpriseProvider(appCheckSiteKey),
+        isTokenAutoRefreshEnabled: true,
+      });
+    } catch (err) {
+      if (import.meta.env.DEV) {
+        console.warn('[firebase] App Check init failed:', err);
+      }
+    }
+  }
+
   if (typeof window !== 'undefined' && measurementId) {
     isSupported()
       .then((ok) => {
@@ -39,5 +56,6 @@ if (coreConfigComplete()) {
   );
 }
 
-export { app, analytics, db };
+export { app, analytics, db, appCheck };
 export const isFirebaseConfigured = Boolean(app);
+export const isAppCheckConfigured = Boolean(appCheck);

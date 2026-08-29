@@ -4,9 +4,21 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // checkout_leads: written by frontend before Stripe redirect (unauthenticated)
-    // No read/update/delete from client — sales team queries via Firebase Console or Admin SDK
+    // Require Firebase App Check + validate shape/size; no client read/update/delete
     match /checkout_leads/{docId} {
-      allow create: if true;
+      allow create: if request.app != null
+        && request.resource.data.keys().hasAll([
+          'orderRefId',
+          'buyerEmail',
+          'createdAt'
+        ])
+        && request.resource.data.keys().size() <= 40
+        && request.resource.data.orderRefId is string
+        && request.resource.data.orderRefId.size() > 0
+        && request.resource.data.orderRefId.size() <= 80
+        && request.resource.data.buyerEmail is string
+        && request.resource.data.buyerEmail.size() > 3
+        && request.resource.data.buyerEmail.size() <= 254;
       allow read, update, delete: if false;
     }
 
@@ -26,4 +38,3 @@ service cloud.firestore {
     }
   }
 }
-

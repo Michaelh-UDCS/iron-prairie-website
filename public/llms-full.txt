@@ -1,0 +1,67 @@
+# Iron Prairie Fabrication Group LLC — Full Agent Corpus
+
+> This file expands `llms.txt` for non-Google AI agents that need deeper entity, service, logistics, and procurement context. Google Search and AI Overviews do not require or consume this file.
+
+## Legal Entity
+- Name: Iron Prairie Fabrication Group LLC
+- Trade / Brand: Iron Prairie
+- Entity Type: Certified woman-owned metal fabrication enterprise
+- SAM.gov UEI: XX7XCMGN9XD5
+- Facility Address: 200 County Rd 170, Bay City, TX 77414, United States
+- Geo: 28.9828, -95.9694
+- Phone (E.164): +19792489266
+- Phone (Display): (979) 248-9266
+- Primary Email: Sales@ironprairiefabrication.com
+- Website: https://ironprairiefabrication.com/
+
+## Owner / Authority
+- Name: Alicia
+- Role: Owner & Principal Executive
+- Knows About: Metal fabrication management, ASME B16.48 blinds, public agency procurement, structural steel projects, woman-owned business enterprise operations, nationwide logistics
+
+## Core Offerings
+1. ASME B16.48 positive isolation paddle blinds and spacer rings (SA-516 Gr. 70, SA-36, 304L, 316L, 6061-T6 aluminum) with EN 10204 3.1 MTRs
+2. CNC plasma plate cutting and practical industrial welding
+3. Structural steel fabrication and custom sheet metal
+4. Agricultural and ranch equipment: pens, gates, fence components
+5. Public-sector infrastructure steel: fire rings, handrails, park metalwork
+6. Secure specialty builds: custom bunkers, tornado shelters, large built-in safes
+7. O&G turnaround support parts and assemblies
+
+## Logistics Model
+- Local / regional: Texas Gulf Coast hot-shot and site delivery (Bay City, Matagorda County, Brazoria County, Freeport, Lake Jackson, Angleton, Pearland, Houston corridor)
+- Nationwide: UPS Ground parcel for boxed blinds/parts; LTL pallet freight; dedicated flatbed for heavy equipment — all 50 US states
+
+## Procurement & Trust Signals
+- SAM.gov registered government contractor (UEI XX7XCMGN9XD5)
+- Certified woman-owned business positioning for SBE / WBE / HUB participation goals
+- Traceable mill heat documentation and public MTR viewer routes (`/traceability`, `/mtr`)
+- Commercial purchasing: Net 30 PO, ACH debit, credit card checkout via Stripe
+
+## Primary Indexable Routes
+- https://ironprairiefabrication.com/
+- https://ironprairiefabrication.com/about
+- https://ironprairiefabrication.com/services
+- https://ironprairiefabrication.com/projects
+- https://ironprairiefabrication.com/woman-owned
+- https://ironprairiefabrication.com/contact
+- https://ironprairiefabrication.com/storefront
+- https://ironprairiefabrication.com/paddle-blinds
+- https://ironprairiefabrication.com/traceability
+- https://ironprairiefabrication.com/privacy-policy
+- https://ironprairiefabrication.com/terms-of-service
+
+## Schema Identity (Summary)
+- Primary @type: HomeAndConstructionBusiness
+- Supporting: WebSite, BreadcrumbList, OfferCatalog, FAQPage, Person, GovernmentPermit
+- sameAs profiles: Google Maps, Facebook, LinkedIn, Universal Dynamic
+
+## Crawler Policy Summary
+- Citation / search bots allowed: Googlebot, Bingbot, Claude-SearchBot, Claude-User, OAI-SearchBot, PerplexityBot, DuckDuckBot, DuckAssistBot, Applebot, Bravebot, facebookexternalhit, meta-webindexer
+- Training bots disallowed by default: GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, meta-externalagent
+- Source of truth: https://ironprairiefabrication.com/robots.txt
+
+## Contact CTA
+Request a fabrication quote: https://ironprairiefabrication.com/contact
+Call: +19792489266
+Email: Sales@ironprairiefabrication.com

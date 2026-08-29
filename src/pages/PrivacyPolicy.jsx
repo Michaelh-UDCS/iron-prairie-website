@@ -47,6 +47,13 @@ export default function PrivacyPolicy() {
             Our website is hosted on secure cloud infrastructure (Firebase / Google Cloud Platform). We do not share your confidential project drawings or contact details with unauthorized third parties.
           </p>
         </div>
+
+        <div className="rounded-xl bg-white p-5 shadow-sm border border-stone-200/80 md:col-span-2">
+          <h2 className="text-sm font-bold text-slate-900">Search &amp; AI Crawler Policy</h2>
+          <p className="mt-2 text-xs leading-relaxed text-slate-600">
+            Iron Prairie Fabrication Group LLC allows verified search and AI citation crawlers (including Googlebot, Bingbot, Claude-SearchBot, Claude-User, OAI-SearchBot, PerplexityBot, DuckDuckBot, DuckAssistBot, Applebot, and Bravebot) so customers can discover our fabrication services. We disallow model-training crawlers by default (including GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, and meta-externalagent). The live policy is published at <a href="/robots.txt" className="text-brand-brown underline hover:text-brand-brown-light">/robots.txt</a>, with an agent summary at <a href="/llms.txt" className="text-brand-brown underline hover:text-brand-brown-light">/llms.txt</a>.
+          </p>
+        </div>
       </section>
 
       <section className="rounded-2xl bg-white border border-stone-200/90 p-6 text-slate-800 shadow-sm">

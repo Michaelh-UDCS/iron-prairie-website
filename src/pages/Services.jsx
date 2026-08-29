@@ -76,9 +76,9 @@ export default function Services() {
               <Truck className="h-3 w-3 text-emerald-700" /> Ships Nationwide Daily
             </span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-brand-brown font-display">
+          <p className="text-2xl sm:text-3xl font-extrabold tracking-tight text-brand-brown font-display">
             ASME B16.48 Positive Isolation Paddle Blinds &amp; Spacers
-          </h2>
+          </p>
           <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
             In-house high-definition CNC cutting from domestic A516-70 carbon and 304L/316L stainless plate. Multi-size turnaround table ordering, certified EN 10204 3.1 MTRs, same-day emergency hot-shot courier across Texas, and <strong>daily UPS &amp; LTL freight shipping across all 50 states</strong>.
           </p>

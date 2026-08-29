@@ -137,6 +137,7 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
         shippingCost: shippingInfo.cost,
         shippingMethod: shippingInfo.method,
         hasMTR,
+        orderRefId,
       });
 
       if (result.success) {

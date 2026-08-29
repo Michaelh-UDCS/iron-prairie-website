@@ -1,16 +1,25 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
-import Home from './pages/Home.jsx';
-import About from './pages/About.jsx';
-import Services from './pages/Services.jsx';
-import Projects from './pages/Projects.jsx';
-import WomanOwned from './pages/WomanOwned.jsx';
-import Contact from './pages/Contact.jsx';
-import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
-import TermsOfService from './pages/TermsOfService.jsx';
-import NotFound from './pages/NotFound.jsx';
-import PublicMtrViewer from './pages/PublicMtrViewer';
 import brandLogo from '../Logo.jpg';
+
+const Home = lazy(() => import('./pages/Home.jsx'));
+const About = lazy(() => import('./pages/About.jsx'));
+const Services = lazy(() => import('./pages/Services.jsx'));
+const Projects = lazy(() => import('./pages/Projects.jsx'));
+const WomanOwned = lazy(() => import('./pages/WomanOwned.jsx'));
+const Contact = lazy(() => import('./pages/Contact.jsx'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy.jsx'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService.jsx'));
+const NotFound = lazy(() => import('./pages/NotFound.jsx'));
+const PublicMtrViewer = lazy(() => import('./pages/PublicMtrViewer'));
+
+function RouteFallback() {
+  return (
+    <div className="flex min-h-[40vh] items-center justify-center px-4" role="status" aria-live="polite">
+      <p className="text-sm font-mono text-slate-500">Loading…</p>
+    </div>
+  );
+}
 import {
   ShoppingCart,
   Trash2,
@@ -84,10 +93,16 @@ import {
   EmailNotificationRecord,
   IPG_SALES_EMAIL
 } from './services/emailService';
-import { RapidMatrixOrderGrid } from './components/RapidMatrixOrderGrid';
-import { InstantProposalModal } from './components/InstantProposalModal';
+const RapidMatrixOrderGrid = lazy(() =>
+  import('./components/RapidMatrixOrderGrid').then((m) => ({ default: m.RapidMatrixOrderGrid }))
+);
+const InstantProposalModal = lazy(() =>
+  import('./components/InstantProposalModal').then((m) => ({ default: m.InstantProposalModal }))
+);
+const BulkListRfqModal = lazy(() =>
+  import('./components/BulkListRfqModal').then((m) => ({ default: m.BulkListRfqModal }))
+);
 import { generateNextPoNumber, generateNextProposalNumber, generateNextWorkOrderNumber } from './utils/orderNumberGenerator';
-import { BulkListRfqModal } from './components/BulkListRfqModal';
 import { initiateStripeCheckout } from './services/stripeService';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
@@ -1538,7 +1553,7 @@ export default function App() {
     const phone = checkoutPhone.trim() || '';
     const address = checkoutAddress.trim() || 'Direct Facility Receiving';
     const rawPo = checkoutPoNumber.trim();
-    const poNumber = rawPo || (isHotShotOrder ? generateNextPoNumber('IPF-HOT') : generateNextPoNumber('IPF-PO'));
+    const poNumber = rawPo || `IPG-${Date.now().toString().slice(-6)}`;
     const paymentType = checkoutPaymentMethod === 'credit_card' ? 'card' : 'ach';
     const hasMTR = cart.some(item => item.requireMTR || item.includeMTR);
     const shippingMethod = isHotShotOrder ? 'Emergency Hot Shot Courier' : cartTotalWeight > 150 ? 'LTL Palletized Freight' : 'UPS Ground Parcel';
@@ -1615,6 +1630,7 @@ export default function App() {
         shippingCost: shippingEstimate,
         shippingMethod,
         hasMTR,
+        orderRefId: poNumber,
       });
 
       // initiateStripeCheckout redirects the browser when successful.
@@ -1780,6 +1796,12 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#f7f5f0] text-slate-800 font-sans antialiased selection:bg-brand-brown selection:text-white flex flex-col justify-between overflow-x-hidden w-full max-w-full">
       <ScrollToTop />
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-brand-brown focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:outline-none focus:ring-2 focus:ring-brand-bone"
+      >
+        Skip to main content
+      </a>
       
       {/* -------------------------------------------------------------------- */}
       {/* TOP EMERGENCY DISPATCH & OWNER PRICING STATUS BAR                    */}
@@ -1916,6 +1938,8 @@ export default function App() {
               onClick={() => setMobileOpen(!mobileOpen)}
               className="p-2 sm:p-2.5 rounded-lg border border-brand-border text-stone-300 hover:bg-brand-panel-muted lg:hidden min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center touch-manipulation"
               aria-label="Toggle navigation menu"
+              aria-expanded={mobileOpen}
+              aria-controls="mobile-primary-nav"
             >
               <Menu className="h-5 w-5" />
             </button>
@@ -1925,7 +1949,7 @@ export default function App() {
 
         {/* Mobile Navigation Dropdown */}
         {mobileOpen && (
-          <nav className="border-t border-brand-border bg-brand-panel p-4 space-y-2.5 lg:hidden shadow-2xl animate-fadeIn max-h-[85vh] overflow-y-auto">
+          <nav id="mobile-primary-nav" aria-label="Mobile primary navigation" className="border-t border-brand-border bg-brand-panel p-4 space-y-2.5 lg:hidden shadow-2xl animate-fadeIn max-h-[85vh] overflow-y-auto">
             {navLinks.map((item) => {
               const isCatalog = item.to === '/storefront' || item.to === '/paddle-blinds';
               return (
@@ -1971,24 +1995,26 @@ export default function App() {
       {/* MULTI-ROUTE APPLICATION CONTENT                                      */}
       {/* -------------------------------------------------------------------- */}
       <main id="main-content" className="flex-1 min-w-0 w-full overflow-hidden">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/woman-owned" element={<WomanOwned />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/terms-of-service" element={<TermsOfService />} />
-          <Route path="/storefront" element={renderStorefrontView()} />
-          <Route path="/paddle-blinds" element={renderStorefrontView()} />
-          <Route path="/mtr/:heatNumber" element={<PublicMtrViewer />} />
-          <Route path="/mtr" element={<PublicMtrViewer />} />
-          <Route path="/traceability/:refId" element={<PublicMtrViewer />} />
-          <Route path="/traceability" element={<PublicMtrViewer />} />
-          <Route path="/mtr-lookup" element={<PublicMtrViewer />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={<RouteFallback />}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/woman-owned" element={<WomanOwned />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/storefront" element={renderStorefrontView()} />
+            <Route path="/paddle-blinds" element={renderStorefrontView()} />
+            <Route path="/mtr/:heatNumber" element={<PublicMtrViewer />} />
+            <Route path="/mtr" element={<PublicMtrViewer />} />
+            <Route path="/traceability/:refId" element={<PublicMtrViewer />} />
+            <Route path="/traceability" element={<PublicMtrViewer />} />
+            <Route path="/mtr-lookup" element={<PublicMtrViewer />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </main>
 
       {/* -------------------------------------------------------------------- */}
@@ -3360,28 +3386,32 @@ export default function App() {
       {/* -------------------------------------------------------------------- */}
       {/* INSTANT PROPOSAL GENERATOR & LETTERHEAD PDF MODAL                     */}
       {/* -------------------------------------------------------------------- */}
-      <InstantProposalModal
-        isOpen={isProposalModalOpen}
-        onClose={() => setIsProposalModalOpen(false)}
-        items={proposalModalItems}
-        onConfirmOrderAsPO={handleConfirmProposalAsPO}
-      />
+      <Suspense fallback={null}>
+        <InstantProposalModal
+          isOpen={isProposalModalOpen}
+          onClose={() => setIsProposalModalOpen(false)}
+          items={proposalModalItems}
+          onConfirmOrderAsPO={handleConfirmProposalAsPO}
+        />
+      </Suspense>
 
       {/* -------------------------------------------------------------------- */}
       {/* TURNAROUND BULK BOM LIST & 10% TRADE RFQ MODAL                        */}
       {/* -------------------------------------------------------------------- */}
-      <BulkListRfqModal
-        isOpen={isBulkRfqModalOpen}
-        onClose={() => setIsBulkRfqModalOpen(false)}
-        onSuccessLogin={(acc) => {
-          setClientAccount(acc);
-          setIsClientLoggedIn(true);
-          setNotificationToast({
-            type: 'success',
-            message: `🎉 10% Direct Wholesale Manufacturing Discount Active for ${acc.companyName}!`
-          });
-        }}
-      />
+      <Suspense fallback={null}>
+        <BulkListRfqModal
+          isOpen={isBulkRfqModalOpen}
+          onClose={() => setIsBulkRfqModalOpen(false)}
+          onSuccessLogin={(acc) => {
+            setClientAccount(acc);
+            setIsClientLoggedIn(true);
+            setNotificationToast({
+              type: 'success',
+              message: `🎉 10% Direct Wholesale Manufacturing Discount Active for ${acc.companyName}!`
+            });
+          }}
+        />
+      </Suspense>
 
       {/* -------------------------------------------------------------------- */}
       {/* GLOBAL NOTIFICATION TOAST POPUP                                      */}
