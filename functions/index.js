@@ -255,7 +255,9 @@ ACTION: Pull stock plate, queue CNC plasma table, stamp heat numbers, and stage 
           const webhookRecipients = Array.from(new Set([
             'Sales@ironprairiefabrication.com',
             jobRecord.buyerEmail
-          ])).filter(Boolean);
+          ]))
+            .filter(Boolean)
+            .filter(e => e.toLowerCase() !== 'alicia@ironprairiefabrication.com');
 
           await fetch('https://api.resend.com/emails', {
             method: 'POST',
@@ -301,12 +303,21 @@ exports.sendEmailNotification = onRequest({ cors: true }, async (req, res) => {
 
       console.log(`Email notification trigger received for ${to} | Subject: ${subject}`);
 
-      // Assemble unified recipient list with Sales@ and purchaser email
-      const targetRecipients = Array.from(new Set([
+      const ccList = ['Alicia@ironprairiefabrication.com'];
+
+      // Assemble unified primary recipient list: Sales@ and purchaser email ONLY (exclude anyone on the CC list)
+      const rawRecipients = [
         'Sales@ironprairiefabrication.com',
         ...(Array.isArray(to) ? to : (to ? [to] : [])),
         ...(clientEmail ? [clientEmail] : [])
-      ])).filter(Boolean);
+      ];
+
+      const targetRecipients = Array.from(new Set(
+        rawRecipients
+          .filter(Boolean)
+          .map(e => e.trim())
+          .filter(e => !ccList.map(c => c.toLowerCase()).includes(e.toLowerCase()))
+      ));
 
       // 1. If Resend API key is configured
       if (resendApiKey) {
@@ -319,7 +330,7 @@ exports.sendEmailNotification = onRequest({ cors: true }, async (req, res) => {
           body: JSON.stringify({
             from: 'Iron Prairie Sales <Sales@ironprairiefabrication.com>',
             to: targetRecipients,
-            cc: ['Alicia@ironprairiefabrication.com'],
+            cc: ccList,
             reply_to: clientEmail || 'Sales@ironprairiefabrication.com',
             subject: subject,
             html: html || `<pre>${text}</pre>`,

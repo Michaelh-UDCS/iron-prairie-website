@@ -13,9 +13,12 @@ export const IPG_CC_EMAIL = 'Alicia@ironprairiefabrication.com';
 export const IPG_PHONE = '(979) 248-9266';
 export const IPG_ADDRESS = '200 County Rd 170, Bay City, TX 77414';
 
-// Full IPG Internal Notification Distribution List (Primary alias forwarding to all IPG personnel)
+// Primary To: recipient list (Sales Desk only; Alicia is explicitly CC'd)
 export const OWNER_NOTIFICATION_RECIPIENTS: EmailRecipient[] = [
-  { name: 'IPG Sales Desk', email: 'Sales@ironprairiefabrication.com' },
+  { name: 'IPG Sales Desk', email: 'Sales@ironprairiefabrication.com' }
+];
+
+export const CC_NOTIFICATION_RECIPIENTS: EmailRecipient[] = [
   { name: 'Alicia - Operations (CC)', email: 'Alicia@ironprairiefabrication.com' }
 ];
 
@@ -527,7 +530,7 @@ export async function triggerProposalEmailNotification(proposal: ProposalPayload
   const sentAt = new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
   const rawHtml = generateClientProposalEmailHtml(proposal);
   const rawText = generateClientProposalEmailText(proposal);
-  const recipients = [proposal.email, ...OWNER_NOTIFICATION_RECIPIENTS.map(r => r.email)];
+  const recipients = [proposal.email, IPG_SALES_EMAIL].filter(Boolean);
 
   const isRush = proposal.isHotShot;
   const subject = `Official Iron Prairie Proposal #${proposal.proposalId} - ${proposal.companyName} ($${proposal.totalAmount.toFixed(2)})`;
@@ -608,7 +611,7 @@ export async function triggerOrderEmailNotification(order: any): Promise<EmailNo
   const sentAt = new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
   const rawHtml = generateOrderEmailHtml(order);
   const rawText = generateOrderEmailText(order);
-  const recipients = [...OWNER_NOTIFICATION_RECIPIENTS.map(r => r.email), order.email].filter(Boolean);
+  const recipients = [IPG_SALES_EMAIL, order.email].filter(Boolean);
 
   const isRush = order.isHotShot;
   const isLarge = order.isLargeOrder;
