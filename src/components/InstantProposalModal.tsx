@@ -86,7 +86,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
       companyName: companyName.trim(),
       buyerName: buyerName.trim(),
       email: email.trim(),
-      phone: buyerPhone.trim() || '979-417-6489',
+      phone: buyerPhone.trim(),
       jobsiteAddress: jobsiteAddress.trim() || 'Direct Plant Receiving / Gate',
       items: [...items],
       subtotal,
@@ -244,7 +244,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                         required
                         value={buyerName}
                         onChange={e => setBuyerName(e.target.value)}
-                        placeholder="e.g. Mark Henderson"
+                        placeholder="e.g. John Doe (Lead Buyer)"
                         className="w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-9 pr-3 text-xs text-slate-900 focus:border-sky-600 focus:outline-none"
                       />
                     </div>
@@ -261,7 +261,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                         required
                         value={email}
                         onChange={e => setEmail(e.target.value)}
-                        placeholder="e.g. m.henderson@plant.com"
+                        placeholder="e.g. buyer@company.com"
                         className="w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-9 pr-3 text-xs text-slate-900 focus:border-sky-600 focus:outline-none"
                       />
                     </div>
@@ -278,7 +278,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                         required
                         value={buyerPhone}
                         onChange={e => setBuyerPhone(e.target.value)}
-                        placeholder="e.g. (979) 417-6489"
+                        placeholder="e.g. (979) 555-0100"
                         className="w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-9 pr-3 text-xs text-slate-900 focus:border-sky-600 focus:outline-none"
                       />
                     </div>
@@ -295,7 +295,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                         required
                         value={companyName}
                         onChange={e => setCompanyName(e.target.value)}
-                        placeholder="e.g. Dow Chemical / Plant Site"
+                        placeholder="e.g. Plant Facility / Company Name"
                         className="w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-9 pr-3 text-xs text-slate-900 focus:border-sky-600 focus:outline-none"
                       />
                     </div>
@@ -443,7 +443,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                     <div className="font-bold text-slate-900 text-sm">{generatedProposal.companyName}</div>
                     <div className="text-slate-700">{generatedProposal.buyerName}</div>
                     <div className="text-sky-700 font-mono">{generatedProposal.email}</div>
-                    <div className="text-slate-700 text-xs font-mono">Phone: {generatedProposal.phone || '979-417-6489'}</div>
+                    {generatedProposal.phone && <div className="text-slate-700 text-xs font-mono">Phone: {generatedProposal.phone}</div>}
                   </div>
 
                   <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-1">

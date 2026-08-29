@@ -183,39 +183,6 @@ const routes = [
     ]
   },
   {
-    path: '/operations',
-    title: 'Shop Operations Workspace | Iron Prairie Fabrication',
-    description: 'Owner and shop floor operations platform for Iron Prairie Fabrication Group LLC in Texas.',
-    canonical: `${DOMAIN}/operations`,
-    robots: 'noindex, nofollow',
-    breadcrumbs: [
-      { name: 'Home', url: `${DOMAIN}/` },
-      { name: 'Operations', url: `${DOMAIN}/operations` }
-    ]
-  },
-  {
-    path: '/erp',
-    title: 'Enterprise Resource Planning Platform | Iron Prairie Group',
-    description: 'Internal ERP and shop floor manufacturing suite for Iron Prairie Group LLC.',
-    canonical: `${DOMAIN}/erp`,
-    robots: 'noindex, nofollow',
-    breadcrumbs: [
-      { name: 'Home', url: `${DOMAIN}/` },
-      { name: 'ERP Platform', url: `${DOMAIN}/erp` }
-    ]
-  },
-  {
-    path: '/shop-floor',
-    title: 'Shop Floor Production Whiteboard | Iron Prairie Fabrication',
-    description: 'Owner operations and CNC plasma production board for Iron Prairie Fabrication Group LLC in Texas.',
-    canonical: `${DOMAIN}/shop-floor`,
-    robots: 'noindex, nofollow',
-    breadcrumbs: [
-      { name: 'Home', url: `${DOMAIN}/` },
-      { name: 'Shop Floor Operations', url: `${DOMAIN}/shop-floor` }
-    ]
-  },
-  {
     path: '/traceability',
     title: 'ASME Section VIII Div 1 & Amazon Material Traceability Portal | Iron Prairie',
     description: 'Verify mill test reports (MTR EN 10204 3.1), UG-77 hard stampings, and Amazon/B2B delivery dockets for Iron Prairie ASME B16.48 paddle blinds.',

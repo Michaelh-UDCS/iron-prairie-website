@@ -55,9 +55,8 @@ echo.
 echo ------------------------------------------------------------------------
 echo   Local Web Links:
 echo   • Public Website:          http://localhost:5173/
-echo   • Operations / ASME Suite: http://localhost:5173/operations
-echo   • Custom Blind Storefront: http://localhost:5173/storefront
-echo   • Shop Floor Dashboard:    http://localhost:5173/shop-floor
+echo   • ASME Paddle Blinds:      http://localhost:5173/storefront
+echo   • ASME Traceability / MTR: http://localhost:5173/traceability
 echo ------------------------------------------------------------------------
 echo   (*) Changes saved in code will automatically update in your browser.
 echo   (*) Press Ctrl+C to stop the server when you are done.

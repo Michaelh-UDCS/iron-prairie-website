@@ -22,7 +22,7 @@ export const FastPOCheckoutModal: React.FC<FastPOCheckoutModalProps> = ({
   const [buyerName, setBuyerName] = useState('');
   const [buyerEmail, setBuyerEmail] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
-  const [poNumber, setPoNumber] = useState(`PO-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`);
+  const [poNumber, setPoNumber] = useState('');
   const [paymentTerms, setPaymentTerms] = useState('Net 30 Commercial Account');
   const [specialNotes, setSpecialNotes] = useState('');
   const [submittedJob, setSubmittedJob] = useState<ShopJob | null>(null);
@@ -49,7 +49,7 @@ export const FastPOCheckoutModal: React.FC<FastPOCheckoutModalProps> = ({
 
     const newJob: ShopJob = {
       id: `job-${Date.now()}`,
-      poNumber: poNumber.trim() || `PO-ONLINE-${Date.now().toString().slice(-4)}`,
+      poNumber: poNumber.trim() || `PO-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
       customerName: companyName.trim(),
       buyerEmail: buyerEmail.trim(),
       deliveryAddress: deliveryAddress.trim() || 'Direct Facility Receiving',
@@ -193,7 +193,7 @@ export const FastPOCheckoutModal: React.FC<FastPOCheckoutModalProps> = ({
                       required
                       value={companyName}
                       onChange={(e) => setCompanyName(e.target.value)}
-                      placeholder="e.g. Dow Chemical / Plant Site"
+                      placeholder="e.g. Plant Facility / Company Name"
                       className="w-full rounded-lg border border-slate-700 bg-slate-950 py-2 pl-9 pr-3 text-xs text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
                     />
                   </div>
@@ -201,14 +201,13 @@ export const FastPOCheckoutModal: React.FC<FastPOCheckoutModalProps> = ({
 
                 <div>
                   <label className="block text-slate-300 font-semibold mb-1">
-                    PO # / Work Order Ref <span className="text-amber-400">*</span>
+                    PO # / Work Order Ref
                   </label>
                   <input
                     type="text"
-                    required
                     value={poNumber}
                     onChange={(e) => setPoNumber(e.target.value)}
-                    placeholder="e.g. PO-2026-8849"
+                    placeholder="e.g. PO-2026-8849 (or blank to auto-generate)"
                     className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-xs font-mono text-amber-300 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
                   />
                 </div>
@@ -223,7 +222,7 @@ export const FastPOCheckoutModal: React.FC<FastPOCheckoutModalProps> = ({
                       type="text"
                       value={buyerName}
                       onChange={(e) => setBuyerName(e.target.value)}
-                      placeholder="e.g. Mike Henderson"
+                      placeholder="e.g. John Doe (Procurement)"
                       className="w-full rounded-lg border border-slate-700 bg-slate-950 py-2 pl-9 pr-3 text-xs text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
                     />
                   </div>
@@ -257,7 +256,7 @@ export const FastPOCheckoutModal: React.FC<FastPOCheckoutModalProps> = ({
                     type="text"
                     value={deliveryAddress}
                     onChange={(e) => setDeliveryAddress(e.target.value)}
-                    placeholder="e.g. Plant Gate 4 Receiving, TX 77531"
+                    placeholder="e.g. Gate 4 Receiving / Laydown Yard, TX"
                     className="w-full rounded-lg border border-slate-700 bg-slate-950 py-2 pl-9 pr-3 text-xs text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
                   />
                 </div>

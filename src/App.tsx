@@ -10,8 +10,6 @@ import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
 import TermsOfService from './pages/TermsOfService.jsx';
 import NotFound from './pages/NotFound.jsx';
 import PublicMtrViewer from './pages/PublicMtrViewer';
-import { OperationsApp } from './operations/OperationsApp';
-import { OperationsAuthGate } from './operations/OperationsAuthGate';
 import brandLogo from '../Logo.jpg';
 import {
   ShoppingCart,
@@ -559,411 +557,9 @@ function calculateDynamicBlindPrice(
   };
 }
 
-// Initial Mock Orders Seed for Owner Kanban
-const INITIAL_ORDERS: CustomerOrder[] = [
-  {
-    orderId: 'PO-2026-8849',
-    orderSource: 'Website B2B',
-    createdAt: '2026-08-20 08:30 AM',
-    companyName: 'Dow Chemical (Texas Plant B)',
-    contactName: 'Mark Henderson (Turnaround Lead)',
-    email: 'm.henderson@dow.com',
-    jobsiteAddress: 'Plant Gate 14 Receiving, TX 77531',
-    poNumber: 'PO-DOW-TX-88492',
-    items: [
-      {
-        id: 'ITEM-1',
-        partNumber: 'PB516-CX150T11GA4',
-        nps: '4"',
-        nominalSizeInches: 4,
-        pressureClass: 150,
-        materialCode: 'SA-516-70',
-        materialName: 'Carbon Steel SA-516 Gr. 70 (PVQ Pressure Vessel)',
-        facing: 'Flat Face (FF) - Standard (No Machining)',
-        thickness: 0.1196,
-        thicknessLabel: '11 Gauge (0.120")',
-        od: 6.75,
-        boltCircle: 7.50,
-        boltSize: 0.625,
-        actualWeightLbs: 1.69,
-        adjustedWeightLbs: 2.37,
-        unitPrice: 45.00,
-        quantity: 4,
-        handleStamp: 'UNIT-4-ISO-01',
-        requireMTR: true,
-        addTHadle: true,
-        addLockoutHole: true,
-        addLiftingLug: false,
-        addPlateDog: false,
-        addWedge: false,
-      }
-    ],
-    subtotal: 176.00,
-    shippingCost: 35.00,
-    hotShotFee: 0,
-    totalAmount: 211.00,
-    totalWeightLbs: 8.5,
-    shippingMethod: 'UPS Ground Parcel',
-    isHotShot: false,
-    isLargeOrder: false,
-    leadTimeEstimate: '⚡ Standard Next-Day In-Stock Plate Dispatch (Within 24 Hours)',
-    paymentMethod: 'Net 30 Commercial PO',
-    paymentStatus: 'Net 30 Authorized',
-    status: 'queued',
-    millHeatNumber: 'Pending Assignment',
-    scheduledShipDate: '2026-08-21',
-    carrierName: 'UPS Ground',
-    trackingNumber: 'PENDING-LABEL',
-  },
-  {
-    orderId: 'HOT-2026-9901',
-    orderSource: 'Website B2B',
-    createdAt: '2026-08-20 01:10 PM',
-    companyName: 'Phillips 66 Sweeny Refinery',
-    contactName: 'Brian Kowalski (Turnaround Emergency)',
-    email: 'b.kowalski@p66.com',
-    jobsiteAddress: 'Highway 35, Gate 3, Old Ocean, TX 77463',
-    poNumber: 'P66-HOT-9901',
-    items: [
-      {
-        id: 'ITEM-HOT-1',
-        partNumber: 'PB304L-CX300T1/2S6',
-        nps: '6"',
-        nominalSizeInches: 6,
-        pressureClass: 300,
-        materialCode: '304L',
-        materialName: 'Stainless Steel 304/304L (Dual-Certified Low Carbon)',
-        facing: 'Flat Face (FF) - Standard (No Machining)',
-        thickness: 0.500,
-        thicknessLabel: '1/2" (0.500")',
-        od: 9.745,
-        boltCircle: 10.62,
-        boltSize: 0.750,
-        actualWeightLbs: 16.57,
-        adjustedWeightLbs: 23.21,
-        unitPrice: 245.00,
-        quantity: 2,
-        handleStamp: 'EMERGENCY-BLIND',
-        requireMTR: true,
-        addTHadle: true,
-        addLiftingLug: false,
-        addPlateDog: false,
-        addWedge: false,
-      }
-    ],
-    subtotal: 490.00,
-    shippingCost: 75.00,
-    hotShotFee: 250.00,
-    totalAmount: 815.00,
-    totalWeightLbs: 46.5,
-    shippingMethod: 'Emergency Hot Shot Courier',
-    isHotShot: true,
-    isLargeOrder: false,
-    leadTimeEstimate: '🔥 HOT SHOT 2-4 Hr Emergency Burn & Dispatch',
-    paymentMethod: 'Credit Card',
-    paymentStatus: 'Paid in Full',
-    status: 'plasma_cutting',
-    millHeatNumber: 'K49201-B (Outokumpu 304L)',
-    scheduledShipDate: '2026-08-20 (TODAY)',
-    carrierName: 'Iron Prairie Hot-Shot Courier',
-    trackingNumber: 'HOT-SHOT-DIRECT-TRUCK',
-  },
-  {
-    orderId: 'PO-2026-8852',
-    orderSource: 'Website B2B',
-    createdAt: '2026-08-19 11:00 AM',
-    companyName: 'BASF Texas Verbund Site',
-    contactName: 'David R. Vance',
-    email: 'david.vance@basf.com',
-    jobsiteAddress: '602 Copper Rd, Plant Gate 2, TX 77531',
-    poNumber: 'BASF-PO-88520',
-    items: [
-      {
-        id: 'ITEM-3',
-        partNumber: 'PBSA36-CX150T3/8S8',
-        nps: '8"',
-        nominalSizeInches: 8,
-        pressureClass: 150,
-        materialCode: 'SA-36',
-        materialName: 'Carbon Steel SA-36 (Structural Plate)',
-        facing: 'Flat Face (FF) - Standard (No Machining)',
-        thickness: 0.375,
-        thicknessLabel: '3/8" (0.375")',
-        od: 10.875,
-        boltCircle: 11.75,
-        boltSize: 0.750,
-        actualWeightLbs: 9.88,
-        adjustedWeightLbs: 13.84,
-        unitPrice: 185.00,
-        quantity: 1,
-        handleStamp: 'TEST-BLIND-08',
-        requireMTR: false,
-        addTHadle: false,
-        addLiftingLug: true,
-        addPlateDog: false,
-        addWedge: false,
-      }
-    ],
-    subtotal: 185.00,
-    shippingCost: 32.00,
-    hotShotFee: 0,
-    totalAmount: 217.00,
-    totalWeightLbs: 14.0,
-    shippingMethod: 'UPS Ground Parcel',
-    isHotShot: false,
-    isLargeOrder: false,
-    leadTimeEstimate: '⚡ Standard Next-Day In-Stock Plate Dispatch',
-    paymentMethod: 'ACH Direct Debit',
-    paymentStatus: 'ACH Clearing',
-    status: 'deburred_stamped',
-    millHeatNumber: 'M7782-A (Nucor A516-70)',
-    scheduledShipDate: '2026-08-20',
-    carrierName: 'UPS Ground',
-    trackingNumber: '1Z8888888888888888',
-  },
-  {
-    orderId: 'PO-2026-8840',
-    orderSource: 'Direct PO',
-    createdAt: '2026-08-18 04:00 PM',
-    companyName: 'Olin Chlor-Alkali Operations',
-    contactName: 'William Arzola',
-    email: 'w.arzola@olin.com',
-    jobsiteAddress: 'Brazos River Works, TX 77531',
-    poNumber: 'OLIN-PO-99120',
-    items: [
-      {
-        id: 'ITEM-4',
-        partNumber: 'PB316L-CX150T11GA2',
-        nps: '2"',
-        nominalSizeInches: 2,
-        pressureClass: 150,
-        materialCode: '316L',
-        materialName: 'Stainless Steel 316L (Acid & Marine Refinery Grade)',
-        facing: 'Flat Face (FF) - Standard (No Machining)',
-        thickness: 0.1196,
-        thicknessLabel: '11 Gauge (0.120")',
-        od: 4.00,
-        boltCircle: 4.75,
-        boltSize: 0.625,
-        actualWeightLbs: 0.43,
-        adjustedWeightLbs: 0.60,
-        unitPrice: 52.00,
-        quantity: 10,
-        handleStamp: 'OLIN-UNIT-2',
-        requireMTR: true,
-        addTHadle: true,
-        addLockoutHole: false,
-        addLiftingLug: false,
-        addPlateDog: false,
-        addWedge: false,
-      }
-    ],
-    subtotal: 185.00,
-    shippingCost: 32.00,
-    hotShotFee: 0,
-    totalAmount: 217.00,
-    totalWeightLbs: 14.0,
-    shippingMethod: 'UPS Ground Parcel',
-    isHotShot: false,
-    isLargeOrder: false,
-    leadTimeEstimate: '⚡ Standard Next-Day In-Stock Plate Dispatch',
-    paymentMethod: 'ACH Direct Debit',
-    paymentStatus: 'ACH Clearing',
-    status: 'deburred_stamped',
-    millHeatNumber: 'M7782-A (Nucor A516-70)',
-    scheduledShipDate: '2026-08-20',
-    carrierName: 'UPS Ground',
-    trackingNumber: '1Z8888888888888888',
-  },
-  {
-    orderId: 'PO-2026-8840',
-    orderSource: 'Direct PO',
-    createdAt: '2026-08-18 04:00 PM',
-    companyName: 'Olin Chlor-Alkali Operations',
-    contactName: 'William Arzola',
-    email: 'w.arzola@olin.com',
-    jobsiteAddress: 'Brazos River Works, TX 77531',
-    poNumber: 'OLIN-PO-99120',
-    items: [
-      {
-        id: 'ITEM-4',
-        partNumber: 'PBCS-CX150T1/8S2',
-        nps: '2"',
-        nominalSizeInches: 2,
-        pressureClass: 150,
-        materialCode: 'CS',
-        materialName: 'Carbon Steel (A516 Gr. 70)',
-        facing: 'Flat Face (FF) - Standard (No Machining)',
-        thickness: 0.125,
-        thicknessLabel: '1/8"',
-        od: 4.00,
-        boltCircle: 4.75,
-        boltSize: 0.625,
-        actualWeightLbs: 0.45,
-        adjustedWeightLbs: 0.62,
-        unitPrice: 42.00,
-        quantity: 10,
-        handleStamp: 'OLIN-UNIT-2',
-        requireMTR: true,
-        addTHadle: true,
-        addLiftingLug: false,
-        addPlateDog: false,
-        addWedge: false,
-      }
-    ],
-    subtotal: 420.00,
-    shippingCost: 28.00,
-    hotShotFee: 0,
-    totalAmount: 448.00,
-    totalWeightLbs: 6.5,
-    shippingMethod: 'UPS Ground Parcel',
-    isHotShot: false,
-    isLargeOrder: false,
-    leadTimeEstimate: '⚡ Standard Next-Day In-Stock Plate Dispatch',
-    paymentMethod: 'Net 30 Commercial PO',
-    paymentStatus: 'Net 30 Authorized',
-    status: 'ready_to_ship',
-    millHeatNumber: 'M7782-A (Nucor A516-70)',
-    scheduledShipDate: '2026-08-20',
-    carrierName: 'UPS Ground',
-    trackingNumber: '1Z7777777777777777',
-  }
-];
-
-// Initial Abandoned Carts Seed for Owner Recovery Tracking
-const INITIAL_ABANDONED_CARTS: AbandonedCartRecord[] = [
-  {
-    cartId: 'ABANDON-2026-1042',
-    abandonedAt: '2026-08-20 02:45 PM',
-    companyName: 'ExxonMobil Baytown Complex',
-    buyerName: 'Travis Hollingsworth (Turnaround Planner)',
-    email: 'travis.hollingsworth@exxonmobil.com',
-    phone: '(281) 834-4000',
-    facilityLocation: 'Baytown, TX',
-    items: [
-      {
-        id: 'ITEM-AB-1',
-        partNumber: 'PB316L-CX300T5/8S8',
-        nps: '8"',
-        nominalSizeInches: 8,
-        pressureClass: 300,
-        materialCode: '316L',
-        materialName: 'Stainless Steel 316L (Acid & Marine Refinery Grade)',
-        facing: 'Flat Face (FF) - Standard (No Machining)',
-        thickness: 0.625,
-        thicknessLabel: '5/8" (0.625")',
-        od: 12.00,
-        boltCircle: 13.00,
-        boltSize: 0.875,
-        actualWeightLbs: 23.15,
-        adjustedWeightLbs: 32.41,
-        unitPrice: 370.00,
-        quantity: 4,
-        handleStamp: 'UNIT-HYDRO-08',
-        requireMTR: true,
-        addTHadle: true,
-        addLiftingLug: true,
-        addPlateDog: false,
-        addWedge: false,
-      }
-    ],
-    subtotal: 1480.00,
-    shippingEstimate: 145.00,
-    totalAmount: 1625.00,
-    totalWeightLbs: 92.6,
-    status: 'Abandoned',
-    lastActiveStep: 'Checkout Opened'
-  },
-  {
-    cartId: 'ABANDON-2026-1038',
-    abandonedAt: '2026-08-20 11:20 AM',
-    companyName: 'LyondellBasell Channelview Complex',
-    buyerName: 'Sarah Jenkins',
-    email: 's.jenkins@lyondellbasell.com',
-    phone: '(281) 452-8888',
-    facilityLocation: 'Channelview, TX',
-    items: [
-      {
-        id: 'ITEM-AB-2',
-        partNumber: 'PBSA51670-CX150T1/2S12',
-        nps: '12"',
-        nominalSizeInches: 12,
-        pressureClass: 150,
-        materialCode: 'SA-516-70',
-        materialName: 'Carbon Steel SA-516 Gr. 70 (PVQ Pressure Vessel)',
-        facing: 'Flat Face (FF) - Standard (No Machining)',
-        thickness: 0.500,
-        thicknessLabel: '1/2" (0.500")',
-        od: 16.00,
-        boltCircle: 17.00,
-        boltSize: 0.875,
-        actualWeightLbs: 28.50,
-        adjustedWeightLbs: 39.90,
-        unitPrice: 395.00,
-        quantity: 2,
-        handleStamp: 'LYB-ISO-12',
-        requireMTR: true,
-        addTHadle: false,
-        addLiftingLug: true,
-        addPlateDog: false,
-        addWedge: false,
-      }
-    ],
-    subtotal: 790.00,
-    shippingEstimate: 95.00,
-    totalAmount: 885.00,
-    totalWeightLbs: 57.0,
-    status: 'Abandoned',
-    lastActiveStep: 'Cart Drawer'
-  },
-  {
-    cartId: 'ABANDON-2026-1029',
-    abandonedAt: '2026-08-19 04:15 PM',
-    companyName: 'Chevron Phillips Chemical (Cedar Bayou)',
-    buyerName: 'Craig M. Douglas',
-    email: 'douglacm@cpchem.com',
-    phone: '(281) 421-6500',
-    facilityLocation: 'Baytown, TX',
-    items: [
-      {
-        id: 'ITEM-AB-3',
-        partNumber: 'PB304L-CX600T3/8S3',
-        nps: '3"',
-        nominalSizeInches: 3,
-        pressureClass: 600,
-        materialCode: '304L',
-        materialName: 'Stainless Steel 304/304L (Dual-Certified Low Carbon)',
-        facing: 'Flat Face (FF) - Standard (No Machining)',
-        thickness: 0.375,
-        thicknessLabel: '3/8" (0.375")',
-        od: 5.745,
-        boltCircle: 6.62,
-        boltSize: 0.750,
-        actualWeightLbs: 3.95,
-        adjustedWeightLbs: 5.53,
-        unitPrice: 135.00,
-        quantity: 6,
-        handleStamp: 'CPCHEM-ISO-03',
-        requireMTR: true,
-        addTHadle: true,
-        addLiftingLug: false,
-        addPlateDog: false,
-        addWedge: false,
-      }
-    ],
-    subtotal: 810.00,
-    shippingEstimate: 45.00,
-    totalAmount: 855.00,
-    totalWeightLbs: 23.7,
-    status: 'Quote Sent',
-    lastActiveStep: 'Payment Selection'
-  }
-];
-
-// ============================================================================
 // ============================================================================
 // 2.5 INTERACTIVE 2D/3D CAD PADDLE BLIND & T-HANDLE VISUALIZER
-// ============================================================================
+// =======================================================================================
 function PaddleBlindVisualizer({
   nps,
   pressureClass,
@@ -1759,11 +1355,6 @@ export default function App() {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
 
-  // Navigation View State
-  const [activeTab, setActiveTab] = useState<'storefront' | 'whiteboard'>(() => {
-    return location.pathname === '/shop-floor' ? 'whiteboard' : 'storefront';
-  });
-
   // --------------------------------------------------------------------------
   // AUTH STATE: GATED CLIENT LOGIN TO PROTECT WEBSITE PRICING
   // --------------------------------------------------------------------------
@@ -1779,7 +1370,15 @@ export default function App() {
   const [clientAccount, setClientAccount] = useState<ClientAccount | null>(() => {
     try {
       const saved = localStorage.getItem('ipf_client_account');
-      return saved ? JSON.parse(saved) : null;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed?.companyName?.toLowerCase().includes('dow') || parsed?.email?.toLowerCase().includes('dow') || parsed?.email?.includes('universal-dynamic')) {
+          localStorage.removeItem('ipf_client_account');
+          return null;
+        }
+        return parsed;
+      }
+      return null;
     } catch {
       return null;
     }
@@ -1829,6 +1428,8 @@ export default function App() {
       localStorage.setItem('ipf_client_logged_in', String(isClientLoggedIn));
       if (clientAccount) {
         localStorage.setItem('ipf_client_account', JSON.stringify(clientAccount));
+      } else {
+        localStorage.removeItem('ipf_client_account');
       }
     } catch (e) {
       console.error(e);
@@ -1850,7 +1451,7 @@ export default function App() {
   const [selectedThickness, setSelectedThickness] = useState<number>(0.1196); // Default 11 Gauge (0.120")
   const [selectedThicknessLabel, setSelectedThicknessLabel] = useState<string>('11 Gauge (0.120")');
   const [selectedFacing, setSelectedFacing] = useState<FacingType>('Flat Face (FF) - Standard (No Machining)');
-  const [handleStamp, setHandleStamp] = useState<string>('ISO-UNIT-04');
+  const [handleStamp, setHandleStamp] = useState<string>('');
   const [requireMTR, setRequireMTR] = useState<boolean>(true);
   const [addTHadle, setAddTHadle] = useState<boolean>(false);
   const [addLockoutHole, setAddLockoutHole] = useState<boolean>(false);
@@ -1866,19 +1467,51 @@ export default function App() {
   const [cart, setCart] = useState<ConfiguredItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false);
+  const [confirmedOrder, setConfirmedOrder] = useState<CustomerOrder | null>(null);
   const [isAmazonExportOpen, setIsAmazonExportOpen] = useState<boolean>(false);
+
+  // Controlled Checkout Form State (Always initialized to blank for every customer session)
+  const [checkoutCompanyName, setCheckoutCompanyName] = useState<string>('');
+  const [checkoutContactName, setCheckoutContactName] = useState<string>('');
+  const [checkoutEmail, setCheckoutEmail] = useState<string>('');
+  const [checkoutPhone, setCheckoutPhone] = useState<string>('');
+  const [checkoutPoNumber, setCheckoutPoNumber] = useState<string>('');
+  const [checkoutAddress, setCheckoutAddress] = useState<string>('');
+  const [checkoutCardNumber, setCheckoutCardNumber] = useState<string>('');
+  const [checkoutCardExp, setCheckoutCardExp] = useState<string>('');
+  const [checkoutCardCvc, setCheckoutCardCvc] = useState<string>('');
+  const [checkoutBankRouting, setCheckoutBankRouting] = useState<string>('');
+  const [checkoutBankAccount, setCheckoutBankAccount] = useState<string>('');
 
   // Checkout Payment Method Selection & Net 30 ACH Mandate State
   const [checkoutPaymentMethod, setCheckoutPaymentMethod] = useState<PaymentMethodType>('net30_po');
   const [achAgreementChecked, setAchAgreementChecked] = useState<boolean>(false);
 
-  // Business Owner Operations State
+  // Reset checkout fields to blank whenever checkout modal opens
+  useEffect(() => {
+    if (isCheckoutOpen) {
+      setCheckoutCompanyName('');
+      setCheckoutContactName('');
+      setCheckoutEmail('');
+      setCheckoutPhone('');
+      setCheckoutPoNumber('');
+      setCheckoutAddress('');
+      setCheckoutCardNumber('');
+      setCheckoutCardExp('');
+      setCheckoutCardCvc('');
+      setCheckoutBankRouting('');
+      setCheckoutBankAccount('');
+      setAchAgreementChecked(false);
+    }
+  }, [isCheckoutOpen]);
+
+  // Orders State
   const [orders, setOrders] = useState<CustomerOrder[]>(() => {
     try {
       const saved = localStorage.getItem('ipf_orders_pipeline');
-      return saved ? JSON.parse(saved) : INITIAL_ORDERS;
+      return saved ? JSON.parse(saved) : [];
     } catch {
-      return INITIAL_ORDERS;
+      return [];
     }
   });
 
@@ -1886,9 +1519,9 @@ export default function App() {
   const [abandonedCarts, setAbandonedCarts] = useState<AbandonedCartRecord[]>(() => {
     try {
       const saved = localStorage.getItem('ipf_abandoned_carts');
-      return saved ? JSON.parse(saved) : INITIAL_ABANDONED_CARTS;
+      return saved ? JSON.parse(saved) : [];
     } catch {
-      return INITIAL_ABANDONED_CARTS;
+      return [];
     }
   });
 
@@ -1927,18 +1560,6 @@ export default function App() {
       console.error(e);
     }
   }, [abandonedCarts]);
-
-  // Executive Manager discreet keyboard shortcut: Ctrl+Shift+E -> /erp
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'e') {
-        e.preventDefault();
-        navigate('/erp');
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [navigate]);
 
   // Live Calculating Spec for Active Storefront Configuration
   const liveSpec = useMemo(() => {
@@ -2560,21 +2181,6 @@ export default function App() {
     setIsLoginModalOpen(false);
   };
 
-  // Quick Demo Login for Plant Mechanics
-  const handleQuickDemoLogin = (preset: 'dow' | 'turner' | 'basf' | 'p66' | 'exxon') => {
-    const presets: Record<string, ClientAccount> = {
-      dow: { companyName: 'Dow Chemical (Texas Site)', buyerName: 'Mark Henderson (Turnaround Lead)', email: 'm.henderson@dow.com', facilityLocation: 'Texas', achAuthorized: true },
-      turner: { companyName: 'Turner Industries', buyerName: 'Jason Miller (Procurement)', email: 'purchasing@turner-ind.com', facilityLocation: 'Port Arthur, TX', achAuthorized: true },
-      basf: { companyName: 'BASF Texas Verbund', buyerName: 'David R. Vance', email: 'david.vance@basf.com', facilityLocation: 'Texas', achAuthorized: true },
-      p66: { companyName: 'Phillips 66 Sweeny Refinery', buyerName: 'Brian Kowalski (Turnaround Emergency)', email: 'b.kowalski@p66.com', facilityLocation: 'Old Ocean, TX', achAuthorized: true },
-      exxon: { companyName: 'ExxonMobil Baytown Complex', buyerName: 'Travis Hollingsworth', email: 'travis.hollingsworth@exxonmobil.com', facilityLocation: 'Baytown, TX', achAuthorized: true },
-    };
-    const acc = presets[preset] || presets.dow;
-    setClientAccount(acc);
-    setIsClientLoggedIn(true);
-    setIsLoginModalOpen(false);
-  };
-
   // Client Logout
   const handleClientLogout = () => {
     if (cart.length > 0) {
@@ -2583,6 +2189,12 @@ export default function App() {
     setIsClientLoggedIn(false);
     setClientAccount(null);
     setCart([]);
+    try {
+      localStorage.removeItem('ipf_client_account');
+      localStorage.removeItem('ipf_client_logged_in');
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   // Add Item to Order Cart
@@ -2707,10 +2319,9 @@ export default function App() {
     });
   };
 
-  // Submit Multi-Payment Checkout & Push into Whiteboard
+  // Submit Multi-Payment Checkout & Push into Order State
   const handlePlaceOrder = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
 
     let payLabel: 'Credit Card' | 'ACH Direct Debit' | 'Net 30 Commercial PO' = 'Net 30 Commercial PO';
     let payStatus: 'Paid in Full' | 'ACH Clearing' | 'Net 30 Authorized' = 'Net 30 Authorized';
@@ -2723,11 +2334,13 @@ export default function App() {
       payStatus = 'ACH Clearing';
     }
 
-    const companyName = (formData.get('companyName') as string) || clientAccount?.companyName || 'Dow Chemical';
-    const contactName = (formData.get('contactName') as string) || clientAccount?.buyerName || 'Industrial Procurement';
-    const email = (formData.get('email') as string) || clientAccount?.email || 'buyer@dow.com';
-    const address = (formData.get('address') as string) || 'Industrial Plant Gate 4 Receiving, TX';
-    const poNumber = (formData.get('poNumber') as string) || (isHotShotOrder ? generateNextPoNumber('IPF-HOT') : generateNextPoNumber('IPF-PO'));
+    const companyName = checkoutCompanyName.trim() || 'Commercial Buyer';
+    const contactName = checkoutContactName.trim() || 'Plant Sourcing Contact';
+    const email = checkoutEmail.trim() || '';
+    const phone = checkoutPhone.trim() || '';
+    const address = checkoutAddress.trim() || 'Direct Facility Receiving';
+    const rawPo = checkoutPoNumber.trim();
+    const poNumber = rawPo || (isHotShotOrder ? generateNextPoNumber('IPF-HOT') : generateNextPoNumber('IPF-PO'));
 
     const newOrder: CustomerOrder = {
       orderId: poNumber,
@@ -2768,12 +2381,11 @@ export default function App() {
     setCart([]);
     setIsCheckoutOpen(false);
     setIsHotShotOrder(false);
-    setActiveTab('whiteboard');
-    navigate('/shop-floor');
+    setConfirmedOrder(newOrder);
 
     setNotificationToast({
       type: 'email',
-      message: `✉️ Order #${newOrder.poNumber} confirmed! Immediate notification email dispatched to sales@ironprairiefabrication.com & IPG team!`
+      message: `✉️ Order #${newOrder.poNumber} confirmed! Notification dispatched to ${email} & sales@ironprairiefabrication.com`
     });
   };
 
@@ -3706,921 +3318,6 @@ export default function App() {
     </div>
   );
 
-  // --------------------------------------------------------------------------
-  // 3.2 RENDER FUNCTION: SHOP FLOOR WHITEBOARD, ANALYTICS, ABANDONED CARTS & DISPATCH
-  // --------------------------------------------------------------------------
-  const renderShopFloorView = () => {
-    // Analytics calculations
-    const totalGrossRevenue = orders.reduce((sum, o) => sum + o.totalAmount, 0);
-    const activePipelineRevenue = orders.filter(o => o.status !== 'shipped').reduce((sum, o) => sum + o.totalAmount, 0);
-    const totalAbandonedValue = abandonedCarts.filter(c => c.status === 'Abandoned').reduce((sum, c) => sum + c.totalAmount, 0);
-    const totalWeightLbs = orders.reduce((sum, o) => sum + o.totalWeightLbs, 0);
-    const totalTonnage = (totalWeightLbs / 2000).toFixed(2);
-    const totalUnitsCount = orders.reduce((sum, o) => sum + o.items.reduce((isum, i) => isum + i.quantity, 0), 0);
-    const averageOrderValue = orders.length > 0 ? totalGrossRevenue / orders.length : 0;
-    const totalCartSessions = orders.length + abandonedCarts.length;
-    const cartConversionRate = totalCartSessions > 0 ? Math.round((orders.length / totalCartSessions) * 100) : 100;
-
-    // Metallurgy Sales Breakdown
-    const metallurgyStats: Record<string, { totalAmount: number; weightLbs: number; count: number }> = {
-      'SA-516-70': { totalAmount: 0, weightLbs: 0, count: 0 },
-      'SA-36': { totalAmount: 0, weightLbs: 0, count: 0 },
-      '304L': { totalAmount: 0, weightLbs: 0, count: 0 },
-      '304': { totalAmount: 0, weightLbs: 0, count: 0 },
-      '316L': { totalAmount: 0, weightLbs: 0, count: 0 },
-      'AL-6061': { totalAmount: 0, weightLbs: 0, count: 0 },
-    };
-
-    orders.forEach(o => {
-      o.items.forEach(it => {
-        const code = it.materialCode;
-        if (metallurgyStats[code]) {
-          metallurgyStats[code].totalAmount += it.unitPrice * it.quantity;
-          metallurgyStats[code].weightLbs += it.actualWeightLbs * it.quantity;
-          metallurgyStats[code].count += it.quantity;
-        }
-      });
-    });
-
-    // Pressure Class Breakdown
-    const classStats: Record<number, number> = { 150: 0, 300: 0, 600: 0, 900: 0, 1500: 0 };
-    orders.forEach(o => {
-      o.items.forEach(it => {
-        if (classStats[it.pressureClass] !== undefined) {
-          classStats[it.pressureClass] += it.quantity;
-        }
-      });
-    });
-
-    // Payment Method Breakdown
-    const paymentStats: Record<string, { amount: number; count: number }> = {
-      'Net 30 Commercial PO': { amount: 0, count: 0 },
-      'Credit Card': { amount: 0, count: 0 },
-      'ACH Direct Debit': { amount: 0, count: 0 },
-    };
-    orders.forEach(o => {
-      const pm = o.paymentMethod;
-      if (paymentStats[pm]) {
-        paymentStats[pm].amount += o.totalAmount;
-        paymentStats[pm].count += 1;
-      }
-    });
-
-    const emailLogs = getEmailDispatchLogs();
-
-    return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        
-        {/* Top Operational Whiteboard Header */}
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-          <div>
-            <div className="flex items-center gap-2 text-blue-800 text-xs font-mono font-bold uppercase tracking-wider">
-              <Factory className="h-4 w-4 text-blue-700" /> Shop Floor Operations &amp; Business Intelligence
-            </div>
-            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight mt-1">
-              Active CNC Plasma Pipeline &amp; Sales Management
-            </h1>
-            <p className="text-slate-600 text-xs mt-0.5">
-              Live burn queues, automated dispatch emails to <strong>sales@ironprairiefabrication.com</strong> (Russell, Alicia &amp; Michael), abandoned cart tracking, and high-precision testing suite.
-            </p>
-          </div>
-          
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={() => setIsOwnerPricingModalOpen(true)}
-              className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold px-3.5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-sm active:scale-95"
-            >
-              <Settings className="h-4 w-4 text-blue-400" />
-              <span>⚙️ Steel Pricing Matrix</span>
-            </button>
-
-            <div className="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-center shadow-sm">
-              <div className="text-[10px] text-slate-500 uppercase font-bold">Total Sales</div>
-              <div className="text-base font-extrabold text-slate-900 font-mono">
-                ${totalGrossRevenue.toFixed(2)}
-              </div>
-            </div>
-
-            <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-3.5 py-2 text-center shadow-sm">
-              <div className="text-[10px] text-emerald-700 uppercase font-bold">Steel Tonnage</div>
-              <div className="text-base font-extrabold text-emerald-900 font-mono">
-                {totalTonnage} <span className="text-[11px] font-normal">Tons</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ------------------------------------------------------------------ */}
-        {/* TEST CLIENT GENERATOR & MATRIX SIMULATION TOOLBAR                  */}
-        {/* ------------------------------------------------------------------ */}
-        <div className="bg-slate-950 text-white rounded-2xl p-4 sm:p-5 shadow-md border border-slate-800 space-y-3">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-2 border-b border-slate-800">
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-blue-400 animate-pulse" />
-              <span className="text-xs font-bold font-mono uppercase tracking-wider text-blue-400">
-                Random Test Client Simulator &amp; Parameter Matrix Engine
-              </span>
-            </div>
-            <span className="text-[11px] text-slate-300 font-mono">
-              Covers 100% of all 18 NPS Sizes, 5 Classes, 6 Metals, 22 Thicknesses &amp; Checkouts
-            </span>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2.5">
-            {/* 1-Click Single Random Order */}
-            <button
-              onClick={handleSimulateRandomOrder}
-              className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold px-3 py-2 rounded-xl text-xs transition-all shadow-md shadow-blue-600/20 active:scale-95"
-              title="Pick a random petrochemical client and generate a random size/class/metal order"
-            >
-              <Play className="h-3.5 w-3.5 text-white" />
-              <span>🎲 1-Click Random Client Order</span>
-            </button>
-
-            {/* 1-Click Large QTY Turnaround Special Order */}
-            <button
-              onClick={handleSimulateLargeTurnaroundOrder}
-              className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3 py-2 rounded-xl text-xs transition-all shadow-sm active:scale-95"
-              title="Simulate a High-Quantity / High-Tonnage Petrochemical Turnaround Special Order (>100 units / >$10k / Mill Plate Sourcing)"
-            >
-              <Factory className="h-3.5 w-3.5 text-indigo-200" />
-              <span>🏭 1-Click Large QTY Turnaround Package (&gt;$10K)</span>
-            </button>
-
-            {/* 1-Click Simulate Abandoned Cart */}
-            <button
-              onClick={handleSimulateAbandonedCart}
-              className="flex items-center gap-1.5 bg-rose-900/80 hover:bg-rose-800 text-rose-100 border border-rose-700 font-bold px-3 py-2 rounded-xl text-xs transition-all shadow-sm active:scale-95"
-              title="Simulate a plant buyer adding blinds to cart and leaving before checkout"
-            >
-              <ShoppingCart className="h-3.5 w-3.5 text-rose-300" />
-              <span>🛒 Simulate Abandoned Cart</span>
-            </button>
-
-            {/* 5x Batch Simulation */}
-            <button
-              onClick={() => handleRunBatchSimulation(5)}
-              className="flex items-center gap-1.5 bg-sky-800 hover:bg-sky-700 text-white font-bold px-3 py-2 rounded-xl text-xs transition-all shadow-sm active:scale-95"
-              title="Generate 5 random orders across all 5 Kanban stages"
-            >
-              <Zap className="h-3.5 w-3.5 text-sky-300" />
-              <span>⚡ 5x Batch Stress Test</span>
-            </button>
-
-            {/* Run Full 11,880 Matrix Sweep */}
-            <button
-              onClick={handleRunLiveMatrixSweep}
-              className="flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 font-bold px-3 py-2 rounded-xl text-xs transition-all shadow-sm active:scale-95"
-              title="Run in-browser validation test across all 11,880 parameter combinations"
-            >
-              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
-              <span>🔬 Run 11,880 Matrix Sweep</span>
-            </button>
-
-            {/* Target Email Recipients Pill */}
-            <div className="ml-auto hidden xl:flex items-center gap-2 bg-slate-950/80 px-3 py-1.5 rounded-xl border border-slate-800 text-[11px] font-mono text-slate-300">
-              <Mail className="h-3.5 w-3.5 text-sky-400" />
-              <span>Active Sender: <strong>sales@ironprairiefabrication.com</strong> <span className="text-slate-400">(IPG Team)</span></span>
-            </div>
-          </div>
-        </div>
-
-        {/* ------------------------------------------------------------------ */}
-        {/* SUB-NAVIGATION TABS                                                */}
-        {/* ------------------------------------------------------------------ */}
-        <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-3">
-          <button
-            onClick={() => setActiveOwnerTab('kanban')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
-              activeOwnerTab === 'kanban'
-                ? 'bg-sky-700 text-white shadow-sm'
-                : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
-            }`}
-          >
-            <Factory className="h-4 w-4" />
-            <span>Active Production Pipeline</span>
-            <span className="bg-white/20 text-white text-[10px] px-2 py-0.2 rounded-full font-mono font-bold ml-1">
-              {orders.length}
-            </span>
-          </button>
-
-          <button
-            onClick={() => setActiveOwnerTab('analytics')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
-              activeOwnerTab === 'analytics'
-                ? 'bg-sky-700 text-white shadow-sm'
-                : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
-            }`}
-          >
-            <BarChart3 className="h-4 w-4" />
-            <span>📊 Sales &amp; Financial Analytics</span>
-          </button>
-
-          <button
-            onClick={() => setActiveOwnerTab('abandoned')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
-              activeOwnerTab === 'abandoned'
-                ? 'bg-sky-700 text-white shadow-sm'
-                : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
-            }`}
-          >
-            <ShoppingCart className="h-4 w-4" />
-            <span>🛒 Abandoned Carts Tracker</span>
-            {abandonedCarts.filter(c => c.status === 'Abandoned').length > 0 && (
-              <span className="bg-rose-500 text-white text-[10px] px-2 py-0.2 rounded-full font-mono font-bold ml-1">
-                {abandonedCarts.filter(c => c.status === 'Abandoned').length}
-              </span>
-            )}
-          </button>
-
-          <button
-            onClick={() => setActiveOwnerTab('emails')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${
-              activeOwnerTab === 'emails'
-                ? 'bg-sky-700 text-white shadow-sm'
-                : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200'
-            }`}
-          >
-            <Mail className="h-4 w-4" />
-            <span>✉️ Order Email Alerts Log</span>
-            <span className="bg-slate-200 text-slate-800 text-[10px] px-2 py-0.2 rounded-full font-mono font-bold ml-1">
-              {emailLogs.length}
-            </span>
-          </button>
-        </div>
-
-        {/* ------------------------------------------------------------------ */}
-        {/* TAB 1: ACTIVE PRODUCTION KANBAN WHITEBOARD                         */}
-        {/* ------------------------------------------------------------------ */}
-        {activeOwnerTab === 'kanban' && (
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            {/* Column 1: Queued to Burn */}
-            <div className="bg-slate-200/70 border border-slate-300 rounded-2xl p-4 flex flex-col justify-between min-h-[600px]">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-300">
-                  <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                    <span className="h-2.5 w-2.5 rounded-full bg-sky-600"></span> 1. Queued to Burn
-                  </span>
-                  <span className="text-xs font-mono text-slate-600 font-bold">
-                    {orders.filter(o => o.status === 'queued').length}
-                  </span>
-                </div>
-
-                <div className="space-y-3">
-                  {orders.filter(o => o.status === 'queued').map(order => (
-                    <div
-                      key={order.orderId}
-                      className={`rounded-xl p-3.5 space-y-2.5 shadow-sm border ${
-                        order.isHotShot
-                          ? 'bg-rose-50 border-rose-300 ring-2 ring-rose-400'
-                          : order.isLargeOrder
-                          ? 'bg-amber-50 border-amber-300'
-                          : 'bg-white border-slate-200'
-                      }`}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="font-bold text-xs text-slate-900">{order.poNumber}</span>
-                            {order.isHotShot && (
-                              <span className="bg-rose-600 text-white text-[9px] px-1.5 py-0.2 rounded font-bold uppercase">
-                                Hot Shot
-                              </span>
-                            )}
-                            {order.isLargeOrder && (
-                              <span className="bg-amber-600 text-white text-[9px] px-1.5 py-0.2 rounded font-semibold uppercase">
-                                &gt;$10K Plate
-                              </span>
-                            )}
-                          </div>
-                          <span className="text-[11px] text-slate-600 block">{order.companyName}</span>
-                        </div>
-                        <span className="text-[10px] font-mono bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded text-slate-700">
-                          {order.paymentMethod}
-                        </span>
-                      </div>
-
-                      <div className="bg-slate-50 border border-slate-200 rounded-lg p-2 font-mono text-[11px] space-y-1">
-                        {order.items.map(item => (
-                          <div key={item.id} className="text-slate-800 font-medium">
-                            {item.quantity}x {item.nps} {item.pressureClass}# {item.materialCode} ({item.thicknessLabel})
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="flex items-center justify-between text-[11px]">
-                        <span className="text-slate-500">{order.totalWeightLbs} lbs &bull; ${order.totalAmount.toFixed(2)}</span>
-                        <span className={order.items.some(i => i.requireMTR) ? 'text-emerald-700 font-bold' : 'text-slate-500'}>
-                          {order.items.some(i => i.requireMTR) ? 'MTR REQUIRED' : 'NO MTR'}
-                        </span>
-                      </div>
-
-                      <button
-                        onClick={() => advanceOrderStatus(order.orderId)}
-                        className="w-full font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 transition-all bg-sky-700 hover:bg-sky-800 text-white shadow-sm"
-                      >
-                        Send to Plasma Table <ArrowRight className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Column 2: At Plasma Table */}
-            <div className="bg-slate-200/70 border border-slate-300 rounded-2xl p-4 flex flex-col justify-between min-h-[600px]">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-300">
-                  <span className="text-xs font-bold text-sky-800 uppercase tracking-wider flex items-center gap-1.5">
-                    <span className="h-2.5 w-2.5 rounded-full bg-sky-600"></span> 2. At Plasma Table
-                  </span>
-                  <span className="text-xs font-mono text-slate-600 font-bold">
-                    {orders.filter(o => o.status === 'plasma_cutting').length}
-                  </span>
-                </div>
-
-                <div className="space-y-3">
-                  {orders.filter(o => o.status === 'plasma_cutting').map(order => (
-                    <div
-                      key={order.orderId}
-                      className="rounded-xl p-3.5 space-y-2.5 shadow-sm border bg-white border-slate-200"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <div className="flex items-center gap-1.5">
-                            <span className="font-bold text-xs text-slate-900">{order.poNumber}</span>
-                            {order.isHotShot && <span className="text-[9px] bg-rose-600 text-white px-1 rounded font-bold">Hot Shot</span>}
-                          </div>
-                          <span className="text-[11px] text-slate-600 block">{order.companyName}</span>
-                        </div>
-                        <span className="text-[10px] font-mono text-sky-800 bg-sky-50 border border-sky-200 px-1.5 py-0.5 rounded font-bold">
-                          Cutting
-                        </span>
-                      </div>
-
-                      <div className="bg-slate-50 border border-slate-200 rounded-lg p-2 font-mono text-[11px] space-y-1">
-                        {order.items.map(item => (
-                          <div key={item.id} className="text-slate-800 font-medium">
-                            {item.quantity}x {item.nps} {item.pressureClass}# {item.materialCode}
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Heat Number Field */}
-                      <div>
-                        <label className="block text-[10px] text-slate-600 uppercase font-bold mb-1">Plate Heat #:</label>
-                        <input
-                          type="text"
-                          value={order.millHeatNumber}
-                          onChange={e => updateHeatNumber(order.orderId, e.target.value)}
-                          className="w-full bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs font-mono text-slate-900 font-bold focus:outline-none focus:border-sky-600 focus:bg-white"
-                        />
-                      </div>
-
-                      <button
-                        onClick={() => advanceOrderStatus(order.orderId)}
-                        className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
-                      >
-                        Mark Cut &amp; Stamped <ArrowRight className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Column 3: Deburred & Stamped */}
-            <div className="bg-slate-200/70 border border-slate-300 rounded-2xl p-4 flex flex-col justify-between min-h-[600px]">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-300">
-                  <span className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                    <span className="h-2.5 w-2.5 rounded-full bg-indigo-600"></span> 3. Deburred &amp; Stamped
-                  </span>
-                  <span className="text-xs font-mono text-slate-600 font-bold">
-                    {orders.filter(o => o.status === 'deburred_stamped').length}
-                  </span>
-                </div>
-
-                <div className="space-y-3">
-                  {orders.filter(o => o.status === 'deburred_stamped').map(order => (
-                    <div key={order.orderId} className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2.5 shadow-sm">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <span className="font-bold text-xs text-slate-900 block">{order.poNumber}</span>
-                          <span className="text-[11px] text-slate-600 block">{order.companyName}</span>
-                        </div>
-                        <span className="text-[10px] font-mono text-emerald-800 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded font-bold">
-                          QC Pass
-                        </span>
-                      </div>
-
-                      <div className="text-[11px] font-mono text-slate-700">
-                        Heat #: <span className="text-sky-800 font-bold">{order.millHeatNumber}</span>
-                      </div>
-
-                      <button
-                        onClick={() => setActiveJobPacket(order)}
-                        className="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-semibold py-1.5 rounded-lg text-xs flex items-center justify-center gap-1.5"
-                      >
-                        <Printer className="h-3.5 w-3.5 text-slate-600" /> Print Cut &amp; MTR Packet
-                      </button>
-
-                      <button
-                        onClick={() => advanceOrderStatus(order.orderId)}
-                        className="w-full bg-sky-700 hover:bg-sky-800 text-white font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
-                      >
-                        Package for Dispatch <ArrowRight className="h-3.5 w-3.5" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Column 4: Ready to Ship */}
-            <div className="bg-slate-200/70 border border-slate-300 rounded-2xl p-4 flex flex-col justify-between min-h-[600px]">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-300">
-                  <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center gap-1.5">
-                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-600"></span> 4. Ready to Ship
-                  </span>
-                  <span className="text-xs font-mono text-slate-600 font-bold">
-                    {orders.filter(o => o.status === 'ready_to_ship').length}
-                  </span>
-                </div>
-
-                <div className="space-y-3">
-                  {orders.filter(o => o.status === 'ready_to_ship').map(order => (
-                    <div key={order.orderId} className="bg-white border border-slate-200 rounded-xl p-3.5 space-y-2.5 shadow-sm">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <span className="font-bold text-xs text-slate-900 block">{order.poNumber}</span>
-                          <span className="text-[11px] text-slate-600 block">{order.companyName}</span>
-                        </div>
-                        <span className="text-[10px] font-mono text-emerald-800 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded font-bold">
-                          Staged
-                        </span>
-                      </div>
-
-                      <div className="text-[11px] space-y-0.5">
-                        <div className="text-slate-600 font-mono">Carrier: {order.carrierName}</div>
-                        <div className="text-slate-600 font-mono">Target: {order.scheduledShipDate}</div>
-                      </div>
-
-                      <button
-                        onClick={() => advanceOrderStatus(order.orderId)}
-                        className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
-                      >
-                        <PackageCheck className="h-3.5 w-3.5" /> Mark Carrier Picked Up
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Column 5: Shipped & Completed */}
-            <div className="bg-slate-200/70 border border-slate-300 rounded-2xl p-4 flex flex-col justify-between min-h-[600px]">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-300">
-                  <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-700" /> 5. Shipped &amp; Done
-                  </span>
-                  <span className="text-xs font-mono text-slate-600 font-bold">
-                    {orders.filter(o => o.status === 'shipped').length}
-                  </span>
-                </div>
-
-                <div className="space-y-3">
-                  {orders.filter(o => o.status === 'shipped').map(order => (
-                    <div key={order.orderId} className="bg-white border border-slate-200 rounded-xl p-3 space-y-2 opacity-90 hover:opacity-100 transition-opacity shadow-sm">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <span className="font-bold text-xs text-slate-900 block">{order.poNumber}</span>
-                          <span className="text-[11px] text-slate-600 block">{order.companyName}</span>
-                        </div>
-                        <span className="text-[10px] font-mono text-emerald-700 font-bold">DISPATCHED</span>
-                      </div>
-
-                      <div className="text-[10px] font-mono text-slate-500 space-y-0.5">
-                        <div>Track: {order.trackingNumber}</div>
-                        <div>MTR: Dispatched to Email</div>
-                      </div>
-
-                      <button
-                        onClick={() => setActiveJobPacket(order)}
-                        className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 py-1 rounded text-[11px] flex items-center justify-center gap-1 font-medium border border-slate-200"
-                      >
-                        <FileText className="h-3 w-3 text-slate-500" /> View Archive
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ------------------------------------------------------------------ */}
-        {/* TAB 2: SALES & FINANCIAL ANALYTICS INTELLIGENCE DASHBOARD          */}
-        {/* ------------------------------------------------------------------ */}
-        {activeOwnerTab === 'analytics' && (
-          <div className="space-y-6">
-            
-            {/* Top KPI Cards Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-1">
-                <div className="flex items-center justify-between text-slate-500 text-xs font-bold uppercase tracking-wider">
-                  <span>Gross Booked Sales</span>
-                  <DollarSign className="h-4 w-4 text-emerald-600" />
-                </div>
-                <div className="text-2xl font-black text-slate-900 font-mono">
-                  ${totalGrossRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </div>
-                <div className="text-[11px] text-slate-500">Across {orders.length} confirmed orders</div>
-              </div>
-
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-1">
-                <div className="flex items-center justify-between text-slate-500 text-xs font-bold uppercase tracking-wider">
-                  <span>Active WIP Pipeline</span>
-                  <Clock className="h-4 w-4 text-sky-600" />
-                </div>
-                <div className="text-2xl font-black text-sky-800 font-mono">
-                  ${activePipelineRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </div>
-                <div className="text-[11px] text-slate-500">Orders currently in manufacturing</div>
-              </div>
-
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-1">
-                <div className="flex items-center justify-between text-slate-500 text-xs font-bold uppercase tracking-wider">
-                  <span>Average Order Value</span>
-                  <TrendingUp className="h-4 w-4 text-indigo-600" />
-                </div>
-                <div className="text-2xl font-black text-slate-900 font-mono">
-                  ${averageOrderValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </div>
-                <div className="text-[11px] text-slate-500">Average ticket per plant purchase</div>
-              </div>
-
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-1">
-                <div className="flex items-center justify-between text-slate-500 text-xs font-bold uppercase tracking-wider">
-                  <span>Cart Conversion Rate</span>
-                  <Percent className="h-4 w-4 text-emerald-600" />
-                </div>
-                <div className="text-2xl font-black text-emerald-700 font-mono">
-                  {cartConversionRate}%
-                </div>
-                <div className="text-[11px] text-slate-500">{orders.length} checkouts vs {abandonedCarts.length} abandoned</div>
-              </div>
-            </div>
-
-            {/* Segment Breakdown Grids */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              
-              {/* Left 7 Cols: Metallurgy Revenue Share */}
-              <div className="lg:col-span-7 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-                  <h3 className="font-bold text-sm text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                    <Layers className="h-4 w-4 text-sky-700" />
-                    Revenue &amp; Volume by Metal Grade
-                  </h3>
-                  <span className="text-xs font-mono text-slate-500">Domestic Plate Allocation</span>
-                </div>
-
-                <div className="space-y-3.5">
-                  {Object.entries(metallurgyStats).map(([code, stats]) => {
-                    const pct = totalGrossRevenue > 0 ? Math.round((stats.totalAmount / totalGrossRevenue) * 100) : 0;
-                    return (
-                      <div key={code} className="space-y-1.5 font-mono text-xs">
-                        <div className="flex justify-between items-center text-slate-800 font-bold">
-                          <span>{MATERIALS[code as MaterialCode]?.name.split('(')[0] || code}</span>
-                          <span>${stats.totalAmount.toFixed(2)} ({pct}%)</span>
-                        </div>
-                        <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${
-                              code === 'SA-516-70' ? 'bg-sky-600' : code === '316L' ? 'bg-indigo-600' : code === '304L' ? 'bg-emerald-600' : code === 'SA-36' ? 'bg-amber-600' : 'bg-slate-600'
-                            }`}
-                            style={{ width: `${Math.max(5, pct)}%` }}
-                          ></div>
-                        </div>
-                        <div className="flex justify-between text-[11px] text-slate-500">
-                          <span>{stats.count} total units cut</span>
-                          <span>{stats.weightLbs.toFixed(1)} lbs finished weight</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Right 5 Cols: Pressure Class & Payment Terms */}
-              <div className="lg:col-span-5 space-y-6">
-                
-                {/* Pressure Class Distribution */}
-                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-                    <h3 className="font-bold text-sm text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                      <Scale className="h-4 w-4 text-sky-700" />
-                      Pressure Class Demand
-                    </h3>
-                  </div>
-                  <div className="grid grid-cols-5 gap-2 text-center font-mono">
-                    {([150, 300, 600, 900, 1500] as const).map(pClass => (
-                      <div key={pClass} className="p-3 bg-slate-50 rounded-xl border border-slate-200">
-                        <div className="text-xs font-bold text-slate-900">{pClass}#</div>
-                        <div className="text-lg font-black text-sky-800 mt-1">{classStats[pClass] || 0}</div>
-                        <div className="text-[10px] text-slate-400">blinds</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Commercial Payment Terms Distribution */}
-                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-                    <h3 className="font-bold text-sm text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                      <CreditCard className="h-4 w-4 text-sky-700" />
-                      Payment Method Breakdown
-                    </h3>
-                  </div>
-                  <div className="space-y-2.5 font-mono text-xs">
-                    {Object.entries(paymentStats).map(([method, data]) => (
-                      <div key={method} className="flex justify-between items-center p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                        <span className="font-bold text-slate-800">{method}</span>
-                        <span className="text-sky-900 font-bold">${data.amount.toFixed(2)} ({data.count} orders)</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-        )}
-
-        {/* ------------------------------------------------------------------ */}
-        {/* TAB 3: ABANDONED CARTS & LOST PIPELINE TRACKER                      */}
-        {/* ------------------------------------------------------------------ */}
-        {activeOwnerTab === 'abandoned' && (
-          <div className="space-y-6">
-            
-            {/* Abandoned Cart KPI Banner */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-rose-50 border border-rose-200 rounded-2xl p-5 shadow-sm space-y-1">
-                <div className="text-xs font-bold text-rose-800 uppercase tracking-wider flex items-center justify-between">
-                  <span>Abandoned Cart Pipeline</span>
-                  <ShoppingCart className="h-4 w-4 text-rose-600" />
-                </div>
-                <div className="text-2xl font-black text-rose-900 font-mono">
-                  ${totalAbandonedValue.toFixed(2)}
-                </div>
-                <div className="text-[11px] text-rose-700">{abandonedCarts.filter(c => c.status === 'Abandoned').length} potential sales awaiting quote follow-up</div>
-              </div>
-
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-1">
-                <div className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center justify-between">
-                  <span>Unconverted Steel Weight</span>
-                  <Scale className="h-4 w-4 text-slate-600" />
-                </div>
-                <div className="text-2xl font-black text-slate-900 font-mono">
-                  {abandonedCarts.reduce((sum, c) => sum + c.totalWeightLbs, 0).toFixed(1)} lbs
-                </div>
-                <div className="text-[11px] text-slate-500">Uncut raw plate demand</div>
-              </div>
-
-              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 shadow-sm space-y-1">
-                <div className="text-xs font-bold text-emerald-800 uppercase tracking-wider flex items-center justify-between">
-                  <span>Recovered Cart Value</span>
-                  <CheckCircle className="h-4 w-4 text-emerald-600" />
-                </div>
-                <div className="text-2xl font-black text-emerald-900 font-mono">
-                  ${abandonedCarts.filter(c => c.status === 'Recovered').reduce((sum, c) => sum + c.totalAmount, 0).toFixed(2)}
-                </div>
-                <div className="text-[11px] text-emerald-700">{abandonedCarts.filter(c => c.status === 'Recovered').length} carts successfully converted to production</div>
-              </div>
-            </div>
-
-            {/* Abandoned Carts Table / Cards */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-                <div>
-                  <h3 className="text-base font-bold text-slate-900">Abandoned Carts &amp; Incomplete Checkouts</h3>
-                  <p className="text-xs text-slate-500">Track buyers who configured paddle blinds but left before submitting payment. Send 1-click quotes or restore sessions.</p>
-                </div>
-                <button
-                  onClick={handleSimulateAbandonedCart}
-                  className="bg-rose-100 hover:bg-rose-200 text-rose-800 font-bold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 transition-colors"
-                >
-                  <Plus className="h-3.5 w-3.5" /> Simulate New Abandoned Cart
-                </button>
-              </div>
-
-              {abandonedCarts.length === 0 ? (
-                <div className="p-8 text-center text-slate-500 text-xs">No abandoned carts currently recorded.</div>
-              ) : (
-                <div className="space-y-3">
-                  {abandonedCarts.map(cartItem => (
-                    <div
-                      key={cartItem.cartId}
-                      className={`p-4 rounded-xl border transition-all ${
-                        cartItem.status === 'Recovered'
-                          ? 'bg-emerald-50/60 border-emerald-200 opacity-80'
-                          : cartItem.status === 'Quote Sent'
-                          ? 'bg-amber-50/60 border-amber-200'
-                          : 'bg-white border-slate-200 shadow-sm'
-                      }`}
-                    >
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-3 border-b border-slate-100">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm text-slate-900">{cartItem.companyName}</span>
-                            <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold uppercase ${
-                              cartItem.status === 'Recovered'
-                                ? 'bg-emerald-100 text-emerald-800'
-                                : cartItem.status === 'Quote Sent'
-                                ? 'bg-amber-100 text-amber-800'
-                                : 'bg-rose-100 text-rose-800'
-                            }`}>
-                              {cartItem.status}
-                            </span>
-                            <span className="text-[10px] text-slate-400 font-mono">Stage: {cartItem.lastActiveStep}</span>
-                          </div>
-                          <div className="text-xs text-slate-600 mt-0.5">
-                            Buyer: <strong>{cartItem.buyerName}</strong> &bull; Email: <a href={`mailto:${cartItem.email}`} className="text-sky-700 underline">{cartItem.email}</a> &bull; Phone: {cartItem.phone}
-                          </div>
-                        </div>
-
-                        <div className="text-right">
-                          <div className="text-base font-black text-slate-900 font-mono">${cartItem.totalAmount.toFixed(2)}</div>
-                          <div className="text-[11px] text-slate-500 font-mono">{cartItem.totalWeightLbs} lbs &bull; Abandoned: {cartItem.abandonedAt}</div>
-                        </div>
-                      </div>
-
-                      {/* Items In Cart */}
-                      <div className="py-2.5 font-mono text-xs text-slate-700 flex flex-wrap gap-2">
-                        {cartItem.items.map((it, idx) => (
-                          <span key={idx} className="bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-lg">
-                            {it.quantity}x {it.nps} {it.pressureClass}# {it.materialCode} ({it.thicknessLabel}) &mdash; ${ (it.unitPrice * it.quantity).toFixed(2) }
-                          </span>
-                        ))}
-                      </div>
-
-                      {/* Owner Follow-Up Actions */}
-                      <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-slate-100 text-xs">
-                        <button
-                          onClick={() => setSelectedQuoteCart(cartItem)}
-                          className="flex items-center gap-1.5 bg-sky-700 hover:bg-sky-800 text-white font-bold px-3 py-1.5 rounded-lg shadow-sm transition-all"
-                        >
-                          <Send className="h-3.5 w-3.5" /> Generate &amp; Send Quote Email
-                        </button>
-
-                        <button
-                          onClick={() => handleRestoreAbandonedCart(cartItem)}
-                          className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-3 py-1.5 rounded-lg border border-slate-300 transition-colors"
-                        >
-                          <RotateCcw className="h-3.5 w-3.5" /> Restore into Active Cart
-                        </button>
-
-                        {cartItem.status !== 'Recovered' && (
-                          <button
-                            onClick={() => handleMarkCartRecovered(cartItem.cartId)}
-                            className="flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-3 py-1.5 rounded-lg shadow-sm transition-all"
-                          >
-                            <CheckCircle className="h-3.5 w-3.5" /> Convert to Active PO
-                          </button>
-                        )}
-
-                        <button
-                          onClick={() => handleDismissAbandonedCart(cartItem.cartId)}
-                          className="ml-auto text-slate-400 hover:text-rose-600 p-1.5"
-                          title="Dismiss"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-          </div>
-        )}
-
-        {/* ------------------------------------------------------------------ */}
-        {/* TAB 4: ORDER EMAIL ALERTS & NOTIFICATION DISPATCH CENTER           */}
-        {/* ------------------------------------------------------------------ */}
-        {activeOwnerTab === 'emails' && (
-          <div className="space-y-6">
-            
-            {/* Target Notification Recipients Banner */}
-            <div className="bg-sky-50 border border-sky-200 rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 bg-sky-700 text-white rounded-xl flex items-center justify-center flex-shrink-0">
-                  <Mail className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-sm text-sky-950">Automated Order Notification Engine Active</h3>
-                  <p className="text-xs text-sky-800">
-                    Every completed checkout instantly generates and dispatches an order package to:
-                  </p>
-                  <div className="flex flex-wrap gap-2 mt-1 font-mono text-xs">
-                    {OWNER_NOTIFICATION_RECIPIENTS.map(r => (
-                      <span key={r.email} className="bg-white border border-sky-300 text-sky-900 font-bold px-2 py-0.5 rounded">
-                        {r.name} &lt;{r.email}&gt;
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-xs font-mono bg-white border border-sky-200 rounded-xl p-3 text-slate-700">
-                <div>⚡ Trigger: <strong>Checkout Submission / Payment</strong></div>
-                <div>📋 Content: <strong>Full BOM, Weights, Pricing &amp; Shop Actions</strong></div>
-              </div>
-            </div>
-
-            {/* Email Dispatch History Log */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-                <div>
-                  <h3 className="text-base font-bold text-slate-900">Email Notification Dispatch Log</h3>
-                  <p className="text-xs text-slate-500">History of order alerts sent from sales@ironprairiefabrication.com to IPG team (Russell, Alicia &amp; Michael).</p>
-                </div>
-                <span className="text-xs font-mono text-slate-500">{emailLogs.length} Total Emails Dispatched</span>
-              </div>
-
-              {emailLogs.length === 0 ? (
-                <div className="p-8 text-center text-slate-500 text-xs">No email logs recorded yet. Place an order or run a simulation to see dispatched emails.</div>
-              ) : (
-                <div className="space-y-3">
-                  {emailLogs.map(log => (
-                    <div key={log.id} className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2 hover:bg-slate-100/80 transition-colors">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-xs text-slate-900">{log.subject}</span>
-                            {log.isHotShot && <span className="bg-rose-600 text-white text-[9px] px-1.5 py-0.2 rounded font-bold uppercase">Hot Shot</span>}
-                          </div>
-                          <div className="text-[11px] text-slate-600 font-mono mt-0.5">
-                            Order: <strong>{log.orderId}</strong> &bull; PO: <strong>{log.poNumber}</strong> &bull; Sent: {log.sentAt}
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <a
-                            href={generateOrderMailtoUrl(log)}
-                            className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 shadow-sm transition-colors"
-                            title="Open Outlook or default mail app pre-filled to sales@ironprairiefabrication.com"
-                          >
-                            <Send className="h-3.5 w-3.5" /> Send to Inbox
-                          </a>
-
-                          <button
-                            onClick={() => setPreviewEmailRecord(log)}
-                            className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 font-bold px-3 py-1.5 rounded-lg text-xs flex items-center gap-1.5 shadow-sm transition-colors"
-                          >
-                            <Eye className="h-3.5 w-3.5 text-sky-700" /> View Payload
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="text-[11px] text-slate-600 bg-white p-2.5 rounded-lg border border-slate-200 font-mono">
-                        <strong className="text-sky-900">Action:</strong> {log.actionRequired}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-          </div>
-        )}
-
-      </div>
-    );
-  };
-
-  // Dedicated Desktop Operations & Internal ERP Platform (PIN Auth Gated)
-  if (location.pathname.startsWith('/operations') || location.pathname.startsWith('/erp') || location.pathname === '/shop-floor') {
-    return (
-      <OperationsAuthGate>
-        <OperationsApp
-          orders={orders}
-          setOrders={setOrders}
-          abandonedCarts={abandonedCarts}
-          setAbandonedCarts={setAbandonedCarts}
-          pricingConfig={pricingConfig}
-          setPricingConfig={setPricingConfig}
-        />
-      </OperationsAuthGate>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-[#f7f5f0] text-slate-800 font-sans antialiased selection:bg-brand-brown selection:text-white flex flex-col justify-between overflow-x-hidden w-full max-w-full">
       <ScrollToTop />
@@ -4642,18 +3339,7 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-            {/* Active Owner Pricing Indicator - STRICTLY VISIBLE ONLY ON OWNER SCREEN / SHOP FLOOR */}
-            {location.pathname === '/shop-floor' && (
-              <button
-                onClick={() => setIsOwnerPricingModalOpen(true)}
-                className="flex items-center gap-1.5 text-brand-bone font-mono text-[10px] sm:text-[11px] bg-brand-panel-muted hover:bg-brand-panel px-2 sm:px-2.5 py-0.5 rounded-full border border-brand-border font-bold transition-colors shadow-sm flex-shrink-0"
-                title="Click to adjust Owner Pricing Matrix"
-              >
-                <Settings className="h-3 w-3 text-brand-brown-light shrink-0" />
-                <span className="hidden md:inline">⚙️ Owner Mode: SA-516 ${(pricingConfig.sa516PricePerLb ?? DEFAULT_PRICING_CONFIG.sa516PricePerLb).toFixed(2)}/lb | 304L ${(pricingConfig.ss304LPricePerLb ?? DEFAULT_PRICING_CONFIG.ss304LPricePerLb).toFixed(2)}/lb ({pricingConfig.globalMarkupPct > 0 ? `+${pricingConfig.globalMarkupPct}%` : `${pricingConfig.globalMarkupPct}%`})</span>
-                <span className="md:hidden">Owner Mode</span>
-              </button>
-            )}
+
 
             <a
               href="tel:+19792489266"
@@ -5205,38 +3891,7 @@ export default function App() {
               </button>
             </div>
 
-            {/* Quick Demo Pre-fills for Turnaround Leads */}
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">
-              <div className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                <Unlock className="h-3.5 w-3.5 text-sky-700" /> Instant Demo Access (1-Click Login):
-              </div>
-              <div className="grid grid-cols-3 gap-2 text-xs">
-                <button
-                  type="button"
-                  onClick={() => handleQuickDemoLogin('dow')}
-                  className="p-2.5 rounded-lg bg-white hover:bg-sky-50 border border-slate-200 hover:border-sky-300 text-slate-800 text-left transition-colors shadow-sm"
-                >
-                  <div className="font-bold text-sky-900">Dow Chemical</div>
-                  <div className="text-[10px] text-slate-500">Texas Site</div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickDemoLogin('turner')}
-                  className="p-2.5 rounded-lg bg-white hover:bg-sky-50 border border-slate-200 hover:border-sky-300 text-slate-800 text-left transition-colors shadow-sm"
-                >
-                  <div className="font-bold text-slate-900">Turner Ind.</div>
-                  <div className="text-[10px] text-slate-500">Port Arthur</div>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickDemoLogin('basf')}
-                  className="p-2.5 rounded-lg bg-white hover:bg-sky-50 border border-slate-200 hover:border-sky-300 text-slate-800 text-left transition-colors shadow-sm"
-                >
-                  <div className="font-bold text-emerald-900">BASF Verbund</div>
-                  <div className="text-[10px] text-slate-500">Texas Verbund</div>
-                </button>
-              </div>
-            </div>
+
 
             {/* Manual Account Registration Form */}
             <form onSubmit={handleClientLogin} className="space-y-4 text-xs">
@@ -5259,7 +3914,7 @@ export default function App() {
                       required
                       name="buyerName"
                       defaultValue={clientAccount?.buyerName || ''}
-                      placeholder="e.g. Mike Henderson"
+                      placeholder="e.g. John Doe (Lead Buyer)"
                       className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white font-medium"
                     />
                   </div>
@@ -5281,7 +3936,7 @@ export default function App() {
                   <input
                     name="facilityLocation"
                     defaultValue={clientAccount?.facilityLocation || ''}
-                    placeholder="e.g. Plant Gate 4 Receiving (Texas)"
+                    placeholder="e.g. Plant Gate Receiving (Texas)"
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white"
                   />
                 </div>
@@ -5567,7 +4222,9 @@ export default function App() {
                   <input
                     required
                     name="companyName"
-                    defaultValue={clientAccount?.companyName || 'Dow Chemical'}
+                    value={checkoutCompanyName}
+                    onChange={e => setCheckoutCompanyName(e.target.value)}
+                    placeholder="e.g. Plant Site / Company Name"
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white font-medium min-h-[44px]"
                   />
                 </div>
@@ -5576,7 +4233,9 @@ export default function App() {
                   <input
                     required
                     name="contactName"
-                    defaultValue={clientAccount?.buyerName || 'Industrial Procurement'}
+                    value={checkoutContactName}
+                    onChange={e => setCheckoutContactName(e.target.value)}
+                    placeholder="e.g. John Doe (Procurement Lead)"
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white font-medium min-h-[44px]"
                   />
                 </div>
@@ -5589,7 +4248,9 @@ export default function App() {
                     required
                     type="email"
                     name="email"
-                    defaultValue={clientAccount?.email || 'michael@universal-dynamic.com'}
+                    value={checkoutEmail}
+                    onChange={e => setCheckoutEmail(e.target.value)}
+                    placeholder="e.g. buyer@company.com"
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white font-medium min-h-[44px]"
                   />
                 </div>
@@ -5599,16 +4260,19 @@ export default function App() {
                     required
                     type="tel"
                     name="phone"
-                    defaultValue="979-417-6489"
+                    value={checkoutPhone}
+                    onChange={e => setCheckoutPhone(e.target.value)}
+                    placeholder="e.g. (979) 555-0100"
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white font-medium min-h-[44px]"
                   />
                 </div>
                 <div>
                   <label className="block text-slate-700 font-bold uppercase mb-1">Purchase Order (PO) #</label>
                   <input
-                    required
                     name="poNumber"
-                    defaultValue={isHotShotOrder ? generateNextPoNumber('IPF-HOT') : generateNextPoNumber('IPF-PO')}
+                    value={checkoutPoNumber}
+                    onChange={e => setCheckoutPoNumber(e.target.value)}
+                    placeholder="e.g. PO-2026-8849 (or blank to auto-generate)"
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sky-800 focus:outline-none focus:border-sky-600 focus:bg-white font-mono font-bold min-h-[44px]"
                   />
                 </div>
@@ -5619,8 +4283,9 @@ export default function App() {
                 <input
                   required
                   name="address"
-                  defaultValue="Plant Gate 4 Receiving, TX"
-                  placeholder="e.g. Plant Gate 4 Receiving, TX"
+                  value={checkoutAddress}
+                  onChange={e => setCheckoutAddress(e.target.value)}
+                  placeholder="e.g. Gate 4 Receiving / Laydown Yard, TX"
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white"
                 />
               </div>
@@ -5652,9 +4317,24 @@ export default function App() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
-                    <input placeholder="Card Number (4000 0000 0000 0000)" defaultValue="4000 1234 5678 9010" className="col-span-2 bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono text-xs" />
-                    <input placeholder="MM / YY" defaultValue="12/28" className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono text-xs" />
-                    <input placeholder="CVC / CWW" defaultValue="882" className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono text-xs" />
+                    <input
+                      placeholder="Card Number (4000 0000 0000 0000)"
+                      value={checkoutCardNumber}
+                      onChange={e => setCheckoutCardNumber(e.target.value)}
+                      className="col-span-2 bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono text-xs"
+                    />
+                    <input
+                      placeholder="MM / YY"
+                      value={checkoutCardExp}
+                      onChange={e => setCheckoutCardExp(e.target.value)}
+                      className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono text-xs"
+                    />
+                    <input
+                      placeholder="CVC / CVV"
+                      value={checkoutCardCvc}
+                      onChange={e => setCheckoutCardCvc(e.target.value)}
+                      className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono text-xs"
+                    />
                   </div>
                 </div>
               )}
@@ -5666,8 +4346,18 @@ export default function App() {
                     <span className="text-[10px] text-emerald-700 font-mono font-semibold">0% Processing Surcharge</span>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
-                    <input placeholder="Bank Routing (ABA)" defaultValue="111000025" className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono" />
-                    <input placeholder="Account Number" defaultValue="9823481920" className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono" />
+                    <input
+                      placeholder="Bank Routing (ABA)"
+                      value={checkoutBankRouting}
+                      onChange={e => setCheckoutBankRouting(e.target.value)}
+                      className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono"
+                    />
+                    <input
+                      placeholder="Account Number"
+                      value={checkoutBankAccount}
+                      onChange={e => setCheckoutBankAccount(e.target.value)}
+                      className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono"
+                    />
                   </div>
                 </div>
               )}
@@ -5745,6 +4435,146 @@ export default function App() {
                 </button>
               </div>
             </form>
+
+          </div>
+        </div>
+      )}
+
+      {/* -------------------------------------------------------------------- */}
+      {/* CUSTOMER ORDER CONFIRMATION MODAL                                    */}
+      {/* -------------------------------------------------------------------- */}
+      {confirmedOrder && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-6">
+            
+            {/* Header */}
+            <div className="flex items-start justify-between pb-4 border-b border-slate-200">
+              <div className="flex items-center gap-3.5">
+                <div className="h-12 w-12 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center shadow-sm">
+                  <CheckCircle2 className="h-7 w-7" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900">Purchase Order Confirmed!</h3>
+                  <p className="text-xs text-slate-500 font-medium mt-0.5">
+                    Order Ref / PO <span className="font-mono font-bold text-sky-800">#{confirmedOrder.poNumber}</span> &bull; Dispatched to CNC Plasma Queue
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setConfirmedOrder(null)}
+                className="text-slate-400 hover:text-slate-700 p-1 rounded-lg transition-colors"
+                title="Close"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            {/* Email Dispatch & Lead Time Alert Banner */}
+            <div className="p-3.5 rounded-2xl bg-sky-50 border border-sky-200 text-xs text-sky-950 space-y-1">
+              <div className="flex items-center gap-2 font-bold">
+                <Mail className="h-4 w-4 text-sky-700 shrink-0" />
+                <span>Confirmation Package Dispatched:</span>
+              </div>
+              <p className="text-[11px] text-slate-600 pl-6 leading-relaxed">
+                An itemized order receipt and specification package has been emailed to <strong className="text-slate-900 font-mono">{confirmedOrder.email}</strong> and queued directly to our Bay City, TX fabrication floor (<strong className="text-slate-900">sales@ironprairiefabrication.com</strong>).
+              </p>
+            </div>
+
+            {/* Order & Delivery Details Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-slate-50 p-4 rounded-2xl border border-slate-200 font-mono">
+              <div className="space-y-1">
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block font-sans">Account &amp; Contact</span>
+                <div className="font-bold text-slate-900 font-sans text-sm">{confirmedOrder.companyName}</div>
+                <div className="text-slate-600">{confirmedOrder.contactName}</div>
+                <div className="text-slate-500 text-[11px]">{confirmedOrder.email}</div>
+              </div>
+
+              <div className="space-y-1">
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block font-sans">Delivery &amp; Production</span>
+                <div className="text-slate-900 font-sans text-xs">{confirmedOrder.jobsiteAddress}</div>
+                <div className="text-sky-800 font-semibold text-[11px]">Carrier: {confirmedOrder.carrierName}</div>
+                <div className="text-emerald-700 font-bold text-[11px]">Lead Time: {confirmedOrder.leadTimeEstimate}</div>
+              </div>
+            </div>
+
+            {/* Line Items Table */}
+            <div className="space-y-2">
+              <div className="text-xs font-bold text-slate-700 uppercase tracking-wider">Line Items In Order:</div>
+              <div className="max-h-48 overflow-y-auto rounded-xl border border-slate-200">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead className="bg-slate-100 text-slate-600 text-[10px] uppercase font-bold sticky top-0">
+                    <tr>
+                      <th className="p-2.5">Item / Spec</th>
+                      <th className="p-2.5">Material &amp; Class</th>
+                      <th className="p-2.5 text-center">Qty</th>
+                      <th className="p-2.5 text-right">Price</th>
+                      <th className="p-2.5 text-right">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-mono text-[11px]">
+                    {confirmedOrder.items.map((item, idx) => (
+                      <tr key={idx} className="hover:bg-slate-50">
+                        <td className="p-2.5">
+                          <div className="font-bold text-slate-900">{item.nps} ({item.thicknessLabel})</div>
+                          <div className="text-[10px] text-slate-500 font-mono">{item.partNumber}</div>
+                        </td>
+                        <td className="p-2.5 text-slate-700">
+                          {item.materialCode} &bull; {item.pressureClass}#
+                        </td>
+                        <td className="p-2.5 text-center font-bold text-slate-900">{item.quantity}</td>
+                        <td className="p-2.5 text-right text-slate-600">${item.unitPrice.toFixed(2)}</td>
+                        <td className="p-2.5 text-right font-bold text-sky-800">${(item.unitPrice * item.quantity).toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Invoiced Total Summary */}
+            <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-1.5 font-mono text-xs">
+              <div className="flex justify-between text-slate-600">
+                <span>Subtotal ({confirmedOrder.items.reduce((s, i) => s + i.quantity, 0)} units &bull; {confirmedOrder.totalWeightLbs} lbs):</span>
+                <span className="text-slate-900">${confirmedOrder.subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-slate-600">
+                <span>Shipping ({confirmedOrder.shippingMethod}):</span>
+                <span className="text-slate-900">${confirmedOrder.shippingCost.toFixed(2)}</span>
+              </div>
+              {confirmedOrder.hotShotFee > 0 && (
+                <div className="flex justify-between text-rose-700 font-bold">
+                  <span>Emergency Hot-Shot Dispatch Fee:</span>
+                  <span>+${confirmedOrder.hotShotFee.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-slate-600">
+                <span>Payment Terms / Method:</span>
+                <span className="text-slate-900 font-semibold">{confirmedOrder.paymentMethod} ({confirmedOrder.paymentStatus})</span>
+              </div>
+              <div className="flex justify-between text-sm font-bold text-slate-900 pt-2 border-t border-slate-200">
+                <span>Grand Invoiced Total:</span>
+                <span className="text-sky-800 text-base">${confirmedOrder.totalAmount.toFixed(2)}</span>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row gap-3 pt-1">
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="w-full sm:w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-xl border border-slate-300 text-xs flex items-center justify-center gap-2 transition-colors"
+              >
+                <Printer className="h-4 w-4 text-sky-700" />
+                <span>Print / Save Order Receipt</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmedOrder(null)}
+                className="w-full sm:w-1/2 bg-sky-700 hover:bg-sky-800 text-white font-bold py-3 rounded-xl shadow-sm text-xs uppercase tracking-wider transition-all"
+              >
+                Done / Continue Browsing
+              </button>
+            </div>
 
           </div>
         </div>
@@ -5997,15 +4827,16 @@ export default function App() {
       })()}
 
       {/* -------------------------------------------------------------------- */}
-      {/* ORDER NOTIFICATION EMAIL PREVIEW MODAL (RUSSELL & ALICIA)            */}
+      {/* AUTOMATED EMAIL DISPATCH PREVIEW MODAL                               */}
       {/* -------------------------------------------------------------------- */}
       {previewEmailRecord && (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white border border-slate-200 rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl space-y-4 max-h-[90vh] flex flex-col">
+            
             <div className="flex items-center justify-between pb-3 border-b border-slate-200 flex-shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="h-9 w-9 bg-emerald-600 text-white rounded-xl flex items-center justify-center shadow-sm">
-                  <CheckCircle2 className="h-5 w-5" />
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-emerald-100 text-emerald-700">
+                  <Mail className="h-5 w-5" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
@@ -6064,8 +4895,6 @@ export default function App() {
           </div>
         </div>
       )}
-
-      {/* -------------------------------------------------------------------- */}
       {/* 11,880 PARAMETER MATRIX SWEEP REPORT MODAL                           */}
       {/* -------------------------------------------------------------------- */}
       {matrixSweepModalOpen && matrixSweepStats && (

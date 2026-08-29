@@ -159,7 +159,7 @@ export const BulkListRfqModal: React.FC<BulkListRfqModalProps> = ({
                   required
                   value={companyName}
                   onChange={e => setCompanyName(e.target.value)}
-                  placeholder="e.g. Dow Chemical, BASF, Turner, Chevron"
+                  placeholder="e.g. Plant Facility / Company Name"
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white font-medium"
                 />
               </div>
@@ -185,7 +185,7 @@ export const BulkListRfqModal: React.FC<BulkListRfqModalProps> = ({
                 <input
                   value={buyerName}
                   onChange={e => setBuyerName(e.target.value)}
-                  placeholder="e.g. Mark Henderson (Turnaround Lead)"
+                  placeholder="e.g. John Doe (Procurement Lead)"
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-sky-600 focus:bg-white font-medium"
                 />
               </div>

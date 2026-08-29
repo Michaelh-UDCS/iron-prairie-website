@@ -86,7 +86,7 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
         cartItems,
         buyerEmail: buyerEmail.trim(),
         buyerName: buyerName.trim(),
-        buyerPhone: buyerPhone.trim() || '979-417-6489',
+        buyerPhone: buyerPhone.trim(),
         companyName: companyName.trim(),
         deliveryAddress: deliveryAddress.trim(),
         paymentType,
