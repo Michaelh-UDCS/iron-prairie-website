@@ -24,7 +24,7 @@
 - Deleted `src/pages/PublicMtrViewer.tsx`.
 - Cleaned sitemap, prerender, IndexNow, and llms.txt references.
 - ERP MTR vault (`/operations`, ERP screens) unchanged — internal only.
-- **Not deployed yet** — needs Firebase Hosting deploy to go live.
+- Committed `e3e6b35`, pushed to `origin/master`, deployed hosting + IndexNow.
 
 ### Notes
 - **Live Stripe**: `acct_1Tzf7K2NddnbOHqL`
