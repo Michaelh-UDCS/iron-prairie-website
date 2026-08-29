@@ -842,14 +842,14 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                     </div>
                   </div>
 
-                  {/* 3% ACH Discount Encouragement Banner */}
-                  <div className="rounded-xl border border-emerald-500/40 bg-emerald-950/30 p-2.5 text-xs text-emerald-300 flex items-center justify-between">
+                  {/* 3.5% Card Surcharge Alert & ACH 0% Fee Banner */}
+                  <div className="rounded-xl border border-amber-500/40 bg-amber-950/30 p-2.5 text-xs text-amber-200 flex items-center justify-between">
                     <div className="flex items-center gap-1.5 font-sans">
                       <Sparkles className="h-4 w-4 text-emerald-400 shrink-0" />
-                      <span><strong>Pay via ACH:</strong> Save 3% on items</span>
+                      <span><strong>Pay via ACH:</strong> Pay 0% Fee &bull; Avoid 3.5% Card Surcharge</span>
                     </div>
-                    <span className="font-mono font-bold text-emerald-400 text-sm">
-                      -${(cartSubtotal * 0.03).toFixed(2)}
+                    <span className="font-mono font-bold text-emerald-400 text-xs">
+                      SAVE ${(cartSubtotal * 0.035).toFixed(2)}
                     </span>
                   </div>
 
@@ -862,7 +862,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                       className="w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 py-3.5 text-sm font-black text-slate-950 hover:from-emerald-400 hover:to-teal-400 transition-all shadow-lg active:scale-95 border border-emerald-400/40"
                     >
                       <Zap className="h-4 w-4" />
-                      <span>⚡ Instant Stripe Checkout (Card / Apple Pay / ACH)</span>
+                      <span>⚡ Instant Stripe Checkout (Card +3.5% / ACH 0% Fee)</span>
                     </button>
 
                     {/* Trust Badges */}
@@ -870,8 +870,8 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
                       <span className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800">VISA</span>
                       <span className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800">MC</span>
                       <span className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800">AMEX</span>
-                      <span className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800">APPLE PAY</span>
-                      <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold">ACH (SAVE 3%)</span>
+                      <span className="px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800">APPLE PAY (+3.5%)</span>
+                      <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold">ACH (0% FEE)</span>
                     </div>
 
                     {/* SECONDARY: Commercial B2B Net 30 PO Checkout */}

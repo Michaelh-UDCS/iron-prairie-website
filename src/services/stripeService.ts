@@ -70,9 +70,9 @@ export const initiateStripeCheckout = async (
 
   const itemsSubtotal = cartItems.reduce((sum, item) => sum + item.lineTotal, 0);
   const totalWeight = cartItems.reduce((sum, item) => sum + item.totalFinishedWeight, 0);
-  const achDiscountRate = 0.03;
-  const achDiscountAmount = paymentType === 'ach' ? Math.round(itemsSubtotal * achDiscountRate * 100) / 100 : 0;
-  const grandTotal = Math.round((itemsSubtotal + shippingCost - achDiscountAmount) * 100) / 100;
+  const cardSurchargeRate = 0.035;
+  const cardSurcharge = paymentType === 'card' ? Math.round((itemsSubtotal + shippingCost) * cardSurchargeRate * 100) / 100 : 0;
+  const grandTotal = Math.round((itemsSubtotal + shippingCost + cardSurcharge) * 100) / 100;
 
   // 1. If live Stripe publishable key is present and backend is available, call the API
   if (isStripeConfigured()) {
@@ -143,8 +143,8 @@ export const initiateStripeCheckout = async (
     mtrRequired: hasMTR,
     notes: `Stripe Checkout (${
       paymentType === 'card'
-        ? 'Credit Card / Apple Pay - Paid in Full'
-        : `Stripe ACH Instant Direct Debit - 3% Cash Discount Applied (-$${achDiscountAmount.toFixed(2)}) - Bluevine Payout`
+        ? `Credit Card (+3.5% Card Processing Surcharge Applied: +$${cardSurcharge.toFixed(2)}) - Paid in Full`
+        : `Stripe ACH Direct Debit (0% Processing Surcharge - $0 Fee Applied) - Bluevine Payout`
     }) | Auth: ch_${Math.random().toString(36).substring(2, 11)}`
   };
 

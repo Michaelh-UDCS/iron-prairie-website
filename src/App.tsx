@@ -5610,15 +5610,34 @@ export default function App() {
 
               {/* PAYMENT DETAILS SUB-FORMS */}
               {checkoutPaymentMethod === 'credit_card' && (
-                <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2.5">
+                <div className="p-3.5 bg-rose-50/80 rounded-xl border border-rose-200 space-y-3">
                   <div className="flex items-center justify-between text-slate-800 font-bold">
-                    <span className="flex items-center gap-1.5"><CreditCard className="h-4 w-4 text-sky-700" /> Credit Card Authorization</span>
-                    <span className="text-[10px] text-slate-500 font-mono">Encrypted 256-bit SSL</span>
+                    <span className="flex items-center gap-1.5 text-rose-900"><CreditCard className="h-4 w-4 text-rose-700" /> Credit Card Authorization</span>
+                    <span className="text-[10px] text-rose-700 font-mono font-bold bg-rose-100 px-2 py-0.5 rounded border border-rose-200">+3.5% SURCHARGE APPLIED</span>
                   </div>
+
+                  {/* High-visibility Warning Banner with 1-Click Switch Button */}
+                  <div className="p-2.5 bg-amber-50 border border-amber-300 rounded-lg text-xs text-amber-900 flex items-center justify-between gap-2 shadow-sm">
+                    <div className="flex items-start gap-1.5">
+                      <AlertCircle className="h-4 w-4 text-amber-700 shrink-0 mt-0.5" />
+                      <div>
+                        <strong>Notice:</strong> 3.5% card surcharge is added (+${creditCardSurcharge.toFixed(2)}).
+                        <div className="text-[11px] text-slate-600">Avoid this fee by paying via Bluevine ACH.</div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setCheckoutPaymentMethod('ach')}
+                      className="shrink-0 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] px-2.5 py-1.5 rounded-lg shadow transition-all"
+                    >
+                      ⚡ Switch to ACH (Save ${creditCardSurcharge.toFixed(2)})
+                    </button>
+                  </div>
+
                   <div className="grid grid-cols-2 gap-2">
-                    <input placeholder="Card Number (4000 0000 0000 0000)" defaultValue="4000 1234 5678 9010" className="col-span-2 bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono" />
-                    <input placeholder="MM / YY" defaultValue="12/28" className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono" />
-                    <input placeholder="CVC / CWW" defaultValue="882" className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono" />
+                    <input placeholder="Card Number (4000 0000 0000 0000)" defaultValue="4000 1234 5678 9010" className="col-span-2 bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono text-xs" />
+                    <input placeholder="MM / YY" defaultValue="12/28" className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono text-xs" />
+                    <input placeholder="CVC / CWW" defaultValue="882" className="bg-white border border-slate-300 rounded-lg px-3 py-2 text-slate-900 font-mono text-xs" />
                   </div>
                 </div>
               )}

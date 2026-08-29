@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "iron-prairie-website",
     "public": "dist",
     "cleanUrls": true,
     "ignore": [

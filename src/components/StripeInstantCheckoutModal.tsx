@@ -12,7 +12,7 @@ import {
   ArrowRight,
   Sparkles,
   Zap,
-  ExternalLink,
+  AlertTriangle,
   Info
 } from 'lucide-react';
 
@@ -61,11 +61,13 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
   const totalWeight = cartItems.reduce((sum, item) => sum + item.totalFinishedWeight, 0);
   const hasMTR = cartItems.some((item) => item.includeMTR);
 
-  // 3% ACH Instant Discount Calculation
-  const achDiscountRate = 0.03;
-  const achDiscountAmount = paymentType === 'ach' ? Math.round((itemsSubtotal * achDiscountRate) * 100) / 100 : 0;
-  const rawTotal = itemsSubtotal + shippingInfo.cost;
-  const finalTotalAmount = Math.round((rawTotal - achDiscountAmount) * 100) / 100;
+  // 3.5% Credit Card Processing Surcharge Calculation
+  const cardSurchargeRate = 0.035;
+  const baseOrderTotal = itemsSubtotal + shippingInfo.cost;
+  const cardSurchargeAmount = Math.round(baseOrderTotal * cardSurchargeRate * 100) / 100;
+  
+  const activeSurcharge = paymentType === 'card' ? cardSurchargeAmount : 0;
+  const finalTotalAmount = Math.round((baseOrderTotal + activeSurcharge) * 100) / 100;
 
   const handlePaySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -177,7 +179,7 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
                 </div>
                 <div className="flex justify-between border-b border-slate-800 pb-2">
                   <span className="text-slate-400">Payment Engine:</span>
-                  <span className="font-bold text-indigo-400">Stripe ({paymentType === 'card' ? 'Card / Apple Pay' : 'ACH Direct Debit'})</span>
+                  <span className="font-bold text-indigo-400">Stripe ({paymentType === 'card' ? 'Card / Apple Pay (+3.5% Surcharge)' : 'ACH Direct Debit (0% Surcharge)'})</span>
                 </div>
                 <div className="flex justify-between border-b border-slate-800 pb-2">
                   <span className="text-slate-400">ASME MTR Traveler:</span>
@@ -220,28 +222,33 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
               )}
 
               {/* Order quick overview */}
-              <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-4">
+              <div className="rounded-xl border border-slate-800 bg-slate-950/80 p-4 space-y-1.5">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-slate-400">Items in Order:</span>
                   <span className="font-mono font-bold text-amber-400">
                     {cartItems.reduce((s, i) => s + i.quantity, 0)} units ({totalWeight.toFixed(1)} lbs)
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-xs mt-1">
+                <div className="flex items-center justify-between text-xs">
                   <span className="text-slate-400">Freight &amp; Handling:</span>
                   <span className="font-mono text-slate-200">
                     {shippingInfo.method} (${shippingInfo.cost.toFixed(2)})
                   </span>
                 </div>
-                {paymentType === 'ach' && (
-                  <div className="flex items-center justify-between text-xs mt-1 text-emerald-400 font-bold">
-                    <span className="flex items-center gap-1">
-                      <Sparkles className="h-3.5 w-3.5" />
-                      <span>Instant 3% ACH / Bank Cash Discount:</span>
-                    </span>
-                    <span className="font-mono">-${achDiscountAmount.toFixed(2)}</span>
+
+                {/* Surcharge Line Item */}
+                {paymentType === 'card' ? (
+                  <div className="flex items-center justify-between text-xs text-rose-400 font-semibold">
+                    <span>Credit Card Processing Surcharge (3.5%):</span>
+                    <span className="font-mono">+${cardSurchargeAmount.toFixed(2)}</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between text-xs text-emerald-400 font-semibold">
+                    <span>Stripe ACH Bank Pay Surcharge (0%):</span>
+                    <span className="font-mono text-emerald-400">$0.00 (Zero Fee)</span>
                   </div>
                 )}
+
                 <div className="flex items-center justify-between text-sm font-bold mt-2 pt-2 border-t border-slate-800">
                   <span className="text-slate-200">Total Due Today:</span>
                   <span className="font-mono text-emerald-400 text-base">${finalTotalAmount.toFixed(2)}</span>
@@ -250,48 +257,88 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
 
               {/* Payment Method Selector Tabs */}
               <div>
-                <label className="block text-slate-300 font-semibold text-xs mb-1.5">
-                  Select Instant Payment Method
+                <label className="block text-slate-300 font-semibold text-xs mb-1.5 uppercase tracking-wider">
+                  Select Payment Method:
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
                     onClick={() => setPaymentType('card')}
-                    className={`flex items-center justify-center gap-2 rounded-xl p-3 text-xs font-bold transition-all border ${
+                    className={`relative flex flex-col items-center justify-center gap-1 rounded-xl p-3 text-xs font-bold transition-all border ${
                       paymentType === 'card'
-                        ? 'border-emerald-500 bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500'
+                        ? 'border-rose-500 bg-rose-500/15 text-rose-300 ring-1 ring-rose-500 shadow-md'
                         : 'border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700 hover:text-slate-200'
                     }`}
                   >
-                    <CreditCard className="h-4 w-4" />
-                    <span>Credit Card / Apple Pay</span>
+                    <div className="flex items-center gap-1.5">
+                      <CreditCard className="h-4 w-4" />
+                      <span>Credit Card / Apple Pay</span>
+                    </div>
+                    <span className="text-[10px] text-rose-400 font-mono font-semibold">+3.5% Surcharge</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setPaymentType('ach')}
-                    className={`relative flex items-center justify-center gap-2 rounded-xl p-3 text-xs font-bold transition-all border ${
+                    className={`relative flex flex-col items-center justify-center gap-1 rounded-xl p-3 text-xs font-bold transition-all border ${
                       paymentType === 'ach'
                         ? 'border-emerald-500 bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500 shadow-md'
                         : 'border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700 hover:text-slate-200'
                     }`}
                   >
-                    <Building className="h-4 w-4 text-emerald-400" />
-                    <span>Stripe ACH Bank Pay</span>
+                    <div className="flex items-center gap-1.5">
+                      <Building className="h-4 w-4 text-emerald-400" />
+                      <span>Stripe ACH Bank Pay</span>
+                    </div>
+                    <span className="text-[10px] text-emerald-400 font-mono font-semibold">0% Surcharge (SAVE 3.5%)</span>
                     <span className="absolute -top-2 right-2 rounded-full bg-emerald-500 text-[9px] font-black text-slate-950 px-2 py-0.5 shadow">
-                      SAVE 3%
+                      RECOMMENDED
                     </span>
                   </button>
                 </div>
               </div>
 
-              {/* High ticket savings alert for ACH */}
-              <div className="flex items-start gap-2.5 rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-3 text-xs text-emerald-300">
-                <Sparkles className="h-4 w-4 shrink-0 text-emerald-400 mt-0.5" />
-                <div>
-                  <strong className="text-emerald-200">ACH Cash Discount:</strong> Pay via <strong>Stripe ACH Bank Debit</strong> and get an instant <strong>3% discount</strong> off your order plus a flat <strong>$5.00 fee cap</strong>, saving hundreds over commercial credit cards.
+              {/* DYNAMIC SURCHARGE WARNING OR SAVINGS BANNER */}
+              {paymentType === 'card' ? (
+                <div className="rounded-xl border-2 border-amber-500/60 bg-amber-950/40 p-3.5 text-xs text-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-lg animate-fadeIn">
+                  <div className="flex items-start gap-2.5">
+                    <AlertTriangle className="h-5 w-5 text-amber-400 shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="text-amber-300 text-sm block font-black">
+                        3.5% Credit Card Processing Surcharge Applied (+${cardSurchargeAmount.toFixed(2)})
+                      </strong>
+                      <span className="text-slate-300 text-[11px] leading-relaxed block mt-0.5">
+                        Credit/debit card transactions include a standard 3.5% processing fee. You can avoid this entire fee by paying via direct bank debit.
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setPaymentType('ach')}
+                    className="shrink-0 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-3.5 py-2 font-black text-xs flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all"
+                  >
+                    <Sparkles className="h-4 w-4 text-slate-950" />
+                    <span>Switch to ACH &amp; Save ${cardSurchargeAmount.toFixed(2)}</span>
+                  </button>
                 </div>
-              </div>
+              ) : (
+                <div className="rounded-xl border border-emerald-500/50 bg-emerald-950/30 p-3.5 text-xs text-emerald-300 flex items-center justify-between shadow animate-fadeIn">
+                  <div className="flex items-center gap-2.5">
+                    <ShieldCheck className="h-5 w-5 text-emerald-400 shrink-0" />
+                    <div>
+                      <strong className="text-emerald-200 font-bold block">
+                        ✓ 0% Processing Surcharge Applied (Saved ${cardSurchargeAmount.toFixed(2)}!)
+                      </strong>
+                      <span className="text-slate-300 text-[11px]">
+                        Direct bank connection via Stripe Plaid with \$5 flat capped fee.
+                      </span>
+                    </div>
+                  </div>
+                  <span className="rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold px-2.5 py-1 border border-emerald-500/40">
+                    ZERO SURCHARGE
+                  </span>
+                </div>
+              )}
 
               {/* Contact / Delivery info */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">

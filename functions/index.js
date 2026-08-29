@@ -98,16 +98,22 @@ exports.createStripeCheckoutSession = onRequest({ cors: true }, async (req, res)
         });
       }
 
-      // Add Coupon / Discount for ACH if applicable
-      let discounts = [];
-      if (achDiscountAmount > 0) {
-        const coupon = await stripe.coupons.create({
-          amount_off: Math.round(achDiscountAmount * 100),
-          currency: 'usd',
-          duration: 'once',
-          name: '3% ACH Instant Direct Debit Discount',
-        });
-        discounts.push({ coupon: coupon.id });
+      // Add Explicit 3.5% Credit Card Processing Surcharge when Card is chosen
+      if (paymentType === 'card') {
+        const cardSurcharge = Math.round((itemsSubtotal + shippingCost) * 0.035 * 100) / 100;
+        if (cardSurcharge > 0) {
+          line_items.push({
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: 'Credit Card Processing Surcharge (3.5%)',
+                description: 'Payment card interchange fee. Zero surcharge when paying via Stripe ACH Bank Transfer.',
+              },
+              unit_amount: Math.round(cardSurcharge * 100),
+            },
+            quantity: 1,
+          });
+        }
       }
 
       // Configure Allowed Payment Method Types
