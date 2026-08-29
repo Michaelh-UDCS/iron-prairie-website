@@ -189,7 +189,7 @@ export const CustomerStorefront: React.FC<CustomerStorefrontProps> = ({
             </div>
             <div>
               <div className="text-xs font-mono font-bold uppercase tracking-wider text-emerald-400">
-                Stripe Payment Authorized &bull; Bluevine Settlement
+                Stripe Payment Authorized &bull; Instant Settlement
               </div>
               <div className="text-sm font-semibold text-slate-100 mt-0.5">
                 {stripeSuccessNotice}

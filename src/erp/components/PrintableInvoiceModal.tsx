@@ -173,7 +173,7 @@ export const PrintableInvoiceModal: React.FC<PrintableInvoiceModalProps> = ({ in
                 Remittance &amp; Payment Instructions:
               </div>
               <p className="text-slate-300 print:text-black">
-                Please remit payments via ACH Direct Debit, Bluevine Commercial Transfer, or Check to:
+                Please remit payments via ACH Direct Debit, Commercial Bank Wire, or Check to:
               </p>
               <div className="font-bold text-slate-100 print:text-black mt-1">Iron Prairie Group LLC</div>
               <div className="text-slate-400 print:text-black">200 County Rd 170, Bay City, TX 77414</div>

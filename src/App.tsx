@@ -4179,7 +4179,7 @@ export default function App() {
                   }`}
                 >
                   <div className="font-bold text-xs flex items-center gap-1.5">
-                    <Building className="h-4 w-4 text-emerald-700" /> Bluevine ACH
+                    <Building className="h-4 w-4 text-emerald-700" /> Instant ACH
                   </div>
                   <div className="text-[10px] text-emerald-700 font-bold mt-0.5">0% Fee (Preferred)</div>
                 </button>
@@ -4290,7 +4290,7 @@ export default function App() {
                       <AlertCircle className="h-4 w-4 text-amber-700 shrink-0 mt-0.5" />
                       <div>
                         <strong>Notice:</strong> 3.5% card surcharge is added (+${creditCardSurcharge.toFixed(2)}).
-                        <div className="text-[11px] text-slate-600">Avoid this fee by paying via Bluevine ACH.</div>
+                        <div className="text-[11px] text-slate-600">Avoid this fee by paying via Instant ACH.</div>
                       </div>
                     </div>
                     <button
@@ -4372,7 +4372,7 @@ export default function App() {
                 )}
                 {checkoutPaymentMethod === 'ach' && (
                   <div className="flex justify-between text-emerald-700 font-bold text-[11px]">
-                    <span>Bluevine ACH Direct Transfer:</span>
+                    <span>Instant ACH Direct Transfer:</span>
                     <span>0% Fee (You Save ${((cartSubtotal + shippingEstimate + activeHotShotFee) * 0.035).toFixed(2)})</span>
                   </div>
                 )}

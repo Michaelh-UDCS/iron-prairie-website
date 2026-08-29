@@ -409,7 +409,7 @@ export function generateClientProposalEmailHtml(proposal: ProposalPayload): stri
         <!-- ACH Cash Discount Callout Banner -->
         <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 14px 20px; margin: 16px 24px; font-size: 12.5px; color: #065f46; border-radius: 0 8px 8px 0;">
           <strong style="font-size: 13.5px; color: #047857;">⚡ Instant 3% ACH / Bank Payment Discount:</strong><br>
-          Pay or authorize via <strong>Direct ACH Bank Transfer</strong> and save <strong>$${(proposal.subtotal * 0.03)?.toFixed(2)}</strong> today (Discounted Total: <strong>$${(proposal.totalAmount - (proposal.subtotal * 0.03))?.toFixed(2)}</strong>). Reply to this email to receive an instant Stripe ACH checkout link or our Bluevine direct wire routing!
+          Pay or authorize via <strong>Direct ACH Bank Transfer</strong> and save <strong>$${(proposal.subtotal * 0.03)?.toFixed(2)}</strong> today (Discounted Total: <strong>$${(proposal.totalAmount - (proposal.subtotal * 0.03))?.toFixed(2)}</strong>). Reply to this email to receive an instant Stripe ACH checkout link or our direct bank routing!
         </div>
 
         <!-- Compliance & Turnaround Guarantees -->

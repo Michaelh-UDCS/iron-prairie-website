@@ -137,7 +137,7 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
                 </span>
               </div>
               <p className="text-xs text-slate-400">
-                Direct CNC Plasma Dispatch &bull; 256-Bit Encrypted &bull; Payout to Bluevine
+                Direct CNC Plasma Dispatch &bull; 256-Bit Encrypted &bull; Instant Commercial Settlement
               </p>
             </div>
           </div>
@@ -531,7 +531,7 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
                     <span>256-Bit SSL Encrypted</span>
                   </span>
                   <span>&bull;</span>
-                  <span>Settlement into Bluevine Business Checking</span>
+                  <span>Instant Commercial Bank Settlement</span>
                 </div>
               </div>
             </form>

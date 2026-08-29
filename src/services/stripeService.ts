@@ -146,7 +146,7 @@ export const initiateStripeCheckout = async (
     notes: `Stripe Checkout (${
       paymentType === 'card'
         ? `Credit Card (+3.5% Card Processing Surcharge Applied: +$${cardSurcharge.toFixed(2)}) - Paid in Full`
-        : `Stripe ACH Direct Debit (0% Processing Surcharge - $0 Fee Applied) - Bluevine Payout`
+        : `Stripe ACH Direct Debit (0% Processing Surcharge - $0 Fee Applied) - Direct Deposit`
     }) | Auth: ch_${Math.random().toString(36).substring(2, 11)}`
   };
 
