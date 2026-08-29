@@ -216,6 +216,26 @@ const routes = [
     ]
   },
   {
+    path: '/traceability',
+    title: 'ASME Section VIII Div 1 & Amazon Material Traceability Portal | Iron Prairie',
+    description: 'Verify mill test reports (MTR EN 10204 3.1), UG-77 hard stampings, and Amazon/B2B delivery dockets for Iron Prairie ASME B16.48 paddle blinds.',
+    canonical: `${DOMAIN}/traceability`,
+    breadcrumbs: [
+      { name: 'Home', url: `${DOMAIN}/` },
+      { name: 'ASME Traceability & MTRs', url: `${DOMAIN}/traceability` }
+    ]
+  },
+  {
+    path: '/mtr',
+    title: 'Certified Mill Test Report (CMTR) Vault | Iron Prairie Fabrication',
+    description: 'Search and inspect certified ASME chemical and tensile mill test reports for Texas cut paddle blinds and isolation spacers.',
+    canonical: `${DOMAIN}/mtr`,
+    breadcrumbs: [
+      { name: 'Home', url: `${DOMAIN}/` },
+      { name: 'MTR Vault', url: `${DOMAIN}/mtr` }
+    ]
+  },
+  {
     path: '/404',
     title: '404 Page Not Found | Iron Prairie Fabrication Group',
     description: 'The requested page could not be found. Return to Iron Prairie Fabrication Group LLC for custom metal fabrication, structural steel, and welding in Texas.',

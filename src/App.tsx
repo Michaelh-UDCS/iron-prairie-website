@@ -1747,6 +1747,7 @@ const navLinks = [
   { to: '/projects', label: 'Projects' },
   { to: '/woman-owned', label: 'Woman-Owned' },
   { to: '/storefront', label: 'Paddle Blinds (B2B)' },
+  { to: '/traceability', label: 'ASME Traceability / MTR' },
   { to: '/contact', label: 'Contact' },
 ];
 
@@ -4835,6 +4836,9 @@ export default function App() {
           <Route path="/paddle-blinds" element={renderStorefrontView()} />
           <Route path="/mtr/:heatNumber" element={<PublicMtrViewer />} />
           <Route path="/mtr" element={<PublicMtrViewer />} />
+          <Route path="/traceability/:refId" element={<PublicMtrViewer />} />
+          <Route path="/traceability" element={<PublicMtrViewer />} />
+          <Route path="/mtr-lookup" element={<PublicMtrViewer />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
