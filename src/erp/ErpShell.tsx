@@ -27,7 +27,8 @@ import {
   X,
   CheckCircle2,
   Cloud,
-  ChevronRight
+  ChevronRight,
+  Lock
 } from 'lucide-react';
 import { chimeManager } from '../operations/services/AudioChimeManager';
 import { ErpDashboardScreen } from './screens/ErpDashboardScreen';
@@ -142,6 +143,17 @@ export const ErpShell: React.FC = () => {
   // Grouped Navigation Categories
   const categories = ['Operations', 'Quality & Materials', 'Supply Chain & Finance', 'Engineering & System'] as const;
 
+  const handleLockErp = () => {
+    try {
+      sessionStorage.removeItem('ipf_exec_auth_session');
+      localStorage.removeItem('ipf_ops_authenticated');
+      window.location.reload();
+    } catch (e) {
+      console.error(e);
+      window.location.href = '/';
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-mono flex flex-col selection:bg-cyan-500/30 selection:text-cyan-300">
       
@@ -240,6 +252,16 @@ export const ErpShell: React.FC = () => {
             >
               <Sparkles className="h-4 w-4" />
               <span className="hidden sm:inline">+ Simulate Order</span>
+            </button>
+
+            {/* Lock Session Button */}
+            <button
+              onClick={handleLockErp}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 hover:text-rose-200 border border-rose-500/40 text-xs font-black transition-all shadow-sm"
+              title="Lock ERP Workspace & Revoke Active Session"
+            >
+              <Lock className="h-3.5 w-3.5 text-rose-400" />
+              <span className="hidden md:inline">Lock ERP</span>
             </button>
 
             {/* Return to Public Website */}

@@ -1928,6 +1928,18 @@ export default function App() {
     }
   }, [abandonedCarts]);
 
+  // Executive Manager discreet keyboard shortcut: Ctrl+Shift+E -> /erp
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'e') {
+        e.preventDefault();
+        navigate('/erp');
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [navigate]);
+
   // Live Calculating Spec for Active Storefront Configuration
   const liveSpec = useMemo(() => {
     return calculateDynamicBlindPrice(
@@ -4643,15 +4655,6 @@ export default function App() {
               </button>
             )}
 
-            <Link
-              to="/erp"
-              className="font-mono font-bold text-stone-300 hover:text-brand-bone transition-colors text-[11px] flex items-center gap-1 flex-shrink-0 py-0.5 px-2 rounded-md bg-brand-panel hover:bg-brand-panel-muted border border-brand-border"
-              title="Launch Iron Prairie Internal ERP & Desktop Operations"
-            >
-              <span className="text-brand-brown-light font-bold">⚡</span>
-              <span>Internal ERP</span>
-            </Link>
-
             <a
               href="tel:+19792489266"
               className="font-mono font-bold text-brand-bone hover:text-brand-brown-light transition-colors text-xs flex items-center gap-1.5 flex-shrink-0 py-1 px-1.5 rounded-md hover:bg-brand-panel touch-manipulation min-h-[32px]"
@@ -4876,7 +4879,6 @@ export default function App() {
                 <li><Link to="/projects" className="hover:text-brand-bone transition-colors">Project Portfolio</Link></li>
                 <li><Link to="/woman-owned" className="hover:text-brand-bone transition-colors">Woman-Owned Enterprise</Link></li>
                 <li><Link to="/storefront" className="hover:text-brand-bone transition-colors">ASME B16.48 Paddle Blinds</Link></li>
-                <li><Link to="/shop-floor" className="hover:text-brand-bone transition-colors">Shop Floor Whiteboard</Link></li>
                 <li><Link to="/contact" className="hover:text-brand-bone transition-colors">Request a Quote</Link></li>
               </ul>
             </div>
