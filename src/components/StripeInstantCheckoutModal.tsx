@@ -39,6 +39,7 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
   // Form Fields
   const [buyerName, setBuyerName] = useState('');
   const [buyerEmail, setBuyerEmail] = useState('');
+  const [buyerPhone, setBuyerPhone] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   
@@ -85,6 +86,7 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
         cartItems,
         buyerEmail: buyerEmail.trim(),
         buyerName: buyerName.trim(),
+        buyerPhone: buyerPhone.trim() || '979-417-6489',
         companyName: companyName.trim(),
         deliveryAddress: deliveryAddress.trim(),
         paymentType,
@@ -372,7 +374,21 @@ export const StripeInstantCheckoutModal: React.FC<StripeInstantCheckoutModalProp
 
                 <div>
                   <label className="block text-slate-300 font-semibold mb-1">
-                    Company Name (Optional)
+                    Contact Phone Number <span className="text-amber-400">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    required
+                    value={buyerPhone}
+                    onChange={(e) => setBuyerPhone(e.target.value)}
+                    placeholder="e.g. (979) 417-6489"
+                    className="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">
+                    Company Name
                   </label>
                   <input
                     type="text"

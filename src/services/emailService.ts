@@ -558,7 +558,7 @@ export async function triggerProposalEmailNotification(proposal: ProposalPayload
     const webhookUrl = (import.meta as any).env?.VITE_ORDER_WEBHOOK_URL;
     const endpoints = [
       webhookUrl,
-      'https://formspree.io/f/mqaejvqd'
+      '/api/send-email'
     ].filter(Boolean);
 
     for (const endpoint of endpoints) {
@@ -570,19 +570,16 @@ export async function triggerProposalEmailNotification(proposal: ProposalPayload
             'Accept': 'application/json'
           },
           body: JSON.stringify({
-            _replyto: proposal.email || IPG_SALES_EMAIL,
-            _subject: subject,
-            from: IPG_SALES_EMAIL,
-            to: recipients.join(', '),
+            to: recipients,
+            subject: subject,
             clientEmail: proposal.email,
             proposalId: proposal.proposalId,
             companyName: proposal.companyName,
             buyerName: proposal.buyerName,
-            totalAmount: `$${proposal.totalAmount?.toFixed(2)}`,
-            totalWeightLbs: `${proposal.totalWeightLbs} lbs`,
-            leadType: 'Official Turnaround Proposal',
-            fullProposalText: rawText,
-            message: rawText
+            totalAmount: proposal.totalAmount,
+            totalWeightLbs: proposal.totalWeightLbs,
+            html: rawHtml,
+            text: rawText
           })
         });
         break;
@@ -646,7 +643,7 @@ export async function triggerOrderEmailNotification(order: any): Promise<EmailNo
     const webhookUrl = (import.meta as any).env?.VITE_ORDER_WEBHOOK_URL;
     const endpoints = [
       webhookUrl,
-      'https://formspree.io/f/mqaejvqd'
+      '/api/send-email'
     ].filter(Boolean);
 
     for (const endpoint of endpoints) {
@@ -658,26 +655,28 @@ export async function triggerOrderEmailNotification(order: any): Promise<EmailNo
             'Accept': 'application/json'
           },
           body: JSON.stringify({
+            to: recipients,
+            subject: subject,
+            clientEmail: order.email,
             _replyto: order.email || IPG_SALES_EMAIL,
             _subject: subject,
             from: IPG_SALES_EMAIL,
-            to: recipients.join(', '),
             poNumber: order.poNumber,
             orderId: order.orderId,
             companyName: order.companyName,
             contactName: order.contactName || order.buyerName,
             email: order.email,
             jobsiteAddress: order.jobsiteAddress,
-            totalAmount: `$${order.totalAmount?.toFixed(2)}`,
-            totalWeightLbs: `${order.totalWeightLbs} lbs`,
+            totalAmount: order.totalAmount,
+            totalWeightLbs: order.totalWeightLbs,
             priority: isRush ? 'HOT SHOT EMERGENCY (2-4 HR RUSH)' : isLarge ? 'HIGH-VOLUME MILL ALLOCATION (>10k)' : 'STANDARD IN-STOCK DISPATCH',
             paymentMethod: order.paymentMethod,
             paymentStatus: order.paymentStatus,
             scheduledShipDate: order.scheduledShipDate,
             leadTimeEstimate: order.leadTimeEstimate,
             actionRequired: record.actionRequired,
-            fullOrderManifest: rawText,
-            message: rawText
+            html: rawHtml,
+            text: rawText
           })
         });
         break;

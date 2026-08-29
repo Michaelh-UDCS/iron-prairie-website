@@ -238,3 +238,61 @@ exports.stripeWebhook = onRequest({ cors: false }, async (req, res) => {
 
   return res.status(200).json({ received: true });
 });
+
+/**
+ * 3. SEND EMAIL NOTIFICATION (Order / Proposal Dispatch)
+ * POST /sendEmailNotification
+ */
+exports.sendEmailNotification = onRequest({ cors: true }, async (req, res) => {
+  return cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method Not Allowed. Use POST.' });
+    }
+
+    try {
+      const { to, subject, html, text, clientEmail, proposalId, orderId } = req.body;
+      const resendApiKey = process.env.RESEND_API_KEY;
+
+      console.log(`Email notification trigger received for ${to} | Subject: ${subject}`);
+
+      // 1. If Resend API key is configured
+      if (resendApiKey) {
+        const response = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${resendApiKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            from: 'Iron Prairie Sales <Sales@ironprairiefabrication.com>',
+            to: Array.isArray(to) ? to : [to],
+            reply_to: clientEmail || 'Sales@ironprairiefabrication.com',
+            subject: subject,
+            html: html || `<pre>${text}</pre>`,
+            text: text
+          })
+        });
+        const data = await response.json();
+        return res.status(200).json({ success: true, provider: 'resend', data });
+      }
+
+      // 2. Fallback: Log to Firestore for shop queue
+      const docRef = await db.collection('notifications').add({
+        to: to || 'Sales@ironprairiefabrication.com',
+        subject: subject || 'Order Notification',
+        clientEmail: clientEmail || '',
+        proposalId: proposalId || null,
+        orderId: orderId || null,
+        text: text || '',
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        status: 'LOGGED_AND_QUEUED'
+      });
+
+      return res.status(200).json({ success: true, provider: 'firestore_log', id: docRef.id });
+    } catch (err) {
+      console.error('Error dispatching email notification:', err);
+      return res.status(500).json({ error: err.message });
+    }
+  });
+});
+

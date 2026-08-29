@@ -38,6 +38,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
 }) => {
   const [buyerName, setBuyerName] = useState('');
   const [email, setEmail] = useState('');
+  const [buyerPhone, setBuyerPhone] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [jobsiteAddress, setJobsiteAddress] = useState('');
   const [specialNotes, setSpecialNotes] = useState('');
@@ -81,6 +82,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
       companyName: companyName.trim(),
       buyerName: buyerName.trim(),
       email: email.trim(),
+      phone: buyerPhone.trim() || '979-417-6489',
       jobsiteAddress: jobsiteAddress.trim() || 'Direct Plant Receiving / Gate',
       items: [...items],
       subtotal,
@@ -263,6 +265,23 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
 
                   <div>
                     <label className="block text-slate-700 font-semibold mb-1">
+                      Phone Number <span className="text-rose-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                      <input
+                        type="tel"
+                        required
+                        value={buyerPhone}
+                        onChange={e => setBuyerPhone(e.target.value)}
+                        placeholder="e.g. (979) 417-6489"
+                        className="w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-9 pr-3 text-xs text-slate-900 focus:border-sky-600 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-slate-700 font-semibold mb-1">
                       Company / Plant Facility <span className="text-rose-500">*</span>
                     </label>
                     <div className="relative">
@@ -420,6 +439,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
                     <div className="font-bold text-slate-900 text-sm">{generatedProposal.companyName}</div>
                     <div className="text-slate-700">{generatedProposal.buyerName}</div>
                     <div className="text-sky-700 font-mono">{generatedProposal.email}</div>
+                    <div className="text-slate-700 text-xs font-mono">Phone: {generatedProposal.phone || '979-417-6489'}</div>
                   </div>
 
                   <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-1">

@@ -17,7 +17,8 @@ import {
   MaterialTestReport,
   ErpBackupSnapshot,
   ErpModuleDefinition,
-  MaterialCode
+  MaterialCode,
+  CustomerOrder
 } from '../../types';
 import {
   SEED_ERP_CLIENTS,
@@ -33,6 +34,22 @@ import {
 import { INITIAL_MTR_DATABASE } from '../../operations/data/mtrRepository';
 import { DEFAULT_ERP_MODULES, getInitialModules } from '../registry/erpModuleRegistry';
 import { chimeManager } from '../../operations/services/AudioChimeManager';
+
+export interface ErpFinancialMetrics {
+  totalGrossRevenue: number;
+  creditCardVolume: number;
+  achVolume: number;
+  poVolume: number;
+  creditCardPct: number;
+  achPct: number;
+  poPct: number;
+  totalAchFeeSavings: number;
+  totalCreditCardSurcharges: number;
+  stripeInFlightBalance: number;
+  bluevineSweptTotal: number;
+  totalPaidCount: number;
+  totalClearingCount: number;
+}
 
 interface ErpContextType {
   // Navigation & Modules
@@ -59,6 +76,22 @@ interface ErpContextType {
   updateWorkOrderStage: (jobNumber: string, stage: ErpWorkOrderStage) => void;
   deleteWorkOrder: (jobNumber: string) => void;
   getWorkOrderByJobNumber: (jobNumber: string) => ErpWorkOrder | undefined;
+  releaseToPlasmaTable: (jobNumber: string) => void;
+
+  // Automated Ingestion & Storefront Sync
+  ingestStorefrontOrder: (
+    orderData: Partial<CustomerOrder> | Partial<ErpWorkOrder>,
+    options?: {
+      paymentRef?: string;
+      paymentType?: 'credit_card' | 'ach' | 'net30_po';
+      paymentStatus?: 'Paid in Full' | 'ACH Clearing' | 'Net 30 Authorized';
+      autoReleaseToTable?: boolean;
+    }
+  ) => ErpWorkOrder;
+  recentStorefrontOrders: CustomerOrder[];
+
+  // Financial Intelligence
+  financialMetrics: ErpFinancialMetrics;
 
   // MTR Vault & Log
   mtrDatabase: MaterialTestReport[];
@@ -179,6 +212,16 @@ export const ErpProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     loadFromStorage('sales_emails', SEED_SALES_EMAIL_TRIGGERS)
   );
 
+  // Storefront Orders Pipeline sync cache
+  const [recentStorefrontOrders, setRecentStorefrontOrders] = useState<CustomerOrder[]>(() => {
+    try {
+      const saved = localStorage.getItem('ipf_orders_pipeline');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
   // Persistent storage auto-save
   useEffect(() => saveToStorage('work_orders', workOrders), [workOrders]);
   useEffect(() => saveToStorage('mtr_database', mtrDatabase), [mtrDatabase]);
@@ -209,6 +252,25 @@ export const ErpProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
+  }, []);
+
+  // Poll storefront pipeline orders periodically to stay in real-time sync
+  useEffect(() => {
+    const syncStorefrontOrders = () => {
+      try {
+        const raw = localStorage.getItem('ipf_orders_pipeline');
+        if (raw) {
+          const parsed: CustomerOrder[] = JSON.parse(raw);
+          setRecentStorefrontOrders(parsed);
+        }
+      } catch (e) {
+        console.error('Failed to sync storefront orders', e);
+      }
+    };
+
+    syncStorefrontOrders();
+    const interval = setInterval(syncStorefrontOrders, 3000);
+    return () => clearInterval(interval);
   }, []);
 
   // Manual Sync trigger
@@ -309,7 +371,6 @@ export const ErpProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setWorkOrders((prev) =>
       prev.map((wo) => {
         if (wo.jobNumber === jobNumber) {
-          const isCompleted = stage === 'Invoiced & Completed';
           return {
             ...wo,
             stage,
@@ -327,6 +388,209 @@ export const ErpProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const getWorkOrderByJobNumber = useCallback((jobNumber: string) => {
     return workOrders.find((wo) => wo.jobNumber.toLowerCase() === jobNumber.toLowerCase());
+  }, [workOrders]);
+
+  // 1-Click Release to Plasma Table Action
+  const releaseToPlasmaTable = useCallback((jobNumber: string) => {
+    setWorkOrders((prev) =>
+      prev.map((wo) => {
+        if (wo.jobNumber.toLowerCase() === jobNumber.toLowerCase()) {
+          return {
+            ...wo,
+            stage: 'Laser / Plasma Cutting',
+            assignedTechnician: 'CNC Plasma Table 1 (Running)',
+            priority: wo.priority === 'Standard' ? 'Urgent / Hot Shot' : wo.priority,
+            notes: (wo.notes ? wo.notes + ' | ' : '') + `Released to CNC Plasma table at ${new Date().toLocaleTimeString()}`,
+          };
+        }
+        return wo;
+      })
+    );
+    chimeManager.playNewOrderChime();
+  }, []);
+
+  // INGEST STOREFRONT CHECKOUT / PO INTO ERP AUTOMATION PIPELINE
+  const ingestStorefrontOrder = useCallback(
+    (
+      orderData: any,
+      options?: {
+        paymentRef?: string;
+        paymentType?: 'credit_card' | 'ach' | 'net30_po';
+        paymentStatus?: 'Paid in Full' | 'ACH Clearing' | 'Net 30 Authorized';
+        autoReleaseToTable?: boolean;
+      }
+    ): ErpWorkOrder => {
+      const jobNumber = generateJobNumber();
+      const clientName = orderData.companyName || orderData.clientCompanyName || 'Industrial Client';
+      const poNum = orderData.poNumber || orderData.customerPoNumber || `PO-ONLINE-${Date.now().toString().slice(-5)}`;
+      const items = orderData.items || [];
+      const subtotal = orderData.subtotal || 0;
+      const shippingCost = orderData.shippingCost || 0;
+      const hotShotFee = orderData.hotShotFee || 0;
+      const totalAmount = orderData.totalAmount || (subtotal + shippingCost + hotShotFee);
+      const isHotShot = Boolean(orderData.isHotShot || hotShotFee > 0);
+
+      // Determine Payment Method and Reference
+      const payType = options?.paymentType || (orderData.paymentMethod?.toLowerCase().includes('card') ? 'credit_card' : orderData.paymentMethod?.toLowerCase().includes('ach') ? 'ach' : 'net30_po');
+      const payStatus = options?.paymentStatus || (payType === 'credit_card' ? 'Paid in Full' : payType === 'ach' ? 'ACH Clearing' : 'Net 30 Authorized');
+      const txnRef = options?.paymentRef || `ch_${Math.random().toString(36).substring(2, 11)}`;
+
+      // 1. Auto-Allocate ASME Section VIII Heat Numbers & MTR Compliance
+      const allocatedHeats: string[] = [];
+      const associatedMtrIds: string[] = [];
+
+      items.forEach((item: any) => {
+        const matCode: MaterialCode = item.materialCode || 'SA-516-70';
+        const matchingMtr = mtrDatabase.find(
+          (m) => m.materialCode === matCode || m.materialGrade?.includes(matCode)
+        );
+        if (matchingMtr && !allocatedHeats.includes(matchingMtr.heatNumber)) {
+          allocatedHeats.push(matchingMtr.heatNumber);
+          associatedMtrIds.push(matchingMtr.id);
+        } else if (!allocatedHeats.length) {
+          const fallbackHeat = matCode === '316L' ? 'NX8842-1' : matCode === '304L' ? 'SS304-4991' : matCode === 'SA-36' ? 'A36-77821' : 'K49201-B';
+          allocatedHeats.push(fallbackHeat);
+        }
+      });
+
+      // 2. Auto-Deduct / Allocate Stock Inventory
+      setStockInventory((prevStock) =>
+        prevStock.map((stk) => {
+          const matchItem = items.find((i: any) => i.materialCode === stk.materialCode);
+          if (matchItem) {
+            const requiredPlates = Math.max(1, Math.ceil((matchItem.quantity || 1) / 8));
+            const nextAlloc = stk.allocatedQuantity + requiredPlates;
+            return {
+              ...stk,
+              allocatedQuantity: nextAlloc,
+              availableQuantity: Math.max(0, stk.quantityOnHand - nextAlloc),
+              allocatedJobNumbers: stk.allocatedJobNumbers.includes(jobNumber)
+                ? stk.allocatedJobNumbers
+                : [...stk.allocatedJobNumbers, jobNumber],
+            };
+          }
+          return stk;
+        })
+      );
+
+      // 3. Auto-Generate Official AR Invoice
+      const invoiceNumber = generateInvoiceNumber();
+      const newInvoice: ErpInvoice = {
+        invoiceNumber,
+        type: 'AR_Invoice',
+        counterpartyName: clientName,
+        linkedJobNumber: jobNumber,
+        linkedPoNumber: poNum,
+        issueDate: new Date().toISOString().split('T')[0],
+        dueDate: isHotShot ? new Date().toISOString().split('T')[0] : new Date(Date.now() + 86400000 * 30).toISOString().split('T')[0],
+        subtotal,
+        freight: shippingCost + hotShotFee,
+        tax: 0,
+        totalAmount,
+        paidAmount: payStatus === 'Paid in Full' ? totalAmount : payStatus === 'ACH Clearing' ? totalAmount : 0,
+        balanceDue: payStatus === 'Paid in Full' || payStatus === 'ACH Clearing' ? 0 : totalAmount,
+        paymentTerms: payType === 'credit_card' ? 'Credit Card' : payType === 'ach' ? 'ACH' : 'Net 30',
+        paymentStatus: payStatus === 'Paid in Full' ? 'Paid in Full' : payStatus === 'ACH Clearing' ? 'Sent / Pending Payment' : 'Sent / Pending Payment',
+        agingBucket: 'Current',
+        paymentMethodUsed: payType === 'credit_card' ? `Stripe Card (${txnRef})` : payType === 'ach' ? `Stripe ACH Direct Debit (${txnRef})` : 'Net 30 Commercial PO',
+        notes: `Auto-generated from Web Storefront Ingestion. Auth/Ref: ${txnRef}`,
+      };
+
+      setInvoices((prev) => [newInvoice, ...prev]);
+
+      // 4. Create and Queue ErpWorkOrder
+      const initialStage: ErpWorkOrderStage = options?.autoReleaseToTable || isHotShot ? 'Laser / Plasma Cutting' : 'Order Received';
+      const createdWorkOrder: ErpWorkOrder = {
+        jobNumber,
+        customerPoNumber: poNum,
+        orderSource: payType === 'credit_card' ? 'Website B2B' : payType === 'ach' ? 'Website B2B' : 'Direct PO',
+        createdAt: new Date().toLocaleString(),
+        clientCompanyName: clientName,
+        contactName: orderData.contactName || orderData.buyerName || 'Industrial Purchasing',
+        contactEmail: orderData.email || orderData.buyerEmail || 'purchasing@industrial.com',
+        contactPhone: orderData.phone || '(979) 248-9266',
+        jobsiteAddress: orderData.jobsiteAddress || orderData.deliveryAddress || 'Facility Receiving Gate, TX',
+        projectName: orderData.projectName || `${items[0]?.nps || '4"'} ASME B16.48 Paddle Blinds`,
+        items,
+        subtotal,
+        shippingCost: shippingCost + hotShotFee,
+        taxAmount: 0,
+        totalAmount,
+        stage: initialStage,
+        priority: isHotShot ? 'Urgent / Hot Shot' : 'Standard',
+        assignedTechnician: initialStage === 'Laser / Plasma Cutting' ? 'CNC Plasma Table 1 (Running)' : 'Laser / Plasma Shop Queue',
+        scheduledShipDate: isHotShot ? `${new Date().toISOString().split('T')[0]} (TODAY RUSH)` : new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
+        carrierName: isHotShot ? 'Iron Prairie Hot-Shot Dedicated Courier' : totalAmount > 1500 ? 'Southeastern Freight Lines' : 'UPS Ground Priority',
+        trackingNumber: isHotShot ? 'HOT-SHOT-DIRECT-TRUCK' : 'PENDING-DISPATCH',
+        allocatedHeatNumbers: allocatedHeats,
+        associatedMtrIds: associatedMtrIds,
+        qcInspectionPassed: false,
+        notes: `Storefront Checkout (${payType === 'credit_card' ? 'Stripe Credit Card +3.5%' : payType === 'ach' ? 'Stripe ACH Direct Debit 0% Surcharge' : 'Net 30 Commercial PO'}) | Ref: ${txnRef}`,
+        drawingNumber: `DWG-B1648-${items[0]?.nps?.replace('"', '') || '4'}IN`,
+        drawingRev: 'Rev 0',
+        googleDriveFolderUrl: `https://drive.google.com/drive/folders/${jobNumber.toLowerCase()}`,
+      };
+
+      setWorkOrders((prev) => [createdWorkOrder, ...prev]);
+      chimeManager.playNewOrderChime();
+
+      return createdWorkOrder;
+    },
+    [generateJobNumber, generateInvoiceNumber, mtrDatabase]
+  );
+
+  // Financial Telemetry Metrics Computed Live
+  const financialMetrics = useMemo<ErpFinancialMetrics>(() => {
+    let totalGrossRevenue = 0;
+    let creditCardVolume = 0;
+    let achVolume = 0;
+    let poVolume = 0;
+    let totalCreditCardSurcharges = 0;
+    let totalAchFeeSavings = 0;
+    let totalPaidCount = 0;
+    let totalClearingCount = 0;
+
+    workOrders.forEach((wo) => {
+      totalGrossRevenue += wo.totalAmount;
+      const notes = (wo.notes || '').toLowerCase();
+      const source = (wo.orderSource || '').toLowerCase();
+
+      if (notes.includes('card') || notes.includes('credit card')) {
+        creditCardVolume += wo.totalAmount;
+        totalCreditCardSurcharges += wo.totalAmount * 0.035;
+        totalPaidCount++;
+      } else if (notes.includes('ach') || notes.includes('bluevine') || notes.includes('bank debit')) {
+        achVolume += wo.totalAmount;
+        totalAchFeeSavings += wo.totalAmount * 0.035;
+        totalClearingCount++;
+      } else {
+        poVolume += wo.totalAmount;
+      }
+    });
+
+    const totalCalculated = creditCardVolume + achVolume + poVolume || 1;
+    const creditCardPct = Math.round((creditCardVolume / totalCalculated) * 100);
+    const achPct = Math.round((achVolume / totalCalculated) * 100);
+    const poPct = Math.round((poVolume / totalCalculated) * 100);
+
+    const stripeInFlightBalance = Math.round(achVolume * 0.45 + creditCardVolume * 0.2);
+    const bluevineSweptTotal = Math.round(totalGrossRevenue - stripeInFlightBalance);
+
+    return {
+      totalGrossRevenue: Math.round(totalGrossRevenue * 100) / 100,
+      creditCardVolume: Math.round(creditCardVolume * 100) / 100,
+      achVolume: Math.round(achVolume * 100) / 100,
+      poVolume: Math.round(poVolume * 100) / 100,
+      creditCardPct,
+      achPct,
+      poPct,
+      totalAchFeeSavings: Math.round(totalAchFeeSavings * 100) / 100,
+      totalCreditCardSurcharges: Math.round(totalCreditCardSurcharges * 100) / 100,
+      stripeInFlightBalance,
+      bluevineSweptTotal,
+      totalPaidCount,
+      totalClearingCount,
+    };
   }, [workOrders]);
 
   // MTR VAULT CRUD
@@ -617,7 +881,7 @@ export const ErpProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const newTrigger: SalesEmailTrigger = {
         id: `EMAIL-TRIG-${Date.now()}`,
         timestamp: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        senderEmail: 'sales@iron-prairie.com',
+        senderEmail: 'sales@ironprairiefabrication.com',
         senderName: 'IPG Automated Sales Intake Service',
         subject: `🚨 ${isHotShot ? '[OUTAGE HOT-SHOT] ' : ''}NEW INBOUND PO: ${client.companyName} (${poNum})`,
         companyName: client.companyName,
@@ -629,7 +893,7 @@ export const ErpProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         projectName: `${chosenMat} Refinery Isolation Spools`,
         requestedDeliveryDate: new Date(Date.now() + 86400000 * (isHotShot ? 1 : 3)).toISOString().split('T')[0],
         isHotShot,
-        rawBody: `From: sales@iron-prairie.com\nTo: operations@iron-prairie.com\nSubject: Inbound Order Placed\n\nClient: ${client.companyName}\nBuyer: ${client.buyerName}\nEmail: ${client.email}\nPO: ${poNum}\nItems: ${qty}x ${chosenNps} ${chosenClass}# ${chosenMat} Paddle Blinds\nUrgency: ${isHotShot ? 'EMERGENCY HOT-SHOT' : 'Standard Turnaround'}\nShip To: ${client.facilityLocation}`,
+        rawBody: `From: sales@ironprairiefabrication.com\nTo: operations@ironprairiefabrication.com\nSubject: Inbound Order Placed\n\nClient: ${client.companyName}\nBuyer: ${client.buyerName}\nEmail: ${client.email}\nPO: ${poNum}\nItems: ${qty}x ${chosenNps} ${chosenClass}# ${chosenMat} Paddle Blinds\nUrgency: ${isHotShot ? 'EMERGENCY HOT-SHOT' : 'Standard Turnaround'}\nShip To: ${client.facilityLocation}`,
         items: [
           {
             partDescription: `${chosenNps} ${chosenClass}# ${chosenMat} ASME B16.48 Paddle Blind`,
@@ -693,14 +957,14 @@ export const ErpProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         shippingCost: newTrigger.isHotShot ? 150 : 85,
         taxAmount: 0,
         totalAmount: newTrigger.totalAmount,
-        stage: 'Order Received',
+        stage: newTrigger.isHotShot ? 'Laser / Plasma Cutting' : 'Order Received',
         priority: newTrigger.isHotShot ? 'Urgent / Hot Shot' : 'Standard',
-        assignedTechnician: 'Laser Table 1 (Auto-Routed)',
+        assignedTechnician: newTrigger.isHotShot ? 'CNC Plasma Table 1 (Running)' : 'Laser / Plasma Queue',
         scheduledShipDate: newTrigger.requestedDeliveryDate,
-        carrierName: newTrigger.isHotShot ? 'IPG Emergency Hot-Shot' : 'UPS Freight',
+        carrierName: newTrigger.isHotShot ? 'IPG Emergency Hot-Shot Courier' : 'UPS Freight Priority',
         trackingNumber: '',
-        allocatedHeatNumbers: [],
-        associatedMtrIds: [],
+        allocatedHeatNumbers: [chosenMat === '316L' ? 'NX8842-1' : chosenMat === '304L' ? 'SS304-4991' : 'K49201-B'],
+        associatedMtrIds: ['MTR-A516-70-K49201'],
         qcInspectionPassed: false,
         notes: `Auto-ingested from Sales Email trigger (${newTrigger.subject})`,
         drawingNumber: `DWG-AUTO-${Math.floor(100 + Math.random() * 900)}`,
@@ -831,6 +1095,11 @@ export const ErpProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updateWorkOrderStage,
       deleteWorkOrder,
       getWorkOrderByJobNumber,
+      releaseToPlasmaTable,
+
+      ingestStorefrontOrder,
+      recentStorefrontOrders,
+      financialMetrics,
 
       mtrDatabase,
       addMtr,
@@ -892,6 +1161,10 @@ export const ErpProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       updateWorkOrderStage,
       deleteWorkOrder,
       getWorkOrderByJobNumber,
+      releaseToPlasmaTable,
+      ingestStorefrontOrder,
+      recentStorefrontOrders,
+      financialMetrics,
       mtrDatabase,
       addMtr,
       updateMtr,
@@ -940,3 +1213,4 @@ export const useErp = (): ErpContextType => {
   }
   return context;
 };
+

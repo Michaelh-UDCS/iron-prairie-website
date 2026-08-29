@@ -1,9 +1,9 @@
 @echo off
 setlocal
-title Iron Prairie Operations & ASME MTR Platform
+title Iron Prairie ERP & Desktop Operations Platform
 
 echo ========================================================================
-echo   IRON PRAIRIE FABRICATION GROUP LLC - DESKTOP OPERATIONS PLATFORM
+echo   IRON PRAIRIE FABRICATION GROUP LLC - ERP & DESKTOP OPERATIONS
 echo   ASME Section VIII Div 1 & ASME B16.48 Material Traceability Suite
 echo ========================================================================
 echo.
@@ -28,7 +28,7 @@ if not exist "node_modules" (
 
 REM 3. Launch background browser opener in Chrome App mode or default browser
 start /b "" powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-  "$port = 5173; $url = 'http://localhost:5173/operations'; " ^
+  "$port = 5173; $url = 'http://localhost:5173/erp'; " ^
   "for ($i=0; $i -lt 30; $i++) { " ^
   "  Start-Sleep -Milliseconds 500; " ^
   "  try { " ^
@@ -46,7 +46,7 @@ start /b "" powershell -NoProfile -ExecutionPolicy Bypass -Command ^
   "try { Start-Process 'chrome.exe' -ArgumentList ('--app=' + $url, '--window-size=1920,1080') } catch { Start-Process $url }"
 
 echo.
-echo [✓] Launching Operations Suite on http://localhost:5173/operations...
+echo [✓] Launching Iron Prairie ERP Platform on http://localhost:5173/erp...
 echo.
 echo ------------------------------------------------------------------------
 echo   (*) Changes saved in code will automatically update in real-time.

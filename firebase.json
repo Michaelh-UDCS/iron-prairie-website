@@ -18,6 +18,10 @@
         "function": "stripeWebhook"
       },
       {
+        "source": "/api/send-email",
+        "function": "sendEmailNotification"
+      },
+      {
         "source": "/googlef0aac9a4843c12ca.html",
         "destination": "/googlef0aac9a4843c12ca.html"
       },

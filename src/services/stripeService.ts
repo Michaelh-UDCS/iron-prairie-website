@@ -32,6 +32,7 @@ export interface StripeCheckoutPayload {
   cartItems: ConfiguredBlind[];
   buyerEmail: string;
   buyerName: string;
+  buyerPhone?: string;
   companyName?: string;
   deliveryAddress?: string;
   paymentType: 'card' | 'ach' | 'all';

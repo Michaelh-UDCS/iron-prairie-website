@@ -1,5 +1,6 @@
 // src/erp/screens/ErpDashboardScreen.tsx
 // Main Home Page & Executive Operations Dashboard for Iron Prairie Group LLC
+// Real-time integration: Stripe & Bluevine Financial Intelligence, Active Storefront Inbound Feed, Plate Stock Alerts & ASME Quality Flow
 
 import React, { useState } from 'react';
 import { useErp } from '../context/ErpContext';
@@ -21,7 +22,14 @@ import {
   Activity,
   Layers,
   FileSpreadsheet,
-  Building
+  Building,
+  CreditCard,
+  ExternalLink,
+  Zap,
+  ArrowDownLeft,
+  Lock,
+  Percent,
+  Play
 } from 'lucide-react';
 import { ErpWorkOrder } from '../../types';
 import { JobPacketModal } from '../components/JobPacketModal';
@@ -38,6 +46,9 @@ export const ErpDashboardScreen: React.FC = () => {
     simulateSalesEmailTrigger,
     setActiveModuleId,
     updateWorkOrderStage,
+    releaseToPlasmaTable,
+    financialMetrics,
+    recentStorefrontOrders,
   } = useErp();
 
   const [selectedOrderForPacket, setSelectedOrderForPacket] = useState<ErpWorkOrder | null>(null);
@@ -45,7 +56,7 @@ export const ErpDashboardScreen: React.FC = () => {
   // High-Level KPI Calculations
   const activeJobs = workOrders.filter((w) => w.stage !== 'Invoiced & Completed');
   const completedJobs = workOrders.filter((w) => w.stage === 'Invoiced & Completed');
-  const totalRevenue = workOrders.reduce((sum, w) => sum + w.totalAmount, 0);
+  const totalRevenue = financialMetrics.totalGrossRevenue;
   
   const arInvoices = invoices.filter((i) => i.type === 'AR_Invoice');
   const openArBalance = arInvoices
@@ -55,6 +66,15 @@ export const ErpDashboardScreen: React.FC = () => {
   const openNcrCount = ncrRecords.filter((n) => n.status !== 'Closed').length;
   const lowStockCount = stockInventory.filter((s) => s.availableQuantity <= s.minReorderThreshold).length;
   const pendingPos = purchaseOrders.filter((p) => p.status === 'Issued to Vendor' || p.status === 'Draft').length;
+
+  // Key Fabrication Plate Materials
+  const keyPlateAlloys = [
+    { code: 'SA-516-70', label: 'A516-70 PVQ', spec: 'ASME SA-516 Gr. 70 (Normalized)', density: '0.284 lb/in³' },
+    { code: 'SA-36', label: 'SA-36 Structural', spec: 'ASME SA-36 / ASTM A36', density: '0.283 lb/in³' },
+    { code: '304L', label: '304L Stainless', spec: 'ASTM A240 304/304L Dual-Cert', density: '0.290 lb/in³' },
+    { code: '316L', label: '316L Stainless', spec: 'ASTM A240 316L Moly Acid Grade', density: '0.290 lb/in³' },
+    { code: 'AL-6061', label: '6061-T6 Aluminum', spec: 'ASTM B209 6061-T6 High Strength', density: '0.098 lb/in³' },
+  ];
 
   return (
     <div className="space-y-6 font-mono">
@@ -131,6 +151,87 @@ export const ErpDashboardScreen: React.FC = () => {
           )}
         </div>
       )}
+
+      {/* STRIPE & BLUEVINE FINANCIAL INTELLIGENCE CARD */}
+      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 sm:p-6 shadow-xl space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+              <CreditCard className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-sm font-bold text-white uppercase tracking-wider">
+                  Live Banking &amp; Payment Intelligence
+                </h2>
+                <span className="px-2 py-0.5 text-[9px] font-black bg-emerald-500/20 text-emerald-300 rounded border border-emerald-500/40 flex items-center gap-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  BLUEVINE SWEEPS ACTIVE
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400">
+                Stripe Payments Engine &bull; Daily Automatic Sweeps to Bluevine Business Checking
+              </p>
+            </div>
+          </div>
+
+          <a
+            href="https://dashboard.stripe.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all shadow-md shadow-indigo-600/20"
+          >
+            <span>Stripe Dashboard</span>
+            <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+        </div>
+
+        {/* Financial Metrics Split Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+          <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+            <div className="text-[10px] text-slate-400 uppercase font-bold">Gross Volume Processed</div>
+            <div className="text-xl font-black text-white font-mono">${financialMetrics.totalGrossRevenue.toLocaleString()}</div>
+            <div className="text-[10px] text-emerald-400 font-bold">All Channels Combined</div>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+            <div className="flex items-center justify-between text-[10px] text-slate-400 uppercase font-bold">
+              <span>Credit Card (+3.5%)</span>
+              <span className="text-amber-400">{financialMetrics.creditCardPct}%</span>
+            </div>
+            <div className="text-xl font-black text-amber-300 font-mono">${financialMetrics.creditCardVolume.toLocaleString()}</div>
+            <div className="text-[10px] text-slate-400">Surcharge: +${financialMetrics.totalCreditCardSurcharges.toFixed(2)}</div>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+            <div className="flex items-center justify-between text-[10px] text-slate-400 uppercase font-bold">
+              <span>Stripe ACH (0%)</span>
+              <span className="text-cyan-400">{financialMetrics.achPct}%</span>
+            </div>
+            <div className="text-xl font-black text-cyan-300 font-mono">${financialMetrics.achVolume.toLocaleString()}</div>
+            <div className="text-[10px] text-emerald-400 font-bold">Fee Savings: ${financialMetrics.totalAchFeeSavings.toFixed(2)}</div>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+            <div className="text-[10px] text-slate-400 uppercase font-bold">Bluevine Swept Net</div>
+            <div className="text-xl font-black text-emerald-400 font-mono">${financialMetrics.bluevineSweptTotal.toLocaleString()}</div>
+            <div className="text-[10px] text-slate-400">In-Flight: ${financialMetrics.stripeInFlightBalance.toLocaleString()}</div>
+          </div>
+        </div>
+
+        {/* Volume Split Progress Visualizer */}
+        <div className="space-y-1.5 pt-1">
+          <div className="flex justify-between text-[10px] text-slate-400">
+            <span>Payment Method Split: Credit Card ({financialMetrics.creditCardPct}%) vs Stripe ACH Direct Debit ({financialMetrics.achPct}%) vs Net 30 ({financialMetrics.poPct}%)</span>
+            <span className="text-emerald-400 font-bold">0% Surcharge Advantage Active</span>
+          </div>
+          <div className="h-2 w-full rounded-full bg-slate-950 overflow-hidden flex">
+            <div style={{ width: `${financialMetrics.creditCardPct}%` }} className="bg-amber-400 h-full" title={`Credit Card: ${financialMetrics.creditCardPct}%`} />
+            <div style={{ width: `${financialMetrics.achPct}%` }} className="bg-cyan-400 h-full" title={`Stripe ACH: ${financialMetrics.achPct}%`} />
+            <div style={{ width: `${financialMetrics.poPct}%` }} className="bg-purple-500 h-full" title={`Commercial PO: ${financialMetrics.poPct}%`} />
+          </div>
+        </div>
+      </div>
 
       {/* Metric KPI Cards Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
@@ -217,15 +318,78 @@ export const ErpDashboardScreen: React.FC = () => {
 
       </div>
 
-      {/* Split Stage: Production Flow & Live Sales Trigger Feed */}
+      {/* REAL-TIME FABRICATION PLATE STOCK INVENTORY MONITOR */}
+      <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 space-y-3 shadow-lg">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-sm font-bold text-white uppercase tracking-wider">
+            <Boxes className="h-4 w-4 text-cyan-400" />
+            <span>Real-Time Plate Stock Inventory (ASME &amp; Structural Alloys)</span>
+          </div>
+          <button
+            onClick={() => setActiveModuleId('stock_inventory')}
+            className="text-xs text-cyan-400 hover:text-cyan-300 font-bold flex items-center gap-1"
+          >
+            <span>Full Inventory ({stockInventory.length})</span>
+            <ArrowUpRight className="h-3.5 w-3.5" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          {keyPlateAlloys.map((alloy) => {
+            const items = stockInventory.filter((s) => s.materialCode === alloy.code);
+            const totalAvailable = items.reduce((sum, i) => sum + i.availableQuantity, 0);
+            const totalAllocated = items.reduce((sum, i) => sum + i.allocatedQuantity, 0);
+            const isLow = totalAvailable <= 2;
+
+            return (
+              <div
+                key={alloy.code}
+                className={`p-3.5 rounded-xl border transition-all ${
+                  isLow
+                    ? 'bg-red-500/10 border-red-500/40 text-red-300'
+                    : 'bg-slate-950 border-slate-800 text-slate-300'
+                }`}
+              >
+                <div className="flex items-center justify-between text-xs font-bold mb-1">
+                  <span className="text-white font-black">{alloy.label}</span>
+                  {isLow ? (
+                    <span className="text-[9px] font-black bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded border border-red-500/40 animate-pulse">
+                      LOW STOCK
+                    </span>
+                  ) : (
+                    <span className="text-[9px] font-bold bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/40">
+                      IN STOCK
+                    </span>
+                  )}
+                </div>
+
+                <div className="text-[10px] text-slate-400 truncate mb-2">{alloy.spec}</div>
+
+                <div className="flex items-end justify-between border-t border-slate-800/80 pt-2 text-[11px]">
+                  <div>
+                    <span className="text-slate-500 text-[10px] block">Available</span>
+                    <strong className="text-base font-black text-white">{totalAvailable} Plates</strong>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-slate-500 text-[10px] block">Allocated</span>
+                    <span className="text-cyan-400 font-bold">{totalAllocated} Pcs</span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Split Stage: Production Flow & Live Storefront / Email Trigger Feed */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Left 2 Cols: Active Work Orders Pipeline */}
+        {/* Left 2 Cols: Active Inbound Storefront & Work Orders Pipeline */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm font-bold text-slate-100 uppercase">
               <Flame className="h-4 w-4 text-cyan-400" />
-              <span>Live Work Orders &amp; Cutting Queue</span>
+              <span>Active Inbound Storefront &amp; Cutting Queue</span>
             </div>
             <button
               onClick={() => setActiveModuleId('work_orders')}
@@ -237,51 +401,80 @@ export const ErpDashboardScreen: React.FC = () => {
           </div>
 
           <div className="space-y-3">
-            {workOrders.slice(0, 5).map((wo) => (
-              <div
-                key={wo.jobNumber}
-                className="p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
-              >
-                <div className="space-y-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-black text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/30">
-                      {wo.jobNumber}
-                    </span>
-                    <span className="font-bold text-slate-200 truncate">{wo.clientCompanyName}</span>
-                    {wo.priority === 'Urgent / Hot Shot' && (
-                      <span className="text-[10px] font-bold bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded border border-red-500/40 animate-pulse">
-                        HOT-SHOT
+            {workOrders.slice(0, 6).map((wo) => {
+              const isPlasmaCutting = wo.stage === 'Laser / Plasma Cutting';
+              return (
+                <div
+                  key={wo.jobNumber}
+                  className="p-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+                >
+                  <div className="space-y-1 min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-black text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/30">
+                        {wo.jobNumber}
                       </span>
+                      <span className="font-bold text-slate-200 truncate">{wo.clientCompanyName}</span>
+                      {wo.priority === 'Urgent / Hot Shot' && (
+                        <span className="text-[10px] font-bold bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded border border-red-500/40 animate-pulse">
+                          HOT-SHOT
+                        </span>
+                      )}
+                      <span className="text-[10px] text-slate-400 font-mono">
+                        ${wo.totalAmount.toFixed(2)}
+                      </span>
+                    </div>
+
+                    <div className="text-slate-400 truncate">
+                      PO: {wo.customerPoNumber} &bull; {wo.projectName} &bull; Items: {wo.items.map(i => `${i.quantity}x ${i.nps} ${i.materialCode}`).join(', ')}
+                    </div>
+
+                    <div className="text-[10px] text-slate-500 flex items-center gap-2 flex-wrap">
+                      <span>Ship Target: <strong className="text-slate-300">{wo.scheduledShipDate}</strong></span>
+                      <span>&bull;</span>
+                      <span>Heat #s: <strong className="text-cyan-400">{wo.allocatedHeatNumbers.join(', ') || 'Auto-Allocated'}</strong></span>
+                      {wo.notes && (
+                        <>
+                          <span>&bull;</span>
+                          <span className="text-slate-400 truncate max-w-xs">{wo.notes}</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold border ${
+                      wo.stage === 'Invoiced & Completed'
+                        ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
+                        : isPlasmaCutting
+                        ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40 animate-pulse'
+                        : 'bg-slate-800 text-slate-300 border-slate-700'
+                    }`}>
+                      {wo.stage}
+                    </span>
+
+                    {/* 1-Click Release to Plasma Table Action */}
+                    {!isPlasmaCutting && wo.stage !== 'Invoiced & Completed' && (
+                      <button
+                        onClick={() => releaseToPlasmaTable(wo.jobNumber)}
+                        className="flex items-center gap-1 px-3 py-1 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-[11px] font-black transition-all shadow-md shadow-cyan-500/20 active:scale-95"
+                        title="Release directly to CNC Plasma table"
+                      >
+                        <Zap className="h-3.5 w-3.5 fill-current" />
+                        <span>Burn</span>
+                      </button>
                     )}
-                  </div>
-                  <div className="text-slate-400 truncate">
-                    PO: {wo.customerPoNumber} &bull; {wo.projectName} &bull; Items: {wo.items.map(i => `${i.quantity}x ${i.nps} ${i.materialCode}`).join(', ')}
-                  </div>
-                  <div className="text-[10px] text-slate-500">
-                    Ship Target: <strong className="text-slate-300">{wo.scheduledShipDate}</strong> &bull; Heat #s: {wo.allocatedHeatNumbers.join(', ') || 'Unallocated'}
+
+                    <button
+                      onClick={() => setSelectedOrderForPacket(wo)}
+                      className="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-bold transition-colors"
+                      title="Open printable ASME QC shop traveler"
+                    >
+                      Traveler
+                    </button>
                   </div>
                 </div>
-
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold border ${
-                    wo.stage === 'Invoiced & Completed'
-                      ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40'
-                      : wo.stage === 'Laser / Plasma Cutting'
-                      ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/40 animate-pulse'
-                      : 'bg-slate-800 text-slate-300 border-slate-700'
-                  }`}>
-                    {wo.stage}
-                  </span>
-
-                  <button
-                    onClick={() => setSelectedOrderForPacket(wo)}
-                    className="px-2.5 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-[11px] font-bold transition-colors"
-                  >
-                    Traveler
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -302,10 +495,10 @@ export const ErpDashboardScreen: React.FC = () => {
 
           <div className="rounded-2xl border border-slate-800 bg-slate-900 p-4 space-y-3">
             <p className="text-[11px] text-slate-400 leading-relaxed">
-              When orders or RFQs are received from <span className="text-cyan-400 font-semibold">sales@iron-prairie.com</span>, they are parsed and populate the dashboard automatically with assigned Job #s.
+              When orders or RFQs are received from <span className="text-cyan-400 font-semibold">sales@ironprairiefabrication.com</span>, they are parsed and populate the dashboard automatically with assigned Job #s.
             </p>
 
-            <div className="space-y-2.5 max-h-[380px] overflow-y-auto">
+            <div className="space-y-2.5 max-h-[420px] overflow-y-auto">
               {salesEmailTriggers.map((trig) => (
                 <div
                   key={trig.id}
