@@ -38,6 +38,7 @@ export interface StripeCheckoutPayload {
   deliveryAddress?: string;
   paymentType: 'card' | 'ach' | 'all';
   shippingCost: number;
+  hotShotFee?: number;
   shippingMethod: string;
   hasMTR: boolean;
   /** Shared order ref used by client stash, Firestore lead, and Stripe metadata */
@@ -68,6 +69,7 @@ export const initiateStripeCheckout = async (
     deliveryAddress = '',
     paymentType,
     shippingCost,
+    hotShotFee = 0,
     shippingMethod,
     hasMTR,
     orderRefId
@@ -76,13 +78,13 @@ export const initiateStripeCheckout = async (
   const itemsSubtotal = cartItems.reduce((sum, item: any) => sum + (Number(item.lineTotal) || (Number(item.unitPrice) * Number(item.quantity)) || 0), 0);
   const totalWeight = cartItems.reduce((sum, item: any) => sum + (Number(item.totalFinishedWeight) || (Number(item.actualWeightLbs) * Number(item.quantity || 1)) || Number(item.weightLbs) || 0), 0);
   const cardSurchargeRate = 0.035;
-  const cardSurcharge = paymentType === 'card' ? Math.round((itemsSubtotal + shippingCost) * cardSurchargeRate * 100) / 100 : 0;
-  const grandTotal = Math.round((itemsSubtotal + shippingCost + cardSurcharge) * 100) / 100;
+  const feeBase = itemsSubtotal + shippingCost + (Number(hotShotFee) || 0);
+  const cardSurcharge = paymentType === 'card' ? Math.round(feeBase * cardSurchargeRate * 100) / 100 : 0;
+  const grandTotal = Math.round((feeBase + cardSurcharge) * 100) / 100;
 
-  // 1. If live Stripe publishable key is present and backend is available, call the API
+  // 1. Live Stripe: create Checkout Session and redirect. Never silently fake success.
   if (isStripeConfigured()) {
     try {
-      // Determine endpoint path (Firebase Functions / Cloud Run / Local rewrite)
       const endpoint = API_BASE_URL
         ? `${API_BASE_URL}/createStripeCheckoutSession`
         : '/api/create-checkout-session';
@@ -100,6 +102,7 @@ export const initiateStripeCheckout = async (
           deliveryAddress,
           paymentType,
           shippingCost,
+          hotShotFee,
           shippingMethod,
           hasMTR,
           orderRefId,
@@ -107,19 +110,24 @@ export const initiateStripeCheckout = async (
         }),
       });
 
-      if (response.ok) {
-        const session = await response.json();
-        if (session.url) {
-          // Direct browser to Stripe Hosted Checkout
-          window.location.href = session.url;
-          return { success: true, redirectUrl: session.url };
-        }
-      } else {
-        const errData = await response.json().catch(() => ({}));
-        console.warn('Backend Stripe session failed, falling back to local workflow:', errData);
+      const session = await response.json().catch(() => ({} as Record<string, unknown>));
+
+      if (response.ok && typeof session.url === 'string' && session.url) {
+        window.location.href = session.url;
+        return { success: true, redirectUrl: session.url };
       }
-    } catch (apiError) {
-      console.warn('Stripe endpoint fetch error:', apiError);
+
+      const apiError =
+        (typeof session.error === 'string' && session.error) ||
+        `Unable to start ${paymentType === 'card' ? 'card' : 'ACH'} checkout (HTTP ${response.status}).`;
+      console.error('Stripe session creation failed:', apiError, session);
+      return { success: false, error: apiError };
+    } catch (apiError: any) {
+      console.error('Stripe endpoint fetch error:', apiError);
+      return {
+        success: false,
+        error: apiError?.message || 'Network error reaching payment processor. Please try again.',
+      };
     }
   }
 

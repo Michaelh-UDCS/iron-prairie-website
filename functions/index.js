@@ -327,10 +327,12 @@ async function assembleOrderFromSession(stripe, session, extras = {}) {
     ? `${shipping.line1}${shipping.line2 ? `, ${shipping.line2}` : ''}, ${shipping.city}, ${shipping.state} ${shipping.postal_code}`
     : (session.metadata?.deliveryAddress || extras.deliveryAddress || 'Direct Shipping');
 
+  const metaPay = String(session.metadata?.paymentType || extras.paymentType || '').toLowerCase();
   const paymentTypes = session.payment_method_types || [];
-  const isAch = paymentTypes.includes('us_bank_account');
+  const isAch = metaPay === 'ach'
+    || (metaPay !== 'card' && paymentTypes.length === 1 && paymentTypes.includes('us_bank_account'));
   const paymentMethod = extras.paymentMethod
-    || (isAch ? 'ACH Direct Debit' : (paymentTypes[0] || 'card'));
+    || (isAch ? 'ACH Direct Debit' : 'Credit Card');
 
   return {
     orderRefId,
@@ -429,6 +431,7 @@ exports.createStripeCheckoutSession = onRequest({ cors: true }, async (req, res)
         paymentType = 'all', // 'card' | 'ach' | 'all'
         shippingCost = 0,
         shippingMethod = 'Standard Freight',
+        hotShotFee = 0,
         hasMTR = false,
         originUrl,
         orderRefId: clientOrderRefId
@@ -440,18 +443,22 @@ exports.createStripeCheckoutSession = onRequest({ cors: true }, async (req, res)
 
       const clientOrigin = originUrl || req.headers.origin || 'https://iron-prairie-website.web.app';
       const itemsSubtotal = cartItems.reduce((sum, i) => sum + (Number(i.lineTotal) || (Number(i.unitPrice) * Number(i.quantity)) || 0), 0);
-      
-      // Calculate ACH 3% cash discount if ACH is explicitly selected
-      const isAchExplicit = paymentType === 'ach';
-      const achDiscountAmount = isAchExplicit ? Math.round(itemsSubtotal * 0.03 * 100) / 100 : 0;
+      const normalizedShipping = Math.max(0, Number(shippingCost) || 0);
+      const normalizedHotShot = Math.max(0, Number(hotShotFee) || 0);
+      const feeBase = itemsSubtotal + normalizedShipping + normalizedHotShot;
 
       // Build Stripe Line Items
       const line_items = cartItems.map((item) => {
-        const unitPrice = Number(item.unitPrice) || (Number(item.lineTotal) / (Number(item.quantity) || 1));
+        const qty = Math.max(1, Number(item.quantity) || 1);
+        const unitPrice = Number(item.unitPrice) || (Number(item.lineTotal) / qty) || 0;
+        const unitAmount = Math.round(unitPrice * 100);
+        if (!Number.isFinite(unitAmount) || unitAmount < 1) {
+          throw new Error(`Invalid unit price for cart item "${item.partNumber || item.id || 'unknown'}".`);
+        }
         const npsVal = item.nps || item.npsSize || item.nominalSizeInches;
         const matVal = item.materialName || item.material || item.materialCode || 'SA-516-70 Carbon Steel';
         const thickVal = item.thicknessLabel || (item.thickness ? `${item.thickness}"` : '0.375"');
-        const weightVal = Number(item.totalFinishedWeight) || (Number(item.actualWeightLbs) * Number(item.quantity || 1)) || Number(item.weightLbs) || 0;
+        const weightVal = Number(item.totalFinishedWeight) || (Number(item.actualWeightLbs) * qty) || Number(item.weightLbs) || 0;
         
         let productName = item.name;
         if (!productName && npsVal && item.pressureClass) {
@@ -465,21 +472,21 @@ exports.createStripeCheckoutSession = onRequest({ cors: true }, async (req, res)
           price_data: {
             currency: 'usd',
             product_data: {
-              name: productName,
-              description: `Spec: ASME B16.48 | Thk: ${thickVal} | Qty: ${item.quantity || 1} | Weight: ${weightVal.toFixed(1)} lbs`,
+              name: productName.slice(0, 250),
+              description: `Spec: ASME B16.48 | Thk: ${thickVal} | Qty: ${qty} | Weight: ${weightVal.toFixed(1)} lbs`.slice(0, 500),
               metadata: {
-                partNumber: item.partNumber || item.id || 'PADDLE-BLIND',
+                partNumber: String(item.partNumber || item.id || 'PADDLE-BLIND').slice(0, 40),
                 mtrIncluded: String(item.includeMTR || item.requireMTR || hasMTR)
               }
             },
-            unit_amount: Math.round(unitPrice * 100), // Cents
+            unit_amount: unitAmount,
           },
-          quantity: item.quantity || 1,
+          quantity: qty,
         };
       });
 
       // Add Shipping Line Item if present
-      if (shippingCost > 0) {
+      if (normalizedShipping > 0) {
         line_items.push({
           price_data: {
             currency: 'usd',
@@ -487,7 +494,21 @@ exports.createStripeCheckoutSession = onRequest({ cors: true }, async (req, res)
               name: `Freight Dispatch (${shippingMethod})`,
               description: 'Insured industrial freight carrier with tracking',
             },
-            unit_amount: Math.round(shippingCost * 100),
+            unit_amount: Math.round(normalizedShipping * 100),
+          },
+          quantity: 1,
+        });
+      }
+
+      if (normalizedHotShot > 0) {
+        line_items.push({
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: 'Hot Shot Emergency Rush Fee',
+              description: 'Priority CNC plasma allocation and expedited dispatch',
+            },
+            unit_amount: Math.round(normalizedHotShot * 100),
           },
           quantity: 1,
         });
@@ -495,7 +516,7 @@ exports.createStripeCheckoutSession = onRequest({ cors: true }, async (req, res)
 
       // Add Explicit 3.5% Credit Card Processing Surcharge when Card is chosen
       if (paymentType === 'card') {
-        const cardSurcharge = Math.round((itemsSubtotal + shippingCost) * 0.035 * 100) / 100;
+        const cardSurcharge = Math.round(feeBase * 0.035 * 100) / 100;
         if (cardSurcharge > 0) {
           line_items.push({
             price_data: {
@@ -511,7 +532,7 @@ exports.createStripeCheckoutSession = onRequest({ cors: true }, async (req, res)
         }
       }
 
-      // Configure Allowed Payment Method Types
+      // Force a single method so card and ACH each get a clean Stripe Checkout surface
       let payment_method_types = ['card', 'us_bank_account'];
       if (paymentType === 'card') payment_method_types = ['card'];
       if (paymentType === 'ach') payment_method_types = ['us_bank_account'];
@@ -520,44 +541,50 @@ exports.createStripeCheckoutSession = onRequest({ cors: true }, async (req, res)
         ? clientOrderRefId.trim().slice(0, 64)
         : `IPG-${Date.now().toString().slice(-6)}`;
 
-      // Create Stripe Checkout Session
-      const session = await stripe.checkout.sessions.create({
-        payment_method_types: payment_method_types,
+      const sessionParams = {
+        payment_method_types,
         customer_email: buyerEmail || undefined,
-        line_items: line_items,
-
+        line_items,
         mode: 'payment',
-        payment_method_options: {
-          us_bank_account: {
-            financial_connections: {
-              permissions: ['payment_method'],
-            },
-          },
-        },
-        billing_address_collection: 'auto',
+        billing_address_collection: 'required',
         shipping_address_collection: {
           allowed_countries: ['US'],
         },
-        success_url: `${clientOrigin}/?session_id={CHECKOUT_SESSION_ID}&order_status=paid&po=${orderRefId}`,
-        cancel_url: `${clientOrigin}/?order_status=cancelled`,
+        success_url: `${clientOrigin}/storefront?session_id={CHECKOUT_SESSION_ID}&order_status=paid&po=${orderRefId}`,
+        cancel_url: `${clientOrigin}/storefront?order_status=cancelled`,
         metadata: {
-          orderRefId: orderRefId,
-          companyName: companyName || buyerName || 'Direct Industrial Buyer',
-          buyerName: buyerName,
-          buyerEmail: buyerEmail || '',
-          deliveryAddress: deliveryAddress,
+          orderRefId,
+          companyName: (companyName || buyerName || 'Direct Industrial Buyer').slice(0, 500),
+          buyerName: String(buyerName || '').slice(0, 500),
+          buyerEmail: String(buyerEmail || '').slice(0, 500),
+          deliveryAddress: String(deliveryAddress || '').slice(0, 500),
           hasMTR: String(hasMTR),
+          paymentType: String(paymentType || 'all'),
           payoutTarget: 'Bluevine Business Checking'
         },
         payment_intent_data: {
           receipt_email: buyerEmail || undefined,
           metadata: {
-            orderRefId: orderRefId,
-            companyName: companyName || buyerName || 'Direct Industrial Buyer',
-            buyerEmail: buyerEmail || ''
+            orderRefId,
+            companyName: (companyName || buyerName || 'Direct Industrial Buyer').slice(0, 500),
+            buyerEmail: String(buyerEmail || '').slice(0, 500),
+            paymentType: String(paymentType || 'all')
           }
         }
-      });
+      };
+
+      // ACH-only: enable Financial Connections. Omit for card so Checkout stays card-focused.
+      if (payment_method_types.includes('us_bank_account')) {
+        sessionParams.payment_method_options = {
+          us_bank_account: {
+            financial_connections: {
+              permissions: ['payment_method'],
+            },
+          },
+        };
+      }
+
+      const session = await stripe.checkout.sessions.create(sessionParams);
 
       try {
         await db.collection('checkout_carts').doc(orderRefId).set({
@@ -569,7 +596,8 @@ exports.createStripeCheckoutSession = onRequest({ cors: true }, async (req, res)
           companyName,
           deliveryAddress,
           paymentType,
-          shippingCost,
+          shippingCost: normalizedShipping,
+          hotShotFee: normalizedHotShot,
           shippingMethod,
           hasMTR,
           originUrl: clientOrigin,
@@ -685,9 +713,10 @@ exports.stripeWebhook = onRequest({ cors: false }, async (req, res) => {
         buyerEmail: paymentIntent.receipt_email || session.customer_details?.email,
         customerName: session.metadata?.companyName || paymentIntent.shipping?.name,
         totalAmount: (paymentIntent.amount_received || paymentIntent.amount || 0) / 100,
-        paymentMethod: paymentIntent.payment_method_types?.includes('us_bank_account')
-          ? 'ACH Direct Debit'
-          : (session.payment_method_types?.[0] || 'card'),
+        paymentMethod: (
+          paymentIntent.metadata?.paymentType === 'ach'
+          || paymentIntent.payment_method_types?.includes('us_bank_account')
+        ) ? 'ACH Direct Debit' : 'Credit Card',
         paymentStatus: 'PAID_IN_FULL'
       });
 

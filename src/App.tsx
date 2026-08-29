@@ -1628,17 +1628,27 @@ export default function App() {
         deliveryAddress: address,
         paymentType,
         shippingCost: shippingEstimate,
+        hotShotFee: activeHotShotFee,
         shippingMethod,
         hasMTR,
         orderRefId: poNumber,
       });
 
-      // initiateStripeCheckout redirects the browser when successful.
-      // If we are still here it means either:
-      //  a) Stripe functions are not yet deployed (pre-Blaze) → result.isSimulated is true
-      //  b) An unexpected error occurred.
-      if (result.isSimulated || !result.redirectUrl) {
-        // Pre-deployment fallback: save locally and show confirmation as before
+      // Live Stripe redirects away on success. Any remaining path is an error or sandbox-only.
+      if (result.redirectUrl) {
+        return;
+      }
+
+      if (result.error) {
+        setNotificationToast({
+          type: 'alert',
+          message: `⚠️ ${result.error}`,
+        });
+        localStorage.removeItem('ipf_pending_stripe_order');
+        return;
+      }
+
+      if (result.isSimulated && result.job) {
         const payLabel: 'Credit Card' | 'ACH Direct Debit' = paymentType === 'card' ? 'Credit Card' : 'ACH Direct Debit';
         const payStatus: 'Paid in Full' | 'ACH Clearing' = paymentType === 'card' ? 'Paid in Full' : 'ACH Clearing';
 
@@ -1684,11 +1694,17 @@ export default function App() {
         setConfirmedOrder(newOrder);
         setNotificationToast({
           type: 'email',
-          message: `✉️ Order #${newOrder.poNumber} queued! Note: live payment will be active after deployment.`,
+          message: `✉️ Sandbox order #${newOrder.poNumber} queued (Stripe keys not configured).`,
         });
         localStorage.removeItem('ipf_pending_stripe_order');
+        return;
       }
-      // If redirect happened, browser navigates away — nothing else runs here.
+
+      setNotificationToast({
+        type: 'alert',
+        message: '⚠️ Unable to open Stripe checkout. Please try again or call (979) 248-9266.',
+      });
+      localStorage.removeItem('ipf_pending_stripe_order');
     } catch (err) {
       console.error('Checkout error:', err);
       setNotificationToast({ type: 'alert', message: '⚠️ Checkout error. Please try again or contact us directly.' });
