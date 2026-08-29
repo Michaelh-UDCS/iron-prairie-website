@@ -88,6 +88,7 @@ import {
 } from './services/emailService';
 import { RapidMatrixOrderGrid } from './components/RapidMatrixOrderGrid';
 import { InstantProposalModal } from './components/InstantProposalModal';
+import { generateNextPoNumber, generateNextProposalNumber, generateNextWorkOrderNumber } from './utils/orderNumberGenerator';
 import { BulkListRfqModal } from './components/BulkListRfqModal';
 
 function ScrollToTop() {
@@ -2713,10 +2714,10 @@ export default function App() {
     const contactName = (formData.get('contactName') as string) || clientAccount?.buyerName || 'Industrial Procurement';
     const email = (formData.get('email') as string) || clientAccount?.email || 'buyer@dow.com';
     const address = (formData.get('address') as string) || 'Industrial Plant Gate 4 Receiving, TX';
-    const poNumber = (formData.get('poNumber') as string) || `PO-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const poNumber = (formData.get('poNumber') as string) || (isHotShotOrder ? generateNextPoNumber('IPF-HOT') : generateNextPoNumber('IPF-PO'));
 
     const newOrder: CustomerOrder = {
-      orderId: isHotShotOrder ? `HOT-2026-${Math.floor(1000 + Math.random() * 9000)}` : `PO-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+      orderId: poNumber,
       orderSource: 'Website B2B',
       createdAt: new Date().toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }),
       companyName,
@@ -5601,7 +5602,7 @@ export default function App() {
                   <input
                     required
                     name="poNumber"
-                    defaultValue={isHotShotOrder ? `HOT-PO-2026-${Math.floor(1000 + Math.random() * 9000)}` : `PO-2026-${Math.floor(1000 + Math.random() * 9000)}`}
+                    defaultValue={isHotShotOrder ? generateNextPoNumber('IPF-HOT') : generateNextPoNumber('IPF-PO')}
                     className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sky-800 focus:outline-none focus:border-sky-600 focus:bg-white font-mono font-bold min-h-[44px]"
                   />
                 </div>

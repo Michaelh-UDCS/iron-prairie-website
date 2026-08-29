@@ -21,6 +21,7 @@ import {
   triggerProposalEmailNotification,
   IPG_SALES_EMAIL
 } from '../services/emailService';
+import { generateNextProposalNumber, generateNextPoNumber } from '../utils/orderNumberGenerator';
 import brandLogo from '../../Logo.jpg';
 
 interface InstantProposalModalProps {
@@ -71,7 +72,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
     const expiry = new Date(today);
     expiry.setDate(expiry.getDate() + 30);
 
-    const proposalId = `IPF-PROP-${today.getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const proposalId = generateNextProposalNumber();
     const createdAt = today.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
     const expiresAt = expiry.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
 
@@ -97,7 +98,7 @@ export const InstantProposalModal: React.FC<InstantProposalModalProps> = ({
     };
 
     setGeneratedProposal(newProposal);
-    setPoNumberInput(`PO-${today.getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`);
+    setPoNumberInput(generateNextPoNumber());
 
     // Dispatch background notification to Client and IPG Sales Team
     await triggerProposalEmailNotification(newProposal);

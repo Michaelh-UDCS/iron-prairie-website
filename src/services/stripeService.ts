@@ -1,5 +1,6 @@
 import { loadStripe, Stripe } from '@stripe/stripe-js';
 import { ConfiguredBlind, ShopJob } from '../types';
+import { generateNextPoNumber, generateNextHeatCertNumber } from '../utils/orderNumberGenerator';
 
 // Load publishable key from environment
 const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '';
@@ -124,10 +125,10 @@ export const initiateStripeCheckout = async (
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const shipDateStr = tomorrow.toISOString().split('T')[0];
-  const poNum = `STRIPE-${Date.now().toString().slice(-6)}`;
+  const poNum = generateNextPoNumber('IPF-STP');
 
   const simulatedJob: ShopJob = {
-    id: `job-stripe-${Date.now()}`,
+    id: `job-${poNum.toLowerCase()}`,
     poNumber: poNum,
     customerName: companyName.trim() || buyerName.trim() || 'Direct Industrial Buyer',
     buyerEmail: buyerEmail.trim(),
@@ -137,7 +138,7 @@ export const initiateStripeCheckout = async (
     status: 'queued',
     items: [...cartItems],
     millHeatNumber: 'A516-HEAT-' + Math.floor(1000 + Math.random() * 9000),
-    heatCertNumber: hasMTR ? `MTR-TX-${Date.now().toString().slice(-5)}` : undefined,
+    heatCertNumber: hasMTR ? generateNextHeatCertNumber() : undefined,
     carrier: shippingCost > 150 ? 'LTL Freight (Insured)' : 'UPS Ground Priority',
     totalWeightLbs: Math.round(totalWeight * 10) / 10,
     totalAmount: grandTotal,
