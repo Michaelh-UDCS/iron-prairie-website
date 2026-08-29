@@ -64,17 +64,28 @@ exports.createStripeCheckoutSession = onRequest({ cors: true }, async (req, res)
       // Build Stripe Line Items
       const line_items = cartItems.map((item) => {
         const unitPrice = Number(item.unitPrice) || (Number(item.lineTotal) / (Number(item.quantity) || 1));
+        const npsVal = item.nps || item.npsSize || item.nominalSizeInches;
+        const matVal = item.materialName || item.material || item.materialCode || 'SA-516-70 Carbon Steel';
+        const thickVal = item.thicknessLabel || (item.thickness ? `${item.thickness}"` : '0.375"');
+        const weightVal = Number(item.totalFinishedWeight) || (Number(item.actualWeightLbs) * Number(item.quantity || 1)) || Number(item.weightLbs) || 0;
+        
+        let productName = item.name;
+        if (!productName && npsVal && item.pressureClass) {
+          const cleanNps = String(npsVal).replace(/"/g, '').trim();
+          productName = `${cleanNps}" ${item.pressureClass}# Paddle Blind (${matVal})`;
+        } else if (!productName) {
+          productName = item.partNumber || item.id || 'Custom Iron Prairie Fabrication Part';
+        }
+
         return {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: item.npsSize
-                ? `${item.npsSize}" ${item.pressureClass}# Paddle Blind (${item.material || item.materialCode || 'SA-516-70'})`
-                : (item.name || item.partNumber || 'Custom Iron Prairie Fabrication Part'),
-              description: `Spec: ASME B16.48 | Thk: ${item.thickness || '0.375'}" | Qty: ${item.quantity} | Weight: ${(item.totalFinishedWeight || item.weightLbs || 0).toFixed(1)} lbs`,
+              name: productName,
+              description: `Spec: ASME B16.48 | Thk: ${thickVal} | Qty: ${item.quantity || 1} | Weight: ${weightVal.toFixed(1)} lbs`,
               metadata: {
                 partNumber: item.partNumber || item.id || 'PADDLE-BLIND',
-                mtrIncluded: String(item.includeMTR || hasMTR)
+                mtrIncluded: String(item.includeMTR || item.requireMTR || hasMTR)
               }
             },
             unit_amount: Math.round(unitPrice * 100), // Cents
@@ -133,7 +144,7 @@ exports.createStripeCheckoutSession = onRequest({ cors: true }, async (req, res)
         payment_method_options: {
           us_bank_account: {
             financial_connections: {
-              permissions: ['payment_method', 'balances'],
+              permissions: ['payment_method'],
             },
           },
         },

@@ -101,6 +101,7 @@
 - Home hero lead paragraph contrast fixed (`text-slate-800` on dark ink → `text-brand-muted`) and redeployed so mobile body copy reads clearly above the fold.
 
 ### Notes
+- **Live Stripe Production Checkout**: Configured with live account `acct_1Tzf7K2NddnbOHqL` (Iron Prairie Fabrication Group LLC). Active in `functions/.env` and `.env.local` / `.env`. Cloud Functions deployed to Firebase. Supports credit card checkout (3.5% surcharge) and instant ACH bank transfer (3% cash discount).
 - **Preferred custom domain (stakeholder choice)**: `ironprairiefabrication.com` — register, then attach in Firebase Hosting (custom domain + DNS records) when ready; optional secondary `ironprairiefab.com` for short links/email aliases.
 - **Firebase (current)**: `firebase` npm package + `src/firebase.js` (reads `VITE_FIREBASE_*` from `.env.local`). `.firebaserc` targets `iron-prairie-website`; `firebase.json` serves SPA from `dist/` with rewrite to `index.html`. Deploy: `npm run deploy:hosting` after `firebase login` and registering a web app in the console.
 - **Next**: Enable desired products in console (e.g. Firestore, Auth, Analytics); wire Contact form submit to a backend or callable function when ready.

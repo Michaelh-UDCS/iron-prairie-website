@@ -70,8 +70,8 @@ export const initiateStripeCheckout = async (
     hasMTR
   } = payload;
 
-  const itemsSubtotal = cartItems.reduce((sum, item) => sum + item.lineTotal, 0);
-  const totalWeight = cartItems.reduce((sum, item) => sum + item.totalFinishedWeight, 0);
+  const itemsSubtotal = cartItems.reduce((sum, item: any) => sum + (Number(item.lineTotal) || (Number(item.unitPrice) * Number(item.quantity)) || 0), 0);
+  const totalWeight = cartItems.reduce((sum, item: any) => sum + (Number(item.totalFinishedWeight) || (Number(item.actualWeightLbs) * Number(item.quantity || 1)) || Number(item.weightLbs) || 0), 0);
   const cardSurchargeRate = 0.035;
   const cardSurcharge = paymentType === 'card' ? Math.round((itemsSubtotal + shippingCost) * cardSurchargeRate * 100) / 100 : 0;
   const grandTotal = Math.round((itemsSubtotal + shippingCost + cardSurcharge) * 100) / 100;

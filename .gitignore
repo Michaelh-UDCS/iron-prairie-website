@@ -12,6 +12,7 @@ dist-ssr
 functions/.env
 functions/.env.local
 functions/.env.*.local
+MEMORY.md
 
 # Logs
 *.log
