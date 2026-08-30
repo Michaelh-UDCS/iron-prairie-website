@@ -108,59 +108,95 @@ function buildOrderReceiptHtml(order) {
 
   return `<!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"><title>${escapeHtml(order.subjectTitle || 'Iron Prairie Order')}</title></head>
-<body style="margin:0;padding:20px;background:#f8fafc;color:#1e293b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-  <div style="max-width:760px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;">
-    <div style="background:#0f172a;padding:24px;color:#ffffff;">
-      <div style="color:#fbbf24;font-size:11px;font-family:ui-monospace,Consolas,monospace;font-weight:700;letter-spacing:1px;text-transform:uppercase;">IRON PRAIRIE FABRICATION GROUP LLC • BAY CITY, TX</div>
-      <h1 style="margin:8px 0 0 0;font-size:22px;font-weight:800;letter-spacing:-0.4px;">${escapeHtml(banner)}</h1>
-    </div>
-    <div style="background:#f1f5f9;padding:16px 24px;border-bottom:1px solid #e2e8f0;font-size:13px;">
-      <strong>PO:</strong> <span style="font-family:ui-monospace,Consolas,monospace;color:#0369a1;">${escapeHtml(order.orderRefId)}</span>
-      &nbsp;|&nbsp; <strong>Total:</strong> ${escapeHtml(formatMoney(order.totalAmount))}
-      &nbsp;|&nbsp; <strong>Payment:</strong> ${escapeHtml(order.paymentMethod || 'Stripe')} (${escapeHtml(order.paymentStatus || '')})
-    </div>
-    <div style="padding:20px 24px;display:block;">
-      <table width="100%" cellpadding="0" cellspacing="0" style="font-size:13px;">
-        <tr>
-          <td width="50%" valign="top" style="padding:0 12px 12px 0;">
-            <div style="background:#f8fafc;padding:16px;border-radius:8px;border:1px solid #e2e8f0;">
-              <div style="font-size:11px;text-transform:uppercase;color:#64748b;font-weight:700;margin-bottom:4px;">Customer / Buyer</div>
-              <div style="font-size:15px;font-weight:700;color:#0f172a;">${escapeHtml(order.customerName)}</div>
-              <div>${escapeHtml(order.buyerEmail || '')}</div>
-            </div>
-          </td>
-          <td width="50%" valign="top" style="padding:0 0 12px 12px;">
-            <div style="background:#f8fafc;padding:16px;border-radius:8px;border:1px solid #e2e8f0;">
-              <div style="font-size:11px;text-transform:uppercase;color:#64748b;font-weight:700;margin-bottom:4px;">Ship To</div>
-              <div style="font-weight:700;color:#0f172a;">${escapeHtml(order.deliveryAddress || 'Direct Shipping')}</div>
-              <div style="margin-top:8px;color:#15803d;font-weight:700;">Payout: Bluevine Business Checking</div>
-            </div>
-          </td>
-        </tr>
-      </table>
-    </div>
-    <div style="padding:0 24px 24px 24px;">
-      <div style="font-size:13px;font-weight:700;text-transform:uppercase;color:#334155;margin-bottom:10px;">Cut Sheet / Line Items</div>
-      <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;text-align:left;">
-        <thead>
-          <tr style="background:#f1f5f9;color:#475569;font-size:11px;text-transform:uppercase;">
-            <th style="padding:8px 10px;text-align:left;">Part</th>
-            <th style="padding:8px 10px;text-align:left;">Size / Class</th>
-            <th style="padding:8px 10px;text-align:left;">Metal</th>
-            <th style="padding:8px 10px;text-align:left;">Thk</th>
-            <th style="padding:8px 10px;text-align:left;">Qty</th>
-            <th style="padding:8px 10px;text-align:left;">Weight</th>
-            <th style="padding:8px 10px;text-align:right;">Total</th>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>${escapeHtml(order.subjectTitle || 'Iron Prairie Order')}</title>
+  <style type="text/css">
+    body { margin:0; padding:0; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+    table { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; }
+    .email-shell { width:100%; max-width:760px; margin:0 auto; }
+    .stack-column { vertical-align:top; }
+    .word-wrap { word-wrap:break-word; overflow-wrap:break-word; word-break:break-word; }
+    @media only screen and (max-width:600px) {
+      .outer-pad { padding:12px !important; }
+      .header-pad { padding:18px 16px !important; }
+      .section-pad { padding:16px !important; }
+      .stack-column {
+        display:block !important;
+        width:100% !important;
+        max-width:100% !important;
+        padding-left:0 !important;
+        padding-right:0 !important;
+        padding-bottom:12px !important;
+      }
+      .meta-sep { display:none !important; }
+      .meta-item { display:block !important; margin-bottom:4px !important; }
+      .banner-title { font-size:18px !important; line-height:1.3 !important; }
+      .line-items-wrap { display:block !important; width:100% !important; overflow-x:auto !important; -webkit-overflow-scrolling:touch; }
+      .line-items-table { min-width:520px; }
+    }
+  </style>
+</head>
+<body style="margin:0;padding:0;background:#f8fafc;color:#1e293b;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <div class="outer-pad" style="padding:20px;">
+    <div class="email-shell" style="background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;">
+      <div class="header-pad" style="background:#0f172a;padding:24px;color:#ffffff;">
+        <div style="color:#fbbf24;font-size:11px;font-family:ui-monospace,Consolas,monospace;font-weight:700;letter-spacing:1px;text-transform:uppercase;">IRON PRAIRIE FABRICATION GROUP LLC • BAY CITY, TX</div>
+        <h1 class="banner-title" style="margin:8px 0 0 0;font-size:22px;font-weight:800;letter-spacing:-0.4px;">${escapeHtml(banner)}</h1>
+      </div>
+      <div class="section-pad meta-strip" style="background:#f1f5f9;padding:16px 24px;border-bottom:1px solid #e2e8f0;font-size:13px;line-height:1.5;">
+        <span class="meta-item"><strong>PO:</strong> <span style="font-family:ui-monospace,Consolas,monospace;color:#0369a1;">${escapeHtml(order.orderRefId)}</span></span>
+        <span class="meta-sep">&nbsp;|&nbsp;</span>
+        <span class="meta-item"><strong>Total:</strong> ${escapeHtml(formatMoney(order.totalAmount))}</span>
+        <span class="meta-sep">&nbsp;|&nbsp;</span>
+        <span class="meta-item"><strong>Payment:</strong> ${escapeHtml(order.paymentMethod || 'Stripe')} (${escapeHtml(order.paymentStatus || '')})</span>
+      </div>
+      <div class="section-pad" style="padding:20px 24px;">
+        <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="font-size:13px;">
+          <tr>
+            <td class="stack-column" width="50%" valign="top" style="padding:0 12px 12px 0;">
+              <div style="background:#f8fafc;padding:16px;border-radius:8px;border:1px solid #e2e8f0;">
+                <div style="font-size:11px;text-transform:uppercase;color:#64748b;font-weight:700;margin-bottom:4px;">Customer / Buyer</div>
+                <div class="word-wrap" style="font-size:15px;font-weight:700;color:#0f172a;">${escapeHtml(order.customerName)}</div>
+                <div class="word-wrap">${escapeHtml(order.buyerEmail || '')}</div>
+              </div>
+            </td>
+            <td class="stack-column" width="50%" valign="top" style="padding:0 0 12px 12px;">
+              <div style="background:#f8fafc;padding:16px;border-radius:8px;border:1px solid #e2e8f0;">
+                <div style="font-size:11px;text-transform:uppercase;color:#64748b;font-weight:700;margin-bottom:4px;">Ship To</div>
+                <div class="word-wrap" style="font-weight:700;color:#0f172a;">${escapeHtml(order.deliveryAddress || 'Direct Shipping')}</div>
+                <div class="word-wrap" style="margin-top:8px;color:#15803d;font-weight:700;">Payout: Bluevine Business Checking</div>
+              </div>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          ${rows || '<tr><td colspan="7" style="padding:12px;color:#64748b;">No line items were attached to this checkout session.</td></tr>'}
-        </tbody>
-      </table>
-    </div>
-    <div style="background:#0f172a;padding:16px 24px;color:#94a3b8;font-size:11px;text-align:center;">
-      Iron Prairie Fabrication Group LLC • 200 County Rd 170, Bay City, TX 77414 • 979-248-9266 • ${SALES_EMAIL}
+        </table>
+      </div>
+      <div class="section-pad" style="padding:0 24px 24px 24px;">
+        <div style="font-size:13px;font-weight:700;text-transform:uppercase;color:#334155;margin-bottom:10px;">Cut Sheet / Line Items</div>
+        <div class="line-items-wrap">
+          <table class="line-items-table" width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-collapse:collapse;text-align:left;">
+            <thead>
+              <tr style="background:#f1f5f9;color:#475569;font-size:11px;text-transform:uppercase;">
+                <th style="padding:8px 10px;text-align:left;">Part</th>
+                <th style="padding:8px 10px;text-align:left;">Size / Class</th>
+                <th style="padding:8px 10px;text-align:left;">Metal</th>
+                <th style="padding:8px 10px;text-align:left;">Thk</th>
+                <th style="padding:8px 10px;text-align:left;">Qty</th>
+                <th style="padding:8px 10px;text-align:left;">Weight</th>
+                <th style="padding:8px 10px;text-align:right;">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows || '<tr><td colspan="7" style="padding:12px;color:#64748b;">No line items were attached to this checkout session.</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="section-pad" style="background:#0f172a;padding:16px 24px;color:#94a3b8;font-size:11px;text-align:center;line-height:1.5;">
+        Iron Prairie Fabrication Group LLC • 200 County Rd 170, Bay City, TX 77414 • 979-248-9266 • ${SALES_EMAIL}
+      </div>
     </div>
   </div>
 </body>

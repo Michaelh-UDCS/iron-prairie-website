@@ -320,3 +320,46 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* Post-checkout order receipt — print only the confirmation modal, not the configurator */
+@media print {
+  @page {
+    margin: 0.5in;
+    size: letter;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    overflow: visible !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  #order-receipt-print,
+  #order-receipt-print * {
+    visibility: visible !important;
+  }
+
+  #order-receipt-print {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 99999 !important;
+    display: block !important;
+    overflow: visible !important;
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+  }
+
+  .order-receipt-no-print {
+    display: none !important;
+  }
+}

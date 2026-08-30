@@ -1785,6 +1785,15 @@ export default function App() {
     setOrders(prev => prev.map(o => (o.orderId === orderId ? { ...o, millHeatNumber: heat } : o)));
   };
 
+  const handlePrintOrderReceipt = (order: CustomerOrder) => {
+    const previousTitle = document.title;
+    document.title = `Iron Prairie Order Receipt - ${order.poNumber}`;
+    window.print();
+    window.setTimeout(() => {
+      document.title = previousTitle;
+    }, 500);
+  };
+
   // Generate Amazon TSV
   const generateAmazonFlatFileTSV = () => {
     const headers = [
@@ -2937,17 +2946,20 @@ export default function App() {
       {/* CUSTOMER ORDER CONFIRMATION MODAL                                    */}
       {/* -------------------------------------------------------------------- */}
       {confirmedOrder && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-6">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200 print:p-0 print:bg-white print:static print:overflow-visible">
+          <div
+            id="order-receipt-print"
+            className="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-6 print:max-w-none print:rounded-none print:shadow-none print:border-none"
+          >
             
             {/* Header */}
             <div className="flex items-start justify-between pb-4 border-b border-slate-200">
               <div className="flex items-center gap-3.5">
-                <div className="h-12 w-12 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center shadow-sm">
-                  <CheckCircle2 className="h-7 w-7" />
+                <div className="h-12 w-12 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center shadow-sm print:h-10 print:w-10">
+                  <CheckCircle2 className="h-7 w-7 print:h-6 print:w-6" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900">Purchase Order Confirmed!</h3>
+                  <h3 className="text-xl font-bold text-slate-900 print:text-lg">Purchase Order Confirmed!</h3>
                   <p className="text-xs text-slate-500 font-medium mt-0.5">
                     Order Ref / PO <span className="font-mono font-bold text-sky-800">#{confirmedOrder.poNumber}</span> &bull; Dispatched to CNC Plasma Queue
                   </p>
@@ -2955,7 +2967,7 @@ export default function App() {
               </div>
               <button
                 onClick={() => setConfirmedOrder(null)}
-                className="text-slate-400 hover:text-slate-700 p-1 rounded-lg transition-colors"
+                className="text-slate-400 hover:text-slate-700 p-1 rounded-lg transition-colors order-receipt-no-print"
                 title="Close"
               >
                 <X className="h-5 w-5" />
@@ -2963,7 +2975,7 @@ export default function App() {
             </div>
 
             {/* Email Dispatch & Lead Time Alert Banner */}
-            <div className="p-3.5 rounded-2xl bg-sky-50 border border-sky-200 text-xs text-sky-950 space-y-1">
+            <div className="p-3.5 rounded-2xl bg-sky-50 border border-sky-200 text-xs text-sky-950 space-y-1 order-receipt-no-print">
               <div className="flex items-center gap-2 font-bold">
                 <Mail className="h-4 w-4 text-sky-700 shrink-0" />
                 <span>Confirmation Package Dispatched:</span>
@@ -2993,7 +3005,7 @@ export default function App() {
             {/* Line Items Table */}
             <div className="space-y-2">
               <div className="text-xs font-bold text-slate-700 uppercase tracking-wider">Line Items In Order:</div>
-              <div className="max-h-48 overflow-y-auto rounded-xl border border-slate-200">
+              <div className="max-h-48 overflow-y-auto rounded-xl border border-slate-200 print:max-h-none print:overflow-visible">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead className="bg-slate-100 text-slate-600 text-[10px] uppercase font-bold sticky top-0">
                     <tr>
@@ -3051,10 +3063,10 @@ export default function App() {
             </div>
 
             {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-1">
+            <div className="flex flex-col sm:flex-row gap-3 pt-1 order-receipt-no-print">
               <button
                 type="button"
-                onClick={() => window.print()}
+                onClick={() => handlePrintOrderReceipt(confirmedOrder)}
                 className="w-full sm:w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3 rounded-xl border border-slate-300 text-xs flex items-center justify-center gap-2 transition-colors"
               >
                 <Printer className="h-4 w-4 text-sky-700" />
