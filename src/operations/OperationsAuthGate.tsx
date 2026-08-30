@@ -172,6 +172,7 @@ export const OperationsAuthGate: React.FC<OperationsAuthGateProps> = ({ children
             isValid: true,
             authenticatedAt: Date.now(),
             lastActivityAt: Date.now(),
+            opsKey: inputClean,
           })
         );
         sessionStorage.removeItem(FAILED_ATTEMPTS_KEY);

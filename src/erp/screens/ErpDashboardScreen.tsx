@@ -29,7 +29,8 @@ import {
   ArrowDownLeft,
   Lock,
   Percent,
-  Play
+  Play,
+  ShoppingCart
 } from 'lucide-react';
 import { ErpWorkOrder } from '../../types';
 import { JobPacketModal } from '../components/JobPacketModal';
@@ -48,7 +49,10 @@ export const ErpDashboardScreen: React.FC = () => {
     updateWorkOrderStage,
     releaseToPlasmaTable,
     financialMetrics,
-    recentStorefrontOrders,
+    incompleteCheckouts,
+    dismissedCheckoutIds,
+    storefrontFeedAuthRequired,
+    storefrontFeedError,
   } = useErp();
 
   const [selectedOrderForPacket, setSelectedOrderForPacket] = useState<ErpWorkOrder | null>(null);
@@ -66,6 +70,8 @@ export const ErpDashboardScreen: React.FC = () => {
   const openNcrCount = ncrRecords.filter((n) => n.status !== 'Closed').length;
   const lowStockCount = stockInventory.filter((s) => s.availableQuantity <= s.minReorderThreshold).length;
   const pendingPos = purchaseOrders.filter((p) => p.status === 'Issued to Vendor' || p.status === 'Draft').length;
+  const liveIncomplete = incompleteCheckouts.filter((row) => !dismissedCheckoutIds.includes(row.orderRefId));
+  const incompleteValue = liveIncomplete.reduce((sum, row) => sum + (Number(row.totalAmount) || 0), 0);
 
   // Key Fabrication Plate Materials
   const keyPlateAlloys = [
@@ -123,8 +129,22 @@ export const ErpDashboardScreen: React.FC = () => {
       </div>
 
       {/* Critical Alert Banners (if any) */}
-      {(lowStockCount > 0 || openNcrCount > 0) && (
+      {(lowStockCount > 0 || openNcrCount > 0 || liveIncomplete.length > 0) && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {liveIncomplete.length > 0 && (
+            <div
+              onClick={() => setActiveModuleId('incomplete_checkouts')}
+              className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between text-xs cursor-pointer hover:bg-amber-500/20 transition-all md:col-span-2"
+            >
+              <div className="flex items-center gap-2.5 text-amber-200 font-bold">
+                <ShoppingCart className="h-4 w-4 text-amber-400 shrink-0" />
+                <span>
+                  {liveIncomplete.length} incomplete storefront checkout{liveIncomplete.length === 1 ? '' : 's'} — ${incompleteValue.toFixed(2)} started but not paid
+                </span>
+              </div>
+              <ChevronRight className="h-4 w-4 text-amber-400" />
+            </div>
+          )}
           {lowStockCount > 0 && (
             <div
               onClick={() => setActiveModuleId('stock_inventory')}
@@ -387,6 +407,61 @@ export const ErpDashboardScreen: React.FC = () => {
         {/* Left 2 Cols: Active Inbound Storefront & Work Orders Pipeline */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm font-bold text-slate-100 uppercase">
+              <ShoppingCart className="h-4 w-4 text-amber-400" />
+              <span>Incomplete Web Checkouts</span>
+            </div>
+            <button
+              onClick={() => setActiveModuleId('incomplete_checkouts')}
+              className="text-xs text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1"
+            >
+              <span>Follow-up Queue ({liveIncomplete.length})</span>
+              <ArrowUpRight className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
+          {storefrontFeedAuthRequired && (
+            <div className="p-3 rounded-xl border border-amber-500/30 bg-amber-500/10 text-[11px] text-amber-200">
+              Lock ERP and sign in again to load live canceled / unpaid Stripe checkouts.
+            </div>
+          )}
+          {storefrontFeedError && !storefrontFeedAuthRequired && (
+            <div className="p-3 rounded-xl border border-red-500/30 bg-red-500/10 text-[11px] text-red-200">
+              {storefrontFeedError}
+            </div>
+          )}
+
+          <div className="space-y-2">
+            {liveIncomplete.slice(0, 4).map((row) => (
+              <button
+                key={row.orderRefId}
+                type="button"
+                onClick={() => setActiveModuleId('incomplete_checkouts')}
+                className="w-full text-left p-3.5 rounded-2xl bg-slate-900 border border-amber-500/20 hover:border-amber-500/40 transition-all"
+              >
+                <div className="flex items-center justify-between gap-3 text-xs">
+                  <div className="min-w-0">
+                    <div className="font-black text-slate-100 truncate">{row.companyName || row.buyerName || 'Unknown buyer'}</div>
+                    <div className="text-[11px] text-slate-400 truncate">
+                      {row.status === 'cancelled' ? 'Buyer cancelled Stripe checkout' : row.status === 'expired' ? 'Checkout session expired' : 'Checkout started, not paid'}
+                      {row.cartItems[0] ? ` · ${row.cartItems[0].quantity}x ${row.cartItems[0].nps || ''} ${row.cartItems[0].partNumber}` : ''}
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <div className="font-black text-amber-300">${Number(row.totalAmount || 0).toFixed(2)}</div>
+                    <div className="text-[10px] text-slate-500">{row.orderRefId}</div>
+                  </div>
+                </div>
+              </button>
+            ))}
+            {liveIncomplete.length === 0 && !storefrontFeedAuthRequired && (
+              <div className="p-3.5 rounded-2xl bg-slate-900 border border-slate-800 text-[11px] text-slate-500">
+                No unpaid storefront checkouts right now. Canceled paddle-blind orders will land here automatically.
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between pt-2">
             <div className="flex items-center gap-2 text-sm font-bold text-slate-100 uppercase">
               <Flame className="h-4 w-4 text-cyan-400" />
               <span>Active Inbound Storefront &amp; Cutting Queue</span>

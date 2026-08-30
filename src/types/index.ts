@@ -165,8 +165,47 @@ export interface AbandonedCartRecord {
   totalAmount: number;
   totalWeightLbs: number;
   status: 'Abandoned' | 'Quote Sent' | 'Recovered' | 'Dismissed';
-  lastActiveStep: 'Cart Drawer' | 'Checkout Opened' | 'Payment Selection';
+  lastActiveStep: 'Cart Drawer' | 'Checkout Opened' | 'Payment Selection' | 'Stripe Checkout Cancelled';
   quoteSentAt?: string;
+}
+
+export type StorefrontCheckoutStatus = 'open' | 'cancelled' | 'expired' | 'completed' | 'paid';
+
+export interface StorefrontCheckoutLine {
+  partNumber: string;
+  nps?: string | number;
+  pressureClass?: string | number;
+  material?: string;
+  facing?: string;
+  thickness?: string | number;
+  quantity: number;
+  unitPrice?: number;
+  lineTotal?: number;
+}
+
+export interface StorefrontCheckoutRecord {
+  id: string;
+  orderRefId: string;
+  stripeSessionId?: string;
+  stripeStatus?: string;
+  stripePaymentStatus?: string;
+  status: StorefrontCheckoutStatus;
+  companyName: string;
+  buyerName: string;
+  buyerEmail: string;
+  buyerPhone?: string;
+  deliveryAddress?: string;
+  paymentType?: string;
+  cartItems: StorefrontCheckoutLine[];
+  itemsSubtotal?: number;
+  shippingCost?: number;
+  hotShotFee?: number;
+  totalAmount: number;
+  createdAt: string | null;
+  updatedAt?: string | null;
+  cancelledAt?: string | null;
+  source?: string;
+  sources?: string[];
 }
 
 // 3. ASME SECTION VIII DIV 1 MATERIAL TEST REPORT (MTR) & TRACEABILITY

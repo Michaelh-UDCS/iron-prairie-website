@@ -31,6 +31,14 @@ export const DEFAULT_ERP_MODULES: ErpModuleDefinition[] = [
     enabled: true,
   },
   {
+    id: 'incomplete_checkouts',
+    name: 'Incomplete Checkouts',
+    category: 'Operations',
+    description: 'Buyers who started a paddle-blind order and left without paying.',
+    iconName: 'ShoppingCart',
+    enabled: true,
+  },
+  {
     id: 'sales_triggers',
     name: 'Sales Email Triggers',
     category: 'Operations',
@@ -114,7 +122,10 @@ export function getInitialModules(): ErpModuleDefinition[] {
   const saved = localStorage.getItem('ipg_erp_registered_modules');
   if (saved) {
     try {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved) as ErpModuleDefinition[];
+      const savedIds = new Set(parsed.map((mod) => mod.id));
+      const missing = DEFAULT_ERP_MODULES.filter((mod) => !savedIds.has(mod.id));
+      return [...parsed, ...missing];
     } catch {
       return DEFAULT_ERP_MODULES;
     }

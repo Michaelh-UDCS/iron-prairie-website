@@ -9,23 +9,24 @@
 - **GitHub push**: `Michaelh-UDCS`
 
 ### Current Phase
-- **Remove Public ASME Traceability / MTR Page — DONE** (2026-08-29)
+- **Storefront Cart / Checkout Scaling Fix — DONE** (2026-08-29)
+- **Track Incomplete Storefront Checkouts in ERP — DONE** (2026-08-29)
 
-### Active Task — Hide MTR Traceability from Public Site
-1. [x] Locate nav link + routes (`/traceability`, `/mtr`) and `PublicMtrViewer`
-2. [x] Remove public nav entry so typical users never see it
-3. [x] Remove/disable public routes + sitemap/prerender SEO entries
-4. [x] Keep ERP/operations MTR vault intact (internal only)
-5. [x] Verify no public nav still points at the page
+### Active Task — Canceled / Unfulfilled Paddle Blind Checkouts
+1. [x] Confirm gap: Stripe cancel only toasts on storefront; ERP cannot read `checkout_leads` / `checkout_carts`
+2. [x] Persist checkout status (`open` / `cancelled` / `expired` / `completed`) from session create, cancel URL, and Stripe webhooks
+3. [x] Expose authenticated ERP feed of incomplete checkouts (merge Firestore + Stripe)
+4. [x] Show incomplete checkouts on ERP dashboard + dedicated follow-up screen
+5. [x] Capture buyer cancel on return from Stripe (`order_status=cancelled`)
+6. [x] Restore `/operations` ERP gate (was not routed on the public site)
+7. [x] Deploy functions + hosting; verified live dashboard shows the unpaid paddle-blind checkout
 
 ### Status Update (Latest)
-- Removed **"ASME Traceability / MTR"** from main-site nav.
-- Removed public routes: `/traceability`, `/mtr`, `/mtr-lookup` (+ param variants).
-- Deleted `src/pages/PublicMtrViewer.tsx`.
-- Cleaned sitemap, prerender, IndexNow, and llms.txt references.
-- ERP MTR vault (`/operations`, ERP screens) unchanged — internal only.
-- Committed `e3e6b35`, pushed to `origin/master`, deployed hosting + IndexNow.
+- Canceled / unpaid storefront checkouts now appear on the ERP dashboard and **Incomplete Checkouts**.
+- Live verification: ref **IPG-046686**, 1/2" SA-516-70 paddle blind, $62.00, Universal Dynamic Consulting Services LLC — checkout started, not paid.
+- `/operations` is live again behind the executive passkey gate.
 
 ### Notes
 - **Live Stripe**: `acct_1Tzf7K2NddnbOHqL`
 - **Hosting**: https://iron-prairie-website.web.app / https://ironprairiefabrication.com
+- **ERP**: https://ironprairiefabrication.com/operations

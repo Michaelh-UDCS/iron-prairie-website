@@ -22,6 +22,11 @@ service cloud.firestore {
       allow read, update, delete: if false;
     }
 
+    // checkout_carts: written/read only by Cloud Functions (Admin SDK). Never client-readable.
+    match /checkout_carts/{docId} {
+      allow read, write: if false;
+    }
+
     // orders: written by Firebase Cloud Functions (Admin SDK bypasses these rules)
     // notifications: fallback log from Cloud Functions
     match /orders/{docId} {

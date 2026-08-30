@@ -28,12 +28,14 @@ import {
   CheckCircle2,
   Cloud,
   ChevronRight,
-  Lock
+  Lock,
+  ShoppingCart
 } from 'lucide-react';
 import { chimeManager } from '../operations/services/AudioChimeManager';
 import { ErpDashboardScreen } from './screens/ErpDashboardScreen';
 import { ErpWorkOrdersScreen } from './screens/ErpWorkOrdersScreen';
 import { ErpCatalogOrdersScreen } from './screens/ErpCatalogOrdersScreen';
+import { ErpIncompleteCheckoutsScreen } from './screens/ErpIncompleteCheckoutsScreen';
 import { ErpSalesTriggerInboxScreen } from './screens/ErpSalesTriggerInboxScreen';
 import { ErpMtrLogScreen } from './screens/ErpMtrLogScreen';
 import { ErpStockMaterialScreen } from './screens/ErpStockMaterialScreen';
@@ -59,6 +61,7 @@ const ICON_MAP: Record<string, any> = {
   FolderKanban,
   Sparkles,
   Grid,
+  ShoppingCart,
 };
 
 export const ErpShell: React.FC = () => {
@@ -72,6 +75,8 @@ export const ErpShell: React.FC = () => {
     stockInventory,
     ncrRecords,
     salesEmailTriggers,
+    incompleteCheckouts,
+    dismissedCheckoutIds,
     simulateSalesEmailTrigger,
   } = useErp();
 
@@ -105,6 +110,10 @@ export const ErpShell: React.FC = () => {
       const unproc = salesEmailTriggers.filter((t) => t.status === 'New / Unprocessed').length;
       return unproc > 0 ? unproc : null;
     }
+    if (id === 'incomplete_checkouts') {
+      const open = incompleteCheckouts.filter((row) => !dismissedCheckoutIds.includes(row.orderRefId)).length;
+      return open > 0 ? open : null;
+    }
     return null;
   };
 
@@ -117,6 +126,8 @@ export const ErpShell: React.FC = () => {
         return <ErpWorkOrdersScreen />;
       case 'catalog_orders':
         return <ErpCatalogOrdersScreen />;
+      case 'incomplete_checkouts':
+        return <ErpIncompleteCheckoutsScreen />;
       case 'sales_triggers':
         return <ErpSalesTriggerInboxScreen />;
       case 'mtr_vault':

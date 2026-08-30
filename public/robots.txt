@@ -1,9 +1,11 @@
 # -- SEARCH & AI CITATION (ALLOW) --------------------------------
 User-agent: Googlebot
 Allow: /
+Disallow: /operations
 
 User-agent: Bingbot
 Allow: /
+Disallow: /operations
 
 User-agent: Claude-SearchBot
 Allow: /
@@ -54,6 +56,8 @@ Disallow: /
 # -- GENERAL CRAWLERS --------------------------------------------
 User-agent: *
 Allow: /
+Disallow: /operations
+Disallow: /operations/
 
 # Notes: Brave Search uses Googlebot rules for its stealth index crawler
 # plus Bravebot for Leo AI citations. facebookexternalhit stays allowed

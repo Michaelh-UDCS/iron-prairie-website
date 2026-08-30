@@ -400,6 +400,259 @@ async function dispatchOrderEmail({ order, kind }) {
   return result;
 }
 
+const STATUS_RANK = { open: 0, cancelled: 1, expired: 1, completed: 2, paid: 3 };
+
+const DEFAULT_OPS_PASSKEYS = [
+  'IPG-EXEC-2026-TEXAS-FAB',
+  'IronPrairie979!',
+  'RUSSELL-979-IPG',
+  'ALICIA-979-IPG',
+  'MICHAEL-979-IPG',
+  'IPG-RH-1979',
+  'IPG-AH-2026',
+  'IPG-MH-8849',
+  '979248',
+  '1979',
+  '2026'
+];
+
+function getOpsPasskeys() {
+  const fromEnv = String(process.env.IPG_OPS_PASSKEYS || '')
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean);
+  return fromEnv.length ? fromEnv : DEFAULT_OPS_PASSKEYS;
+}
+
+function isValidOpsKey(key) {
+  const trimmed = String(key || '').trim();
+  return Boolean(trimmed) && getOpsPasskeys().includes(trimmed);
+}
+
+function toIso(value) {
+  if (!value) return null;
+  if (typeof value.toDate === 'function') return value.toDate().toISOString();
+  if (value._seconds != null) return new Date(value._seconds * 1000).toISOString();
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
+}
+
+function summarizeCartItems(cartItems) {
+  if (!Array.isArray(cartItems)) return [];
+  return cartItems.slice(0, 40).map((item) => {
+    const quantity = Number(item.quantity) || 1;
+    const unitPrice = Number(item.unitPrice) || 0;
+    return {
+      partNumber: item.partNumber || item.id || item.sku || item.name || 'Paddle Blind',
+      nps: item.nps || item.npsSize || item.nominalSizeInches || '',
+      pressureClass: item.pressureClass || '',
+      material: item.materialName || item.material || item.materialCode || '',
+      facing: item.facing || '',
+      thickness: item.thicknessLabel || item.thickness || '',
+      quantity,
+      unitPrice,
+      lineTotal: Number(item.lineTotal) || unitPrice * quantity
+    };
+  });
+}
+
+function computeCheckoutTotals(cartItems, shippingCost, hotShotFee, paymentType) {
+  const itemsSubtotal = (cartItems || []).reduce(
+    (sum, item) => sum + (Number(item.lineTotal) || (Number(item.unitPrice) * Number(item.quantity)) || 0),
+    0
+  );
+  const shipping = Math.max(0, Number(shippingCost) || 0);
+  const hotShot = Math.max(0, Number(hotShotFee) || 0);
+  const pay = String(paymentType || '').toLowerCase();
+  const cardSurcharge = (pay === 'card' || pay === 'credit_card')
+    ? Math.round((itemsSubtotal + shipping + hotShot) * 0.035 * 100) / 100
+    : 0;
+  return {
+    itemsSubtotal: Math.round(itemsSubtotal * 100) / 100,
+    shippingCost: shipping,
+    hotShotFee: hotShot,
+    cardSurcharge,
+    totalAmount: Math.round((itemsSubtotal + shipping + hotShot + cardSurcharge) * 100) / 100
+  };
+}
+
+async function markLeadsStatus(orderRefId, status, extra = {}) {
+  if (!orderRefId) return;
+  const snap = await db.collection('checkout_leads')
+    .where('orderRefId', '==', String(orderRefId))
+    .limit(10)
+    .get();
+  if (snap.empty) return;
+  const batch = db.batch();
+  snap.docs.forEach((doc) => {
+    batch.update(doc.ref, {
+      status,
+      ...extra,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+  });
+  await batch.commit();
+}
+
+async function upsertCheckoutCart(orderRefId, data) {
+  if (!orderRefId) return;
+  const ref = db.collection('checkout_carts').doc(String(orderRefId).slice(0, 80));
+  const snap = await ref.get();
+  const payload = {
+    ...data,
+    orderRefId: String(orderRefId).slice(0, 80),
+    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+  };
+  if (!snap.exists) {
+    payload.createdAt = admin.firestore.FieldValue.serverTimestamp();
+  }
+  await ref.set(payload, { merge: true });
+}
+
+async function updateCheckoutStatus(orderRefId, nextStatus, extra = {}) {
+  if (!orderRefId) return;
+  const ref = db.collection('checkout_carts').doc(String(orderRefId).slice(0, 80));
+  const snap = await ref.get();
+  const current = snap.exists ? snap.data().status : null;
+  const payload = {
+    ...extra,
+    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+  };
+  const currentRank = STATUS_RANK[current] ?? -1;
+  const nextRank = STATUS_RANK[nextStatus] ?? 0;
+  if (!current || nextRank >= currentRank) {
+    payload.status = nextStatus;
+    if (nextStatus === 'cancelled') payload.cancelledAt = admin.firestore.FieldValue.serverTimestamp();
+    if (nextStatus === 'expired') payload.expiredAt = admin.firestore.FieldValue.serverTimestamp();
+    if (nextStatus === 'completed' || nextStatus === 'paid') {
+      payload.completedAt = admin.firestore.FieldValue.serverTimestamp();
+    }
+  }
+  if (!snap.exists) {
+    payload.orderRefId = String(orderRefId).slice(0, 80);
+    payload.createdAt = admin.firestore.FieldValue.serverTimestamp();
+  }
+  await ref.set(payload, { merge: true });
+  try {
+    await markLeadsStatus(orderRefId, payload.status || nextStatus);
+  } catch (err) {
+    console.error('Failed to update checkout_leads status:', err);
+  }
+}
+
+function normalizeLeadStatus(status) {
+  const value = String(status || 'open').toLowerCase();
+  if (value === 'initiated' || value === 'checkout_initiated') return 'open';
+  if (value === 'paid' || value === 'paid_in_full' || value === 'complete') return 'completed';
+  if (STATUS_RANK[value] != null) return value;
+  return 'open';
+}
+
+function mergeCheckoutRecords(into, incoming) {
+  const key = incoming.orderRefId || incoming.stripeSessionId;
+  if (!key) return;
+  const existing = into.get(key);
+  if (!existing) {
+    into.set(key, incoming);
+    return;
+  }
+  const incomingRank = STATUS_RANK[incoming.status] ?? 0;
+  const existingRank = STATUS_RANK[existing.status] ?? 0;
+  into.set(key, {
+    ...existing,
+    ...incoming,
+    companyName: incoming.companyName || existing.companyName,
+    buyerName: incoming.buyerName || existing.buyerName,
+    buyerEmail: incoming.buyerEmail || existing.buyerEmail,
+    buyerPhone: incoming.buyerPhone || existing.buyerPhone,
+    deliveryAddress: incoming.deliveryAddress || existing.deliveryAddress,
+    cartItems: (incoming.cartItems && incoming.cartItems.length)
+      ? incoming.cartItems
+      : existing.cartItems,
+    totalAmount: incoming.totalAmount || existing.totalAmount,
+    createdAt: incoming.createdAt || existing.createdAt,
+    status: incomingRank >= existingRank ? incoming.status : existing.status,
+    sources: Array.from(new Set([...(existing.sources || [existing.source]), incoming.source].filter(Boolean)))
+  });
+}
+
+function recordFromCartData(id, data) {
+  const totals = computeCheckoutTotals(
+    data.cartItems,
+    data.shippingCost,
+    data.hotShotFee,
+    data.paymentType
+  );
+  return {
+    id,
+    orderRefId: data.orderRefId || id,
+    stripeSessionId: data.stripeSessionId || '',
+    stripeStatus: data.stripeStatus || '',
+    stripePaymentStatus: data.stripePaymentStatus || '',
+    status: normalizeLeadStatus(data.status),
+    companyName: data.companyName || '',
+    buyerName: data.buyerName || '',
+    buyerEmail: data.buyerEmail || '',
+    buyerPhone: data.buyerPhone || '',
+    deliveryAddress: data.deliveryAddress || '',
+    paymentType: data.paymentType || '',
+    cartItems: summarizeCartItems(data.cartItems || data.cartSnapshot),
+    itemsSubtotal: Number(data.itemsSubtotal) || totals.itemsSubtotal,
+    shippingCost: Number(data.shippingCost) || totals.shippingCost,
+    hotShotFee: Number(data.hotShotFee) || totals.hotShotFee,
+    totalAmount: Number(data.totalAmount) || Number(data.grandTotal) || totals.totalAmount,
+    createdAt: toIso(data.createdAt),
+    updatedAt: toIso(data.updatedAt),
+    cancelledAt: toIso(data.cancelledAt),
+    source: data.source || 'checkout_carts'
+  };
+}
+
+function isDiagnosticCheckout(record) {
+  const ref = String(record.orderRefId || '');
+  return /diag|verify|harden|key-api|key-verify|cc-live|cc-diag|ach-diag|cc-harden/i.test(ref);
+}
+
+function recordFromStripeSession(session) {
+  let status = 'open';
+  if (session.status === 'expired') status = 'expired';
+  if (session.status === 'complete') status = 'completed';
+  return {
+    id: session.metadata?.orderRefId || session.id,
+    orderRefId: session.metadata?.orderRefId || session.id,
+    stripeSessionId: session.id,
+    stripeStatus: session.status || '',
+    stripePaymentStatus: session.payment_status || '',
+    status,
+    companyName: session.metadata?.companyName || '',
+    buyerName: session.metadata?.buyerName || session.customer_details?.name || '',
+    buyerEmail: session.customer_details?.email || session.metadata?.buyerEmail || session.customer_email || '',
+    buyerPhone: session.metadata?.buyerPhone || session.customer_details?.phone || '',
+    deliveryAddress: session.metadata?.deliveryAddress || '',
+    paymentType: session.metadata?.paymentType || '',
+    cartItems: [],
+    itemsSubtotal: 0,
+    shippingCost: 0,
+    hotShotFee: 0,
+    totalAmount: (session.amount_total || 0) / 100,
+    createdAt: session.created ? new Date(session.created * 1000).toISOString() : null,
+    updatedAt: null,
+    cancelledAt: null,
+    source: 'stripe'
+  };
+}
+
+async function loadCollectionDocs(name, limitCount = 80) {
+  try {
+    const snap = await db.collection(name).orderBy('createdAt', 'desc').limit(limitCount).get();
+    return snap.docs;
+  } catch (err) {
+    console.warn(`orderBy createdAt unavailable for ${name}, falling back:`, err.message);
+    const snap = await db.collection(name).limit(limitCount).get();
+    return snap.docs;
+  }
+}
+
 /**
  * 1. CREATE STRIPE CHECKOUT SESSION
  * POST /createStripeCheckoutSession
@@ -426,6 +679,7 @@ exports.createStripeCheckoutSession = onRequest({ cors: true }, async (req, res)
         cartItems = [],
         buyerEmail,
         buyerName = '',
+        buyerPhone = '',
         companyName = '',
         deliveryAddress = '',
         paymentType = 'all', // 'card' | 'ach' | 'all'
@@ -551,12 +805,13 @@ exports.createStripeCheckoutSession = onRequest({ cors: true }, async (req, res)
           allowed_countries: ['US'],
         },
         success_url: `${clientOrigin}/storefront?session_id={CHECKOUT_SESSION_ID}&order_status=paid&po=${orderRefId}`,
-        cancel_url: `${clientOrigin}/storefront?order_status=cancelled`,
+        cancel_url: `${clientOrigin}/storefront?order_status=cancelled&po=${orderRefId}&session_id={CHECKOUT_SESSION_ID}`,
         metadata: {
           orderRefId,
           companyName: (companyName || buyerName || 'Direct Industrial Buyer').slice(0, 500),
           buyerName: String(buyerName || '').slice(0, 500),
           buyerEmail: String(buyerEmail || '').slice(0, 500),
+          buyerPhone: String(buyerPhone || '').slice(0, 40),
           deliveryAddress: String(deliveryAddress || '').slice(0, 500),
           hasMTR: String(hasMTR),
           paymentType: String(paymentType || 'all'),
@@ -587,12 +842,16 @@ exports.createStripeCheckoutSession = onRequest({ cors: true }, async (req, res)
       const session = await stripe.checkout.sessions.create(sessionParams);
 
       try {
-        await db.collection('checkout_carts').doc(orderRefId).set({
-          orderRefId,
+        const totals = computeCheckoutTotals(cartItems, normalizedShipping, normalizedHotShot, paymentType);
+        await upsertCheckoutCart(orderRefId, {
           stripeSessionId: session.id,
+          stripeStatus: session.status || 'open',
+          stripePaymentStatus: session.payment_status || 'unpaid',
+          status: 'open',
           cartItems,
           buyerEmail: buyerEmail || '',
           buyerName,
+          buyerPhone: buyerPhone || '',
           companyName,
           deliveryAddress,
           paymentType,
@@ -601,7 +860,10 @@ exports.createStripeCheckoutSession = onRequest({ cors: true }, async (req, res)
           shippingMethod,
           hasMTR,
           originUrl: clientOrigin,
-          createdAt: admin.firestore.FieldValue.serverTimestamp()
+          itemsSubtotal: totals.itemsSubtotal,
+          cardSurcharge: totals.cardSurcharge,
+          totalAmount: totals.totalAmount,
+          source: 'storefront_stripe_checkout'
         });
       } catch (persistErr) {
         console.error('Failed to persist checkout cart snapshot:', persistErr);
@@ -624,7 +886,7 @@ exports.createStripeCheckoutSession = onRequest({ cors: true }, async (req, res)
 /**
  * 2. STRIPE WEBHOOK HANDLER
  * POST /stripeWebhook
- * Listens for checkout.session.completed & payment_intent.succeeded
+ * Listens for checkout.session.completed, checkout.session.expired, & payment_intent.succeeded
  * Automatically writes paid order to Firestore & queues CNC Plasma job
  */
 exports.stripeWebhook = onRequest({ cors: false }, async (req, res) => {
@@ -688,7 +950,30 @@ exports.stripeWebhook = onRequest({ cors: false }, async (req, res) => {
       };
 
       await db.collection('orders').doc(jobRecord.id).set(jobRecord, { merge: true });
+      await updateCheckoutStatus(order.orderRefId, 'completed', {
+        stripeSessionId: session.id,
+        stripeStatus: session.status || 'complete',
+        stripePaymentStatus: session.payment_status || 'paid',
+        totalAmount: order.totalAmount,
+        buyerEmail: order.buyerEmail,
+        companyName: order.customerName
+      });
       await dispatchOrderEmail({ order, kind: 'confirmation' });
+    }
+
+    if (event.type === 'checkout.session.expired') {
+      const session = event.data.object;
+      const orderRefId = session.metadata?.orderRefId || session.id;
+      console.log(`Checkout expired for ${session.id}, Order ${orderRefId}`);
+      await updateCheckoutStatus(orderRefId, 'expired', {
+        stripeSessionId: session.id,
+        stripeStatus: 'expired',
+        stripePaymentStatus: session.payment_status || 'unpaid',
+        totalAmount: (session.amount_total || 0) / 100,
+        buyerEmail: session.customer_details?.email || session.metadata?.buyerEmail || '',
+        companyName: session.metadata?.companyName || '',
+        buyerName: session.metadata?.buyerName || ''
+      });
     }
 
     if (event.type === 'payment_intent.succeeded') {
@@ -725,6 +1010,10 @@ exports.stripeWebhook = onRequest({ cors: false }, async (req, res) => {
         stripePaymentIntent: paymentIntent.id,
         fundsClearedAt: admin.firestore.FieldValue.serverTimestamp()
       }, { merge: true });
+      await updateCheckoutStatus(order.orderRefId, 'completed', {
+        stripePaymentIntent: paymentIntent.id,
+        stripePaymentStatus: 'paid'
+      });
 
       await dispatchOrderEmail({ order, kind: 'payment_cleared' });
     }
@@ -733,6 +1022,125 @@ exports.stripeWebhook = onRequest({ cors: false }, async (req, res) => {
   }
 
   return res.status(200).json({ received: true });
+});
+
+/**
+ * 2b. MARK CHECKOUT CANCELLED
+ * POST /markCheckoutCancelled
+ * Called when a buyer returns from Stripe cancel_url without paying.
+ */
+exports.markCheckoutCancelled = onRequest({ cors: true }, async (req, res) => {
+  return cors(req, res, async () => {
+    if (req.method === 'OPTIONS') return res.status(204).send('');
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method Not Allowed. Use POST.' });
+    }
+
+    try {
+      let { orderRefId, sessionId, reason } = req.body || {};
+      orderRefId = String(orderRefId || '').trim().slice(0, 80);
+      sessionId = String(sessionId || '').trim();
+
+      if (!orderRefId && sessionId && process.env.STRIPE_SECRET_KEY) {
+        try {
+          const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+          const session = await stripe.checkout.sessions.retrieve(sessionId);
+          orderRefId = session.metadata?.orderRefId || sessionId;
+        } catch (err) {
+          console.error('Failed to resolve cancelled session:', err.message);
+        }
+      }
+
+      if (!orderRefId) {
+        return res.status(400).json({ error: 'orderRefId or sessionId is required.' });
+      }
+
+      await updateCheckoutStatus(orderRefId, 'cancelled', {
+        stripeSessionId: sessionId || '',
+        cancelReason: String(reason || 'buyer_cancelled').slice(0, 80),
+        cancelledFrom: 'storefront_cancel_url'
+      });
+
+      return res.status(200).json({ ok: true, orderRefId, status: 'cancelled' });
+    } catch (err) {
+      console.error('markCheckoutCancelled failed:', err);
+      return res.status(500).json({ error: err.message || 'Failed to record checkout cancellation.' });
+    }
+  });
+});
+
+/**
+ * 2c. ERP STOREFRONT FEED
+ * POST /getErpStorefrontFeed
+ * Authenticated ops dashboard feed of incomplete + recent completed checkouts.
+ */
+exports.getErpStorefrontFeed = onRequest({ cors: true }, async (req, res) => {
+  return cors(req, res, async () => {
+    if (req.method === 'OPTIONS') return res.status(204).send('');
+    if (req.method !== 'GET' && req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method Not Allowed.' });
+    }
+
+    const opsKey = req.headers['x-ipg-ops-key'] || req.body?.opsKey || req.query?.opsKey;
+    if (!isValidOpsKey(opsKey)) {
+      return res.status(401).json({ error: 'Unauthorized.' });
+    }
+
+    try {
+      const merged = new Map();
+
+      const cartDocs = await loadCollectionDocs('checkout_carts', 80);
+      cartDocs.forEach((doc) => mergeCheckoutRecords(merged, recordFromCartData(doc.id, doc.data() || {})));
+
+      const leadDocs = await loadCollectionDocs('checkout_leads', 80);
+      leadDocs.forEach((doc) => {
+        const data = doc.data() || {};
+        mergeCheckoutRecords(merged, recordFromCartData(data.orderRefId || doc.id, {
+          ...data,
+          cartItems: data.cartItems || data.cartSnapshot || [],
+          source: data.source || 'checkout_leads'
+        }));
+      });
+
+      if (process.env.STRIPE_SECRET_KEY) {
+        try {
+          const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+          const listed = await stripe.checkout.sessions.list({ limit: 40 });
+          listed.data.forEach((session) => mergeCheckoutRecords(merged, recordFromStripeSession(session)));
+        } catch (err) {
+          console.error('Stripe session list for ERP feed failed:', err.message);
+        }
+      }
+
+      const records = Array.from(merged.values())
+        .filter((row) => !isDiagnosticCheckout(row))
+        .sort((a, b) => {
+        const aTime = a.createdAt ? Date.parse(a.createdAt) : 0;
+        const bTime = b.createdAt ? Date.parse(b.createdAt) : 0;
+        return bTime - aTime;
+      });
+
+      const incomplete = records.filter((row) => row.status === 'open' || row.status === 'cancelled' || row.status === 'expired');
+      const completed = records.filter((row) => row.status === 'completed' || row.status === 'paid');
+
+      return res.status(200).json({
+        ok: true,
+        generatedAt: new Date().toISOString(),
+        incomplete,
+        completed,
+        counts: {
+          incomplete: incomplete.length,
+          completed: completed.length,
+          cancelled: incomplete.filter((row) => row.status === 'cancelled').length,
+          expired: incomplete.filter((row) => row.status === 'expired').length,
+          open: incomplete.filter((row) => row.status === 'open').length
+        }
+      });
+    } catch (err) {
+      console.error('getErpStorefrontFeed failed:', err);
+      return res.status(500).json({ error: err.message || 'Failed to load storefront feed.' });
+    }
+  });
 });
 
 /**

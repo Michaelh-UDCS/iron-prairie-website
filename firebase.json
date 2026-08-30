@@ -14,6 +14,14 @@
         "function": "createStripeCheckoutSession"
       },
       {
+        "source": "/api/mark-checkout-cancelled",
+        "function": "markCheckoutCancelled"
+      },
+      {
+        "source": "/api/erp-storefront-feed",
+        "function": "getErpStorefrontFeed"
+      },
+      {
         "source": "/api/stripe-webhook",
         "function": "stripeWebhook"
       },

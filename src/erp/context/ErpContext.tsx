@@ -18,7 +18,8 @@ import {
   ErpBackupSnapshot,
   ErpModuleDefinition,
   MaterialCode,
-  CustomerOrder
+  CustomerOrder,
+  StorefrontCheckoutRecord,
 } from '../../types';
 import {
   SEED_ERP_CLIENTS,
@@ -34,6 +35,7 @@ import {
 import { INITIAL_MTR_DATABASE } from '../../operations/data/mtrRepository';
 import { DEFAULT_ERP_MODULES, getInitialModules } from '../registry/erpModuleRegistry';
 import { chimeManager } from '../../operations/services/AudioChimeManager';
+import { fetchErpStorefrontFeed, getOpsKeyFromSession } from '../../services/erpStorefrontFeed';
 
 export interface ErpFinancialMetrics {
   totalGrossRevenue: number;
@@ -89,6 +91,14 @@ interface ErpContextType {
     }
   ) => ErpWorkOrder;
   recentStorefrontOrders: CustomerOrder[];
+  incompleteCheckouts: StorefrontCheckoutRecord[];
+  completedCheckouts: StorefrontCheckoutRecord[];
+  storefrontFeedError: string | null;
+  storefrontFeedAuthRequired: boolean;
+  refreshStorefrontFeed: () => Promise<void>;
+  convertIncompleteCheckout: (record: StorefrontCheckoutRecord) => ErpWorkOrder;
+  dismissIncompleteCheckout: (orderRefId: string) => void;
+  dismissedCheckoutIds: string[];
 
   // Financial Intelligence
   financialMetrics: ErpFinancialMetrics;
@@ -221,6 +231,13 @@ export const ErpProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return [];
     }
   });
+  const [incompleteCheckouts, setIncompleteCheckouts] = useState<StorefrontCheckoutRecord[]>([]);
+  const [completedCheckouts, setCompletedCheckouts] = useState<StorefrontCheckoutRecord[]>([]);
+  const [storefrontFeedError, setStorefrontFeedError] = useState<string | null>(null);
+  const [storefrontFeedAuthRequired, setStorefrontFeedAuthRequired] = useState(false);
+  const [dismissedCheckoutIds, setDismissedCheckoutIds] = useState<string[]>(() =>
+    loadFromStorage('dismissed_checkouts', [])
+  );
 
   // Persistent storage auto-save
   useEffect(() => saveToStorage('work_orders', workOrders), [workOrders]);
@@ -234,6 +251,7 @@ export const ErpProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => saveToStorage('clients', clients), [clients]);
   useEffect(() => saveToStorage('sales_emails', salesEmailTriggers), [salesEmailTriggers]);
   useEffect(() => saveToStorage('registered_modules', registeredModules), [registeredModules]);
+  useEffect(() => saveToStorage('dismissed_checkouts', dismissedCheckoutIds), [dismissedCheckoutIds]);
 
   // Online / Offline listener
   useEffect(() => {
@@ -273,11 +291,37 @@ export const ErpProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return () => clearInterval(interval);
   }, []);
 
+  const refreshStorefrontFeed = useCallback(async () => {
+    const opsKey = getOpsKeyFromSession();
+    if (!opsKey) {
+      setStorefrontFeedAuthRequired(true);
+      return;
+    }
+    setStorefrontFeedAuthRequired(false);
+    try {
+      const feed = await fetchErpStorefrontFeed(opsKey);
+      setIncompleteCheckouts(feed.incomplete || []);
+      setCompletedCheckouts(feed.completed || []);
+      setStorefrontFeedError(null);
+      setLastSyncedAt(new Date().toLocaleTimeString());
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Storefront feed unavailable';
+      setStorefrontFeedError(message);
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshStorefrontFeed();
+    const interval = setInterval(refreshStorefrontFeed, 20000);
+    return () => clearInterval(interval);
+  }, [refreshStorefrontFeed]);
+
   // Manual Sync trigger
   const triggerManualSync = useCallback(async () => {
     setLastSyncedAt(new Date().toLocaleTimeString());
     setPendingSyncCount(0);
-  }, []);
+    await refreshStorefrontFeed();
+  }, [refreshStorefrontFeed]);
 
   // Module Management
   const toggleModule = useCallback((id: string) => {
@@ -538,6 +582,68 @@ export const ErpProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     },
     [generateJobNumber, generateInvoiceNumber, mtrDatabase]
   );
+
+  const convertIncompleteCheckout = useCallback((record: StorefrontCheckoutRecord): ErpWorkOrder => {
+    const items = (record.cartItems || []).map((item, index) => ({
+      id: `${record.orderRefId}-${index}`,
+      partNumber: item.partNumber || `PB-${index + 1}`,
+      nps: String(item.nps || '4"'),
+      nominalSizeInches: Number(String(item.nps || '4').replace(/[^\d.]/g, '')) || 4,
+      pressureClass: Number(item.pressureClass) || 150,
+      materialCode: (item.material || 'SA-516-70') as MaterialCode,
+      materialName: String(item.material || 'SA-516-70'),
+      facing: item.facing || 'Flat Face (FF) - Standard (No Machining)',
+      thickness: Number(item.thickness) || 0.375,
+      thicknessLabel: String(item.thickness || '3/8"'),
+      od: 0,
+      boltCircle: 0,
+      boltSize: 0,
+      actualWeightLbs: 0,
+      adjustedWeightLbs: 0,
+      unitPrice: Number(item.unitPrice) || 0,
+      quantity: Number(item.quantity) || 1,
+      handleStamp: '',
+      requireMTR: true,
+      addTHadle: true,
+      addLockoutHole: false,
+      addLiftingLug: false,
+      addPlateDog: false,
+      addWedge: false,
+    }));
+
+    const created = ingestStorefrontOrder(
+      {
+        companyName: record.companyName || 'Web Checkout (Incomplete)',
+        contactName: record.buyerName,
+        email: record.buyerEmail,
+        phone: record.buyerPhone,
+        jobsiteAddress: record.deliveryAddress,
+        poNumber: record.orderRefId,
+        items,
+        subtotal: record.itemsSubtotal || record.totalAmount,
+        shippingCost: record.shippingCost || 0,
+        hotShotFee: record.hotShotFee || 0,
+        totalAmount: record.totalAmount,
+        projectName: `Follow-up: incomplete web checkout ${record.orderRefId}`,
+      },
+      {
+        paymentType: 'net30_po',
+        paymentStatus: 'Net 30 Authorized',
+        paymentRef: `INCOMPLETE-${record.orderRefId}`,
+      }
+    );
+
+    setDismissedCheckoutIds((prev) => (
+      prev.includes(record.orderRefId) ? prev : [record.orderRefId, ...prev]
+    ));
+    return created;
+  }, [ingestStorefrontOrder]);
+
+  const dismissIncompleteCheckout = useCallback((orderRefId: string) => {
+    setDismissedCheckoutIds((prev) => (
+      prev.includes(orderRefId) ? prev : [orderRefId, ...prev]
+    ));
+  }, []);
 
   // Financial Telemetry Metrics Computed Live
   const financialMetrics = useMemo<ErpFinancialMetrics>(() => {
@@ -1099,6 +1205,14 @@ export const ErpProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       ingestStorefrontOrder,
       recentStorefrontOrders,
+      incompleteCheckouts,
+      completedCheckouts,
+      storefrontFeedError,
+      storefrontFeedAuthRequired,
+      refreshStorefrontFeed,
+      convertIncompleteCheckout,
+      dismissIncompleteCheckout,
+      dismissedCheckoutIds,
       financialMetrics,
 
       mtrDatabase,
@@ -1164,6 +1278,14 @@ export const ErpProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       releaseToPlasmaTable,
       ingestStorefrontOrder,
       recentStorefrontOrders,
+      incompleteCheckouts,
+      completedCheckouts,
+      storefrontFeedError,
+      storefrontFeedAuthRequired,
+      refreshStorefrontFeed,
+      convertIncompleteCheckout,
+      dismissIncompleteCheckout,
+      dismissedCheckoutIds,
       financialMetrics,
       mtrDatabase,
       addMtr,
