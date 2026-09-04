@@ -21,10 +21,10 @@
 7. [ ] Deploy catalog rate changes when ready
 
 ### Status Update (Latest)
-- Catalog rates implemented; micro-bump live in code defaults.
-- **Timestamps / MCH audit stay in `logs/paddle-blind-prices/` only** — not bundled, not displayed on the website.
-- Ledger moved out of `src/` → `logs/paddle-blind-prices/materialCostLedger.json`.
-- Audit: `AUDIT-2026-09-04-MCH.md` + `audit-2026-09-04-MCH.json` (performedBy: **MCH**).
+- **Committed / pushed / deployed** `4ae1041` — rates + hero LCP live.
+- Live: https://ironprairiefabrication.com / https://iron-prairie-website.web.app
+- IndexNow: 200 OK
+- Timestamps / MCH audit remain under `logs/` only (not on website).
 
 ### Notes
 - **Live Stripe**: `acct_1Tzf7K2NddnbOHqL`
