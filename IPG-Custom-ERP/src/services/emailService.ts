@@ -10,6 +10,8 @@ export interface EmailRecipient {
 
 export const IPG_SALES_EMAIL = 'Sales@ironprairiefabrication.com';
 export const IPG_CC_EMAIL = 'Alicia@ironprairiefabrication.com';
+export const IPG_ADDRESS = '200 County Rd 170, Bay City, TX 77414';
+export const IPG_MAPS_URL = 'https://maps.app.goo.gl/ipFsC9qtHyKwZZS39';
 
 // Primary To: recipient list (Sales Desk only; Alicia is explicitly CC'd)
 export const OWNER_NOTIFICATION_RECIPIENTS: EmailRecipient[] = [
@@ -289,7 +291,7 @@ export function generateOrderEmailHtml(order: any): string {
 
         <!-- Footer -->
         <div style="background:#0f172a; padding:16px 24px; color:#94a3b8; font-size:11px; text-align:center;">
-          Iron Prairie Fabrication Group LLC &bull; 200 County Rd 170, Bay City, TX 77414 &bull; 979-248-9266 &bull; ${IPG_SALES_EMAIL}
+          Iron Prairie Fabrication Group LLC &bull; <a href="${IPG_MAPS_URL}" target="_blank" rel="noopener noreferrer" style="color:#94a3b8; text-decoration:underline;">${IPG_ADDRESS}</a> &bull; 979-248-9266 &bull; ${IPG_SALES_EMAIL}
         </div>
 
       </div>
@@ -435,7 +437,7 @@ export function generateClientProposalEmailHtml(proposal: ProposalPayload): stri
 
         <!-- Signoff -->
         <div style="background: #090d16; padding: 14px 24px; text-align: center; font-size: 11px; color: #64748b;">
-          Iron Prairie Fabrication Group LLC &bull; 200 County Rd 170, Bay City, TX 77414 &bull; (979) 248-9266 &bull; ${IPG_SALES_EMAIL}
+          Iron Prairie Fabrication Group LLC &bull; <a href="${IPG_MAPS_URL}" target="_blank" rel="noopener noreferrer" style="color: #64748b; text-decoration: underline;">${IPG_ADDRESS}</a> &bull; (979) 248-9266 &bull; ${IPG_SALES_EMAIL}
         </div>
 
       </div>
@@ -513,7 +515,8 @@ Best regards,
 
 Sales & Estimating Team
 Iron Prairie Fabrication Group LLC
-200 County Rd 170, Bay City, TX 77414 | (979) 248-9266
+${IPG_ADDRESS} | (979) 248-9266
+Google Maps: ${IPG_MAPS_URL}
 ${IPG_SALES_EMAIL}
 https://ironprairiefabrication.com`;
 }

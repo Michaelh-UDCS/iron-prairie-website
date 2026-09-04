@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Truck, Award, Building, FileCheck, ArrowRight, CheckCircle2, Lock, FileText, BadgeCheck } from 'lucide-react';
+import { siteConfig } from '../config/siteConfig';
 
 export default function WomanOwned() {
   return (
@@ -55,7 +56,7 @@ export default function WomanOwned() {
             <div className="text-xs text-slate-700 space-y-1 pt-1 font-mono">
               <div><strong>Legal Business:</strong> Iron Prairie Fabrication Group LLC</div>
               <div><strong>Structure:</strong> Certified Woman-Owned Enterprise</div>
-              <div><strong>Physical Shop:</strong> 200 County Rd 170, Bay City, TX 77414 (Matagorda County)</div>
+              <div><strong>Physical Shop:</strong> <a href={siteConfig.googleMapsUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-brand-brown">200 County Rd 170, Bay City, TX 77414</a> (Matagorda County)</div>
             </div>
           </div>
 

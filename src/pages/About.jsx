@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Truck, ShieldCheck, Flame, CheckCircle2, Clock, PackageCheck, ArrowRight, Zap } from 'lucide-react';
+import { siteConfig } from '../config/siteConfig';
 
 export default function About() {
   return (
@@ -67,7 +68,7 @@ export default function About() {
             Local Texas Regional Delivery &bull; Daily Nationwide Shipping
           </h2>
           <p className="mt-2 text-xs sm:text-sm text-slate-700 leading-relaxed max-w-3xl">
-            Our strategic facility in Bay City (200 County Rd 170, Bay City, TX 77414) gives us immediate highway access to the Texas Gulf Coast industrial corridor while our integrated logistics network provides daily parcel and freight dispatch across all 50 states.
+            Our strategic facility in Bay City (<a href={siteConfig.googleMapsUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-brand-brown underline hover:text-brand-brown-light">200 County Rd 170, Bay City, TX 77414</a>) gives us immediate highway access to the Texas Gulf Coast industrial corridor while our integrated logistics network provides daily parcel and freight dispatch across all 50 states.
           </p>
         </div>
 

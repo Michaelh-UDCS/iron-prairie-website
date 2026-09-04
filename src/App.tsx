@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import brandLogo from '../Logo.jpg';
+import { siteConfig } from './config/siteConfig';
 
 const Home = lazy(() => import('./pages/Home.jsx'));
 const About = lazy(() => import('./pages/About.jsx'));
@@ -599,6 +600,15 @@ export default function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState<boolean>(false);
+
+  // Zero-hydration: record SPA route transitions without blocking initial render
+  useEffect(() => {
+    import('./services/analytics')
+      .then(({ trackPageView }) => {
+        trackPageView(location.pathname + location.search);
+      })
+      .catch(() => {});
+  }, [location.pathname, location.search]);
 
   // --------------------------------------------------------------------------
   // AUTH STATE: GATED CLIENT LOGIN TO PROTECT WEBSITE PRICING
@@ -2124,7 +2134,7 @@ export default function App() {
               <div className="space-y-2 text-xs text-stone-400">
                 <div>Phone: <a href="tel:+19792489266" className="text-brand-bone hover:text-brand-brown-light font-bold">(979) 248-9266</a></div>
                 <div>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="text-brand-bone hover:text-brand-brown-light underline">Sales@ironprairiefabrication.com</a></div>
-                <div>Facility: 200 County Rd 170, Bay City, TX 77414 (Matagorda County)</div>
+                <div>Facility: <a href={siteConfig.googleMapsUrl} target="_blank" rel="noopener noreferrer" className="text-stone-300 hover:text-brand-bone underline">200 County Rd 170, Bay City, TX 77414</a> (Matagorda County)</div>
                 <div>Service Area: Texas Statewide &bull; <span className="text-brand-bone font-semibold">Nationwide Shipping (All 50 States)</span></div>
                 <div>Government Contractor: <span className="text-emerald-400 font-bold">SAM.gov Registered</span> &bull; <span className="font-mono text-stone-300 font-bold">UEI: XX7XCMGN9XD5</span></div>
                 <div className="pt-2 flex gap-4 text-[11px] text-stone-500">

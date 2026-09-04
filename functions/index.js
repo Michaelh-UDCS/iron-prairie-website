@@ -195,7 +195,7 @@ function buildOrderReceiptHtml(order) {
         </div>
       </div>
       <div class="section-pad" style="background:#0f172a;padding:16px 24px;color:#94a3b8;font-size:11px;text-align:center;line-height:1.5;">
-        Iron Prairie Fabrication Group LLC • 200 County Rd 170, Bay City, TX 77414 • 979-248-9266 • ${SALES_EMAIL}
+        Iron Prairie Fabrication Group LLC • <a href="https://maps.app.goo.gl/ipFsC9qtHyKwZZS39" target="_blank" rel="noopener noreferrer" style="color:#94a3b8;text-decoration:underline;">200 County Rd 170, Bay City, TX 77414</a> • 979-248-9266 • ${SALES_EMAIL}
       </div>
     </div>
   </div>

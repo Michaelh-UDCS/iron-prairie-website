@@ -21,6 +21,7 @@ export const siteConfig = {
   county: 'Matagorda County',
   latitude: 28.9828,
   longitude: -95.9694,
+  googleMapsUrl: 'https://maps.app.goo.gl/ipFsC9qtHyKwZZS39',
   serviceAreas: [
     'Bay City',
     'Lake Jackson',
@@ -41,6 +42,16 @@ export const siteConfig = {
 
   domain: 'https://ironprairiefabrication.com',
   stagingDomain: 'https://iron-prairie-website.web.app',
+
+  // Google Ecosystem & GA4 Analytics Single Source of Truth
+  ga4MeasurementId: (import.meta.env.VITE_GA4_MEASUREMENT_ID || 'G-39362MRM5F') as string,
+
+  // Multi-Platform Attribution Standard (GBP / Apple Maps / Bing Places)
+  attributionUrls: {
+    gbp: 'https://ironprairiefabrication.com/?utm_source=gbp&utm_medium=organic&utm_campaign=google_maps',
+    appleBusinessConnect: 'https://ironprairiefabrication.com/?utm_source=apple_maps&utm_medium=organic&utm_campaign=apple_business_connect',
+    bingPlaces: 'https://ironprairiefabrication.com/?utm_source=bing_places&utm_medium=organic'
+  },
 
   schemaType: 'HomeAndConstructionBusiness',
   samUei: 'XX7XCMGN9XD5',

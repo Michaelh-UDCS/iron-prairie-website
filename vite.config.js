@@ -10,7 +10,10 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (!id.includes('node_modules')) return;
+          if (!id.includes('node_modules')) {
+            if (id.includes('analytics')) return 'analytics';
+            return;
+          }
           if (id.includes('firebase')) return 'firebase';
           if (id.includes('@stripe') || id.includes('stripe')) return 'stripe';
           if (id.includes('lucide-react')) return 'lucide';

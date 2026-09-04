@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "shortcut": "powershell -ExecutionPolicy Bypass -File scripts/create-desktop-shortcuts.ps1",
     "indexnow": "node scripts/post-deploy-indexnow.mjs",
+    "audit:lighthouse": "node scripts/run-lighthouse-audit.mjs",
     "deploy:hosting": "npm run build && npx --yes firebase-tools deploy --only hosting && npm run indexnow",
     "deploy:all": "npm run build && npx --yes firebase-tools deploy --only hosting,functions,firestore && npm run indexnow"
   },

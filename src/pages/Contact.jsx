@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Truck, MapPin, Phone, Mail, Clock, Flame, ShieldCheck, CheckCircle2, Building, Award, BadgeCheck } from 'lucide-react';
+import { siteConfig } from '../config/siteConfig';
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -213,8 +214,20 @@ export default function Contact() {
               <MapPin className="h-4 w-4 text-brand-brown shrink-0 mt-0.5" />
               <div>
                 <div className="font-bold text-slate-900">Facility Location:</div>
-                <div className="text-slate-600">200 County Rd 170, Bay City, TX 77414 (Matagorda County)</div>
-                <a href="https://www.google.com/maps/search/?api=1&query=200+County+Rd+170,+Bay+City,+TX+77414" target="_blank" rel="noopener noreferrer" className="text-[11px] font-semibold text-brand-brown underline hover:text-brand-brown-light block mt-0.5">
+                <a
+                  href={siteConfig.googleMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-slate-600 hover:text-brand-brown underline block"
+                >
+                  200 County Rd 170, Bay City, TX 77414 (Matagorda County)
+                </a>
+                <a
+                  href={siteConfig.googleMapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[11px] font-semibold text-brand-brown underline hover:text-brand-brown-light block mt-0.5"
+                >
                   View on Google Maps &rarr;
                 </a>
               </div>

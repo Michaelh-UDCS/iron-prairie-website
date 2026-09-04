@@ -1,5 +1,4 @@
 import { initializeApp, getApps } from 'firebase/app';
-import { getAnalytics, isSupported } from 'firebase/analytics';
 import { getFirestore } from 'firebase/firestore';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 
@@ -41,14 +40,6 @@ if (coreConfigComplete()) {
         console.warn('[firebase] App Check init failed:', err);
       }
     }
-  }
-
-  if (typeof window !== 'undefined' && measurementId) {
-    isSupported()
-      .then((ok) => {
-        if (ok && app) analytics = getAnalytics(app);
-      })
-      .catch(() => {});
   }
 } else if (import.meta.env.DEV) {
   console.warn(
