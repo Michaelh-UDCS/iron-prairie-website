@@ -60,7 +60,7 @@ export default function TermsOfService() {
         <div className="mt-4 space-y-1 text-xs text-slate-700 font-mono">
           <div className="font-bold text-slate-900">Iron Prairie Fabrication Group LLC</div>
           <div><a href={siteConfig.googleMapsUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-brand-brown">200 County Rd 170, Bay City, TX 77414</a></div>
-          <div>Phone: <a href="tel:+19792489266" className="text-brand-brown underline hover:text-brand-brown-light">(979) 248-9266</a></div>
+          <div>Phone: <a href="tel:(979)248-9266" data-ga-location="terms_of_service_phone" className="text-brand-brown underline hover:text-brand-brown-light">(979) 248-9266</a></div>
           <div>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="text-brand-brown underline hover:text-brand-brown-light">Sales@ironprairiefabrication.com</a></div>
         </div>
       </section>

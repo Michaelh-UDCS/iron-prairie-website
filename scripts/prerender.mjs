@@ -20,8 +20,8 @@ const OG_IMAGE = `${DOMAIN}/og-banner.jpg`;
 const routes = [
   {
     path: '/',
-    title: 'Metal Fabrication Shop Bay City & Houston | Iron Prairie',
-    description: 'Fast custom metal fabrication, CNC plasma & ASME paddle blinds in Bay City & Houston area. Direct shop pricing & fast quotes. Call (979) 248-9266 today!',
+    title: 'Custom Metal Fabrication Shop Bay City & Houston TX | Iron Prairie',
+    description: 'Custom metal fabrication shop serving Bay City & Houston TX. Structural steel fabrication, CNC plasma cutting, ranch gates, ASME paddle blinds & custom parts.',
     canonical: `${DOMAIN}/`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` }
@@ -34,15 +34,47 @@ const routes = [
           "name": "What custom metal fabrication services does Iron Prairie Fabrication Group provide?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Iron Prairie Fabrication Group LLC provides structural steel fabrication, high-precision CNC plasma plate cutting, ASME B16.48 positive isolation paddle blinds, custom agricultural and ranch equipment, pipe welding, municipal infrastructure components, tornado shelters, custom bunkers, and large built-in safes with nationwide shipping."
+            "text": "Iron Prairie Fabrication Group LLC provides structural steel fabrication, high-definition CNC plasma plate cutting, custom ranch entrance gates, agriculture and livestock equipment (pens, chutes, traps), ASME B16.48 positive isolation paddle blinds & spacers, custom tornado shelters & underground bunkers, industrial welding, and custom part fabrication with local Texas delivery and daily shipping across all 50 states."
           }
         },
         {
           "@type": "Question",
-          "name": "Is Iron Prairie Fabrication Group a certified woman-owned business?",
+          "name": "Where is your local metal fabrication shop located and what areas do you serve?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes, Iron Prairie Fabrication Group LLC is a certified woman-owned metal fabrication enterprise based in Bay City, Texas, serving industrial plants, agricultural operators, and state and federal public agencies locally and nationwide."
+            "text": "Our fabrication facility is located at 200 County Rd 170 in Bay City, Texas (Matagorda County). We provide direct shop pickup, local delivery, and hot-shot transport across Bay City, Freeport, Lake Jackson, Angleton, Houston, Baytown, Pasadena, Corpus Christi, and the Texas Gulf Coast, alongside daily parcel and LTL freight shipping nationwide."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you provide structural steel fabrication and certified welding?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, we specialize in structural steel fabrication and welding for commercial buildings, ranches, agricultural operations, and industrial plants. Our capabilities include beam and column framing, equipment skids, pipe welding, mezzanine platforms, and custom heavy weldments."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can Iron Prairie build custom ranch entrance gates and livestock equipment?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, we custom build architectural ranch entrance gates, cattle guards, livestock handling pens, corral systems, squeeze chutes, modular feral hog traps, and perimeter fence line steel designed specifically for tough Texas ranching environments."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What pressure classes and materials are available for ASME B16.48 paddle blinds?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We manufacture ASME B16.48 paddle blinds and spacer rings from 1/2 inch to 24+ inch NPS in Class 150#, 300#, 600#, 900#, 1500#, and 2500#. Staged domestic materials include SA-516 Grade 70 carbon steel, 304/304L stainless, and 316/316L stainless plate. All qualifying orders include certified EN 10204 3.1 Mill Test Reports (MTRs)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Iron Prairie Fabrication Group a certified woman-owned government contractor?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes, Iron Prairie Fabrication Group LLC is a certified woman-owned enterprise and active government contractor registered on SAM.gov (Unique Entity ID: XX7XCMGN9XD5). We fulfill municipal, state (TPWD), and federal procurement contracts."
           }
         },
         {
@@ -50,7 +82,7 @@ const routes = [
           "name": "Does Iron Prairie Fabrication Group ship nationwide across the United States?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Yes, Iron Prairie Fabrication Group LLC ships daily across all 50 US states using UPS Ground parcel for boxed blinds and precision parts, plus palletized LTL freight and dedicated flatbed trucking for bulk orders and heavy equipment."
+            "text": "Yes, Iron Prairie Fabrication Group LLC ships daily across all 50 US states using UPS Ground and Air parcel for boxed blinds and precision parts, plus palletized LTL freight and dedicated flatbed trucking for bulk orders and heavy structural equipment."
           }
         }
       ]
@@ -58,33 +90,39 @@ const routes = [
   },
   {
     path: '/about',
-    title: 'About Iron Prairie | Fabrication Shop in Bay City, TX',
-    description: 'Iron Prairie Fabrication Group LLC is a woman-owned Bay City, TX metal shop for ranch, industrial, and agency work with daily nationwide shipping.',
+    title: 'About Iron Prairie | Custom Metal Fabrication Shop Bay City TX',
+    description: 'Certified woman-owned custom metal fabrication shop in Bay City, TX. Structural steel, CNC plasma cutting, ranch equipment & industrial welding nationwide.',
     canonical: `${DOMAIN}/about`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
       { name: 'About Us', url: `${DOMAIN}/about` }
     ],
     extraSchema: {
-      "@type": "Person",
-      "@id": `${DOMAIN}/about#person`,
-      "name": "Alicia",
-      "jobTitle": "Owner & Principal Executive",
-      "worksFor": { "@id": `${DOMAIN}/#organization` },
-      "knowsAbout": [
-        "Metal Fabrication Management",
-        "ASME B16.48 Blinds",
-        "Public Agency Procurement",
-        "Structural Steel Projects",
-        "Woman-Owned Business Enterprise",
-        "Nationwide Logistics"
-      ]
+      "@type": "AboutPage",
+      "@id": `${DOMAIN}/about#aboutpage`,
+      "name": "About Iron Prairie Fabrication Group LLC",
+      "description": "Company history, ownership, credentials, and custom metal fabrication capabilities of Iron Prairie Fabrication Group LLC in Bay City, Texas.",
+      "mainEntity": {
+        "@type": "Person",
+        "@id": `${DOMAIN}/about#person`,
+        "name": "Alicia",
+        "jobTitle": "Owner & Principal Executive",
+        "worksFor": { "@id": `${DOMAIN}/#organization` },
+        "knowsAbout": [
+          "Custom Metal Fabrication Management",
+          "Structural Steel Fabrication",
+          "ASME B16.48 Blinds & Flange Isolation",
+          "Public Agency & Municipal Procurement",
+          "Woman-Owned Business Enterprise Leadership",
+          "Nationwide Freight Logistics"
+        ]
+      }
     }
   },
   {
     path: '/services',
-    title: 'Fabrication Services Bay City & Houston | Iron Prairie',
-    description: 'Expert Texas metal fabrication: ASME paddle blinds, CNC plasma, structural steel, ranch gates & shelters. Local delivery plus nationwide freight today.',
+    title: 'Custom Metal Fabrication Services Bay City & Houston TX | Iron Prairie',
+    description: 'Full-service custom metal fabrication shop: structural steel fabrication, CNC plasma cutting, ranch gates, livestock pens, ASME paddle blinds & custom shelters.',
     canonical: `${DOMAIN}/services`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
@@ -92,31 +130,94 @@ const routes = [
     ],
     extraSchema: {
       "@type": "OfferCatalog",
-      "name": "Metal Fabrication Services",
+      "name": "Custom Metal Fabrication & Industrial Manufacturing Services",
       "itemListElement": [
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "ASME B16.48 Paddle Blinds & Spacer Rings" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Structural Steel & Metal Fabrication" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "CNC Plasma Plate Cutting & Precision Machining" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Agricultural & Livestock Equipment Fabrication" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Custom Bunkers, Tornado Shelters & Built-In Safes" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Public Agency & Municipal Infrastructure Fabrication" } }
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Custom Ranch Entrance Gates & Boundary Steel",
+            "description": "Architectural ranch entrance gates, cattle guards, fence line pipe, access control framing, and heavy ornamental steel builds for Texas ranches and rural estates."
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Agriculture & Livestock Equipment (pens, chutes, traps)",
+            "description": "Heavy-duty custom livestock handling pens, corral systems, squeeze chutes, modular feral hog traps, cattle guards, and agricultural equipment repairs."
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "High-Definition CNC Plasma Plate Cutting",
+            "description": "High-definition CNC plasma cutting for mild steel, SA-516-70 carbon steel, stainless steel, and aluminum plate. Precision gussets, baseplates, flanges, and custom parts."
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Structural Steel Fabrication & Welding",
+            "description": "Commercial and industrial structural steel fabrication, certified welding, structural skids, pipe welding, mezzanine steel, and equipment supports."
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "ASME B16.48 Paddle Blinds & Spacers",
+            "description": "Positive isolation paddle blinds, figure-8 spectacle blinds, and spacer rings (150# to 2500#, 1/2\" to 24\"+ NPS) with certified EN 10204 3.1 MTRs and daily nationwide shipping."
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Custom Tornado Shelters & Underground Bunkers",
+            "description": "Engineered steel tornado shelters, storm safety rooms, underground survival bunkers, and large built-in heavy security safes fabricated to project specifications."
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Custom Part Fabrication & Prototyping",
+            "description": "One-off parts, short-run manufacturing, OEM replacement parts, aluminum welding, brackets, and custom sheet metal for local shops and industrial clients."
+          }
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Public Agency & Municipal Infrastructure Fabrication",
+            "description": "Procurement-ready fabrication for Texas Parks & Wildlife (TPWD), municipalities, counties, and federal agencies. Park fire rings, safety handrails, and municipal steel structures."
+          }
+        }
       ]
     }
   },
   {
     path: '/projects',
-    title: 'Fabrication Projects in Bay City, TX | Iron Prairie',
-    description: 'See Iron Prairie fabrication projects: ranch gates, CNC plasma parts, ASME paddle blinds, and freight shipments from Bay City, TX nationwide daily.',
+    title: 'Metal Fabrication Projects | Custom Steel & Gates Bay City TX | Iron Prairie',
+    description: 'Explore custom metal fabrication projects: architectural ranch entrance gates, heavy livestock pens, CNC plasma parts, structural steel & ASME blinds.',
     canonical: `${DOMAIN}/projects`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
       { name: 'Projects', url: `${DOMAIN}/projects` }
-    ]
+    ],
+    extraSchema: {
+      "@type": "CollectionPage",
+      "name": "Iron Prairie Fabrication Projects & Case Studies",
+      "description": "Showcase of completed metal fabrication projects: ranch entry gates, modular hog traps, ASME B16.48 paddle blinds, refinery turnaround components, and park infrastructure steel."
+    }
   },
   {
     path: '/woman-owned',
-    title: 'Woman-Owned Fabricator in Bay City, TX | Iron Prairie',
-    description: 'SAM.gov registered (UEI XX7XCMGN9XD5) woman-owned fabricator in Bay City, TX ready for municipal, state, and federal procurement contracts today.',
+    title: 'Woman-Owned Fabrication Company Bay City TX | SAM.gov UEI | Iron Prairie',
+    description: 'SAM.gov registered (UEI XX7XCMGN9XD5) woman-owned custom metal fabrication business in Bay City, TX. Structural steel, agency infrastructure & contract manufacturing.',
     canonical: `${DOMAIN}/woman-owned`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
@@ -134,13 +235,18 @@ const routes = [
   },
   {
     path: '/contact',
-    title: 'Request Fabrication Quote in Bay City, TX | Iron Prairie',
-    description: 'Request a metal fabrication quote in Bay City, TX. ASME blinds, structural steel, and ranch builds. Call (979) 248-9266 or ship nationwide today!',
+    title: 'Request Fabrication Quote | Metal Fab Shop Bay City TX | Iron Prairie',
+    description: 'Request a fast custom metal fabrication quote. Structural steel, ranch gates, CNC plasma parts, ASME paddle blinds & custom builds. Direct line: (979) 248-9266.',
     canonical: `${DOMAIN}/contact`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
       { name: 'Contact Us', url: `${DOMAIN}/contact` }
-    ]
+    ],
+    extraSchema: {
+      "@type": "ContactPage",
+      "name": "Contact Iron Prairie Fabrication Group LLC",
+      "description": "Request custom metal fabrication quotes, submit engineering drawings, or contact our Bay City shop directly."
+    }
   },
   {
     path: '/privacy-policy',
@@ -164,8 +270,8 @@ const routes = [
   },
   {
     path: '/storefront',
-    title: 'ASME Paddle Blind Configurator | Bay City Iron Prairie',
-    description: 'Configure ASME B16.48 paddle blinds with instant pricing, MTR packets, Texas hot-shot options, and daily nationwide shipping checkout online now.',
+    title: 'ASME Paddle Blind Storefront & Configurator | Iron Prairie TX',
+    description: 'Configure ASME B16.48 paddle blinds with instant pricing, dimensional weights, certified MTR packets, Texas hot-shot delivery & nationwide checkout online.',
     canonical: `${DOMAIN}/storefront`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
@@ -174,8 +280,8 @@ const routes = [
   },
   {
     path: '/paddle-blinds',
-    title: 'ASME B16.48 Paddle Blinds & Spacers | Iron Prairie TX',
-    description: 'Order ASME B16.48 paddle blinds in SA-516-70, 304L & 316L with certified MTRs. Bay City, TX shop with same-day pricing & daily nationwide shipping now!',
+    title: 'ASME B16.48 Paddle Blinds & Spacers | Iron Prairie Bay City TX',
+    description: 'Order ASME B16.48 paddle blinds in SA-516-70, 304L & 316L with certified 3.1 MTRs. Bay City, TX shop with same-day pricing & daily nationwide shipping now!',
     canonical: `${DOMAIN}/paddle-blinds`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
@@ -206,20 +312,30 @@ function buildJsonLd(route) {
       "@id": `${DOMAIN}/#website`,
       "url": `${DOMAIN}/`,
       "name": "Iron Prairie Fabrication Group LLC",
-      "description": "Certified woman-owned fabrication partner for Texas ranches, municipalities, refineries, and industrial buyers nationwide.",
+      "alternateName": ["Iron Prairie", "Iron Prairie Fabrication", "Iron Prairie Fab"],
+      "description": "Certified woman-owned custom metal fabrication shop and manufacturer delivering structural steel, CNC plasma cutting, ranch entrance gates, ASME B16.48 paddle blinds, and specialty steel builds.",
       "inLanguage": "en-US",
       "publisher": { "@id": `${DOMAIN}/#organization` }
     },
     {
-      "@type": "HomeAndConstructionBusiness",
+      "@type": [
+        "HomeAndConstructionBusiness",
+        "LocalBusiness",
+        "Manufacturer"
+      ],
       "@id": `${DOMAIN}/#organization`,
       "name": "Iron Prairie Fabrication Group LLC",
+      "alternateName": ["Iron Prairie", "Iron Prairie Fabrication", "Iron Prairie Fab"],
       "url": `${DOMAIN}/`,
       "logo": `${DOMAIN}/Logo.jpg`,
       "image": OG_IMAGE,
-      "description": "Certified woman-owned metal fabrication business delivering high-precision structural steel, ASME B16.48 paddle blinds, custom sheet metal, pipe fabrication, custom bunkers, tornado shelters, and industrial welding locally across Texas and shipped nationwide across all 50 states.",
+      "description": "Certified woman-owned custom metal fabrication shop and industrial manufacturer delivering high-precision structural steel fabrication, high-definition CNC plasma plate cutting, custom ranch entrance gates, livestock handling equipment, ASME B16.48 paddle blinds, custom tornado shelters & underground bunkers, and custom part fabrication locally across Bay City, Houston, Baytown, and the Texas Gulf Coast, with daily freight shipping nationwide across all 50 states.",
       "telephone": "+19792489266",
       "email": "Sales@ironprairiefabrication.com",
+      "priceRange": "$$",
+      "currenciesAccepted": "USD",
+      "paymentAccepted": "Cash, Credit Card, ACH, Purchase Order, Net 30",
+      "hasMap": "https://maps.app.goo.gl/ipFsC9qtHyKwZZS39",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "200 County Rd 170",
@@ -239,19 +355,146 @@ function buildJsonLd(route) {
       ],
       "areaServed": [
         { "@type": "City", "name": "Bay City", "sameAs": "https://en.wikipedia.org/wiki/Bay_City,_Texas" },
-        { "@type": "City", "name": "Lake Jackson", "sameAs": "https://en.wikipedia.org/wiki/Lake_Jackson,_Texas" },
+        { "@type": "AdministrativeArea", "name": "Matagorda County", "sameAs": "https://en.wikipedia.org/wiki/Matagorda_County,_Texas" },
         { "@type": "City", "name": "Freeport", "sameAs": "https://en.wikipedia.org/wiki/Freeport,_Texas" },
+        { "@type": "City", "name": "Lake Jackson", "sameAs": "https://en.wikipedia.org/wiki/Lake_Jackson,_Texas" },
         { "@type": "City", "name": "Angleton", "sameAs": "https://en.wikipedia.org/wiki/Angleton,_Texas" },
-        { "@type": "City", "name": "Pearland", "sameAs": "https://en.wikipedia.org/wiki/Pearland,_Texas" },
         { "@type": "City", "name": "Houston", "sameAs": "https://en.wikipedia.org/wiki/Houston" },
         { "@type": "City", "name": "Baytown", "sameAs": "https://en.wikipedia.org/wiki/Baytown,_Texas" },
+        { "@type": "City", "name": "Pearland", "sameAs": "https://en.wikipedia.org/wiki/Pearland,_Texas" },
         { "@type": "City", "name": "Pasadena", "sameAs": "https://en.wikipedia.org/wiki/Pasadena,_Texas" },
         { "@type": "City", "name": "Corpus Christi", "sameAs": "https://en.wikipedia.org/wiki/Corpus_Christi,_Texas" },
-        { "@type": "AdministrativeArea", "name": "Matagorda County, TX" },
-        { "@type": "AdministrativeArea", "name": "Brazoria County, TX" },
-        { "@type": "State", "name": "Texas" },
-        { "@type": "Country", "name": "United States" }
+        { "@type": "AdministrativeArea", "name": "Brazoria County", "sameAs": "https://en.wikipedia.org/wiki/Brazoria_County,_Texas" },
+        { "@type": "AdministrativeArea", "name": "Texas Gulf Coast" },
+        { "@type": "State", "name": "Texas", "sameAs": "https://en.wikipedia.org/wiki/Texas" },
+        { "@type": "Country", "name": "United States", "sameAs": "https://en.wikipedia.org/wiki/United_States" }
       ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Custom Metal Fabrication & Industrial Manufacturing Services",
+        "itemListElement": [
+          {
+            "@type": "OfferCatalog",
+            "name": "Custom Ranch Entrance Gates & Boundary Steel",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Custom Ranch Entrance Gates & Boundary Steel",
+                  "description": "Architectural ranch entrance gates, cattle guards, fence line pipe, access control framing, and heavy ornamental steel builds for Texas ranches and rural estates.",
+                  "provider": { "@id": `${DOMAIN}/#organization` }
+                }
+              }
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Agriculture & Livestock Equipment (pens, chutes, traps)",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Agriculture & Livestock Equipment (pens, chutes, traps)",
+                  "description": "Heavy-duty custom livestock handling pens, corral systems, squeeze chutes, modular feral hog traps, cattle guards, and agricultural equipment repairs.",
+                  "provider": { "@id": `${DOMAIN}/#organization` }
+                }
+              }
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "High-Definition CNC Plasma Plate Cutting",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "High-Definition CNC Plasma Plate Cutting",
+                  "description": "High-definition CNC plasma cutting for mild steel, SA-516-70 carbon steel, stainless steel, and aluminum plate. Precision gussets, baseplates, flanges, and custom parts.",
+                  "provider": { "@id": `${DOMAIN}/#organization` }
+                }
+              }
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Structural Steel Fabrication & Welding",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Structural Steel Fabrication & Welding",
+                  "description": "Commercial and industrial structural steel fabrication, certified welding, structural skids, pipe welding, mezzanine steel, and equipment supports.",
+                  "provider": { "@id": `${DOMAIN}/#organization` }
+                }
+              }
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "ASME B16.48 Paddle Blinds & Spacers",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "ASME B16.48 Paddle Blinds & Spacers",
+                  "description": "Positive isolation paddle blinds, figure-8 spectacle blinds, and spacer rings (150# to 2500#, 1/2\" to 24\"+ NPS) with certified EN 10204 3.1 MTRs and daily nationwide shipping.",
+                  "provider": { "@id": `${DOMAIN}/#organization` }
+                }
+              }
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Custom Tornado Shelters & Underground Bunkers",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Custom Tornado Shelters & Underground Bunkers",
+                  "description": "Engineered steel tornado shelters, storm safety rooms, underground survival bunkers, and large built-in heavy security safes fabricated to project specifications.",
+                  "provider": { "@id": `${DOMAIN}/#organization` }
+                }
+              }
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Custom Part Fabrication & Prototyping",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Custom Part Fabrication & Prototyping",
+                  "description": "One-off parts, short-run manufacturing, OEM replacement parts, aluminum welding, brackets, and custom sheet metal for local shops and industrial clients.",
+                  "provider": { "@id": `${DOMAIN}/#organization` }
+                }
+              }
+            ]
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Public Agency & Municipal Infrastructure Fabrication",
+            "itemListElement": [
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "Public Agency & Municipal Infrastructure Fabrication",
+                  "description": "Procurement-ready fabrication for Texas Parks & Wildlife (TPWD), municipalities, counties, and federal agencies. Park fire rings, safety handrails, and municipal steel structures.",
+                  "provider": { "@id": `${DOMAIN}/#organization` }
+                }
+              }
+            ]
+          }
+        ]
+      },
       "sameAs": [
         "https://maps.app.goo.gl/ipFsC9qtHyKwZZS39",
         "https://www.facebook.com/ironprairiefabrication",
@@ -264,14 +507,21 @@ function buildJsonLd(route) {
         "value": "XX7XCMGN9XD5"
       },
       "knowsAbout": [
-        "ASME B16.48 Paddle Blinds",
+        "Custom Metal Fabrication",
         "Structural Steel Fabrication",
-        "Custom Sheet Metal Fabrication",
+        "Custom Part Fabrication",
+        "Fabrication Company Near Me",
+        "Local Fabrication Shops",
+        "Metal Fabrication Companies",
+        "High-Definition CNC Plasma Plate Cutting",
+        "ASME B16.48 Paddle Blinds & Spacers",
+        "Custom Ranch Entrance Gates & Boundary Steel",
+        "Agriculture & Livestock Equipment (Pens, Chutes, Traps)",
+        "Custom Tornado Shelters & Underground Bunkers",
         "Industrial Welding",
         "Pipe Fabrication",
-        "Municipal Metalwork",
-        "Custom Bunkers and Tornado Shelters",
-        "Refinery Fabrication",
+        "Aluminum Welding",
+        "Petrochemical Refinery Turnaround Blinds",
         "Nationwide Freight Logistics",
         "Government Contracting (SAM.gov Registered, UEI: XX7XCMGN9XD5)"
       ]
@@ -304,19 +554,25 @@ function buildJsonLd(route) {
 function buildStaticBody(route) {
   const isPaddleBlinds = route.path === '/paddle-blinds' || route.path === '/storefront';
   const isHome = route.path === '/';
+  const isServices = route.path === '/services';
+  const isAbout = route.path === '/about';
+  const isWomanOwned = route.path === '/woman-owned';
+  const isProjects = route.path === '/projects';
+  const isContact = route.path === '/contact';
+
   return `
     <header style="padding:1rem 1.5rem;background:#241d1a;color:#f7f5f0;font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;">
       <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
         <div>
           <span style="font-size:1.1rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#f7f5f0;">Iron Prairie Fabrication Group LLC</span>
-          <span style="display:block;font-size:0.8rem;color:#d7ccc8;">Bay City, TX &bull; ASME B16.48 Paddle Blinds &bull; Custom Metal Fabrication</span>
+          <span style="display:block;font-size:0.8rem;color:#d7ccc8;">Bay City &amp; Houston, TX &bull; Custom Metal Fabrication Shop &bull; ASME B16.48 Paddle Blinds</span>
         </div>
         <div style="font-size:0.9rem;">
-          <a href="tel:+19792489266" style="color:#6ee7b7;font-weight:700;text-decoration:none;">Call Shop: (979) 248-9266</a>
+          <a href="tel:(979)248-9266" data-ga-location="prerender_static_header_phone" style="color:#6ee7b7;font-weight:700;text-decoration:none;">Call Shop: (979) 248-9266</a>
         </div>
       </div>
     </header>
-    <main style="max-width:1100px;margin:2rem auto;padding:0 1.5rem;font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;color:#1e293b;">
+    <main style="max-width:1100px;margin:2rem auto;padding:0 1.5rem;min-height:950px;font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;color:#1e293b;">
       ${isHome ? `
       <section style="margin-bottom:2rem;border-radius:16px;overflow:hidden;background:#161413;">
         <picture>
@@ -324,7 +580,7 @@ function buildStaticBody(route) {
           <source srcset="/images/hero-gate.webp" type="image/webp" />
           <img
             src="/images/hero-gate.webp"
-            alt="Custom fabricated ranch gate and fence installation by Iron Prairie Fabrication Group LLC"
+            alt="Custom fabricated ranch entrance gate and boundary steel by Iron Prairie Fabrication Group LLC"
             width="1024"
             height="768"
             fetchpriority="high"
@@ -340,7 +596,7 @@ function buildStaticBody(route) {
       <nav aria-label="Quick links" style="margin-bottom:2rem;padding:0.85rem 1.2rem;background:#f1f5f9;border-radius:12px;display:flex;flex-wrap:wrap;gap:0.75rem;font-size:0.9rem;">
         <strong style="color:#0f172a;">Quick Navigation:</strong>
         <a href="/" style="color:#241d1a;font-weight:600;">Home</a>
-        <a href="/about" style="color:#241d1a;font-weight:600;">About</a>
+        <a href="/about" style="color:#241d1a;font-weight:600;">About Us</a>
         <a href="/services" style="color:#241d1a;font-weight:600;">Services</a>
         <a href="/projects" style="color:#241d1a;font-weight:600;">Projects</a>
         <a href="/paddle-blinds" style="color:#241d1a;font-weight:600;">ASME Paddle Blinds</a>
@@ -365,22 +621,33 @@ function buildStaticBody(route) {
       </section>
       ` : `
       <section style="margin:2rem 0;padding:1.5rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;">
-        <h2 style="font-size:1.4rem;color:#241d1a;margin-bottom:0.75rem;">Fabrication Capabilities &amp; Service Highlights</h2>
+        <h2 style="font-size:1.4rem;color:#241d1a;margin-bottom:0.75rem;">Core Custom Metal Fabrication Capabilities</h2>
         <ul style="font-size:0.95rem;line-height:1.8;color:#475569;">
-          <li><strong>CNC Plasma Plate Cutting:</strong> Precision plate cutting from gauge sheet up to heavy structural steel plate.</li>
-          <li><strong>ASME B16.48 Paddle Blinds:</strong> Positive isolation blinds and spacer rings with certified 3.1 MTR paperwork.</li>
-          <li><strong>Ranch &amp; Agricultural Equipment:</strong> Heavy-duty custom gates, livestock pens, cattle guards, and field equipment.</li>
-          <li><strong>Protective Steel Builds:</strong> Tornado shelter components, custom bunkers, and heavy built-in security safes.</li>
-          <li><strong>Public Agency &amp; Municipal Metalwork:</strong> TPWD park infrastructure, fire rings, railings, and municipal steel components.</li>
+          <li><strong>Custom Ranch Entrance Gates &amp; Boundary Steel:</strong> Architectural ranch entrance gates, cattle guards, fence line pipe, access control framing, and heavy ornamental steel builds.</li>
+          <li><strong>Agriculture &amp; Livestock Equipment:</strong> Heavy-duty custom livestock handling pens, corral systems, squeeze chutes, modular feral hog traps, cattle guards, and agricultural equipment repairs.</li>
+          <li><strong>High-Definition CNC Plasma Plate Cutting:</strong> Precision plate cutting from gauge sheet up to heavy structural steel plate in carbon, stainless, and aluminum. Precision gussets, baseplates, flanges, and custom part fabrication.</li>
+          <li><strong>Structural Steel Fabrication &amp; Certified Welding:</strong> Commercial and industrial structural steel fabrication, certified welding, structural skids, pipe welding, mezzanine steel, and equipment supports.</li>
+          <li><strong>ASME B16.48 Paddle Blinds &amp; Spacers:</strong> In-house manufactured positive isolation paddle blinds and spacer rings with certified EN 10204 3.1 MTR paperwork.</li>
+          <li><strong>Custom Tornado Shelters &amp; Underground Bunkers:</strong> Engineered steel storm safety shelters, underground survival bunkers, and heavy built-in security safes.</li>
+          <li><strong>Custom Part Fabrication &amp; Prototyping:</strong> Rapid turnaround on short-run components, replacement parts, brackets, aluminum welding, and custom assemblies for local businesses.</li>
+          <li><strong>Public Agency &amp; Municipal Metalwork:</strong> TPWD park infrastructure, fire rings, railings, and municipal steel components (SAM.gov UEI: XX7XCMGN9XD5).</li>
         </ul>
       </section>
       `}
 
-      <footer style="margin-top:3rem;padding:1.5rem 0;border-top:1px solid #e2e8f0;font-size:0.85rem;color:#64748b;line-height:1.6;">
-        <p><strong>Iron Prairie Fabrication Group LLC</strong> &bull; 200 County Rd 170, Bay City, TX 77414</p>
-        <p>Direct Inquiries: <a href="tel:+19792489266" style="color:#0f172a;font-weight:700;">(979) 248-9266</a> | Email: <a href="mailto:Sales@ironprairiefabrication.com" style="color:#0f172a;">Sales@ironprairiefabrication.com</a></p>
+      <section style="margin:2rem 0;padding:1.5rem;background:#ffffff;border:1px solid #e2e8f0;border-radius:12px;">
+        <h2 style="font-size:1.2rem;color:#241d1a;margin-bottom:0.5rem;">Local Texas Shop Presence &amp; Fast Regional Delivery</h2>
+        <p style="font-size:0.95rem;line-height:1.6;color:#475569;">
+          Located in Bay City, Texas (Matagorda County), Iron Prairie provides local fabrication shop service, fast jobsite drop-offs, and emergency 2-4 hour hot-shot courier delivery throughout <strong>Bay City, Freeport, Lake Jackson, Angleton, Houston, Baytown, Pasadena, Corpus Christi, Pearland, Brazoria County, and the Texas Gulf Coast</strong>. Shipped orders move daily via UPS parcel, palletized LTL freight, and dedicated flatbeds across all 50 US states.
+        </p>
+      </section>
+
+      <div class="prerender-footer" role="contentinfo" style="margin-top:3rem;padding:1.5rem 0;border-top:1px solid #e2e8f0;font-size:0.85rem;color:#64748b;line-height:1.6;">
+        <p><strong>Iron Prairie Fabrication Group LLC</strong> &bull; 200 County Rd 170, Bay City, TX 77414 (Matagorda County)</p>
+        <p>Direct Inquiries: <a href="tel:(979)248-9266" data-ga-location="prerender_static_footer_phone" style="color:#0f172a;font-weight:700;">(979) 248-9266</a> | Email: <a href="mailto:Sales@ironprairiefabrication.com" style="color:#0f172a;">Sales@ironprairiefabrication.com</a></p>
         <p>Serving Bay City, Matagorda County, Brazoria County, Freeport, Lake Jackson, Angleton, Houston, Baytown, Pasadena, Corpus Christi, Texas statewide, and nationwide freight shipping across all 50 US states.</p>
-      </footer>
+        <p>Certified Woman-Owned Business &bull; SAM.gov Unique Entity ID (UEI): <strong>XX7XCMGN9XD5</strong></p>
+      </div>
     </main>
   `;
 }
@@ -446,6 +713,11 @@ for (const route of routes) {
     jsonLdScript
   );
 
+  // Only preload the hero-gate LCP image on the home page
+  if (route.path !== '/') {
+    html = html.replace(/<!-- Preload LCP Hero Image -->[\s\S]*?<link rel="preload" href="\/images\/hero-gate\.webp"[^>]+>\s*/, '');
+  }
+
   // Inject semantic static body fallback inside #root for crawlers, AI agents, and non-JS clients
   const staticBody = buildStaticBody(route);
   html = html.replace(
@@ -466,7 +738,6 @@ for (const route of routes) {
     body { background: #161413; color: #f7f5f0; margin: 0; font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif; }
     .home-hero { position: relative; background: #161413; min-height: 380px; display: block; overflow: hidden; }
     .home-hero__media { width: 100%; height: auto; max-height: 600px; object-fit: cover; display: block; }
-    input, select, textarea { color: #f7f5f0; }
   </style>`;
 
   html = html.replace(

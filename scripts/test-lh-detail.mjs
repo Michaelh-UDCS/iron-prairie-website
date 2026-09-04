@@ -10,13 +10,19 @@ const distDir = path.resolve(__dirname, '../dist');
 
 import zlib from 'node:zlib';
 
+const targetRoute = '/services';
+
 const server = http.createServer((req, res) => {
   let filePath = path.join(distDir, req.url.split('?')[0]);
   if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
     filePath = path.join(filePath, 'index.html');
   }
   if (!fs.existsSync(filePath)) {
-    filePath = path.join(distDir, 'index.html');
+    if (fs.existsSync(filePath + '.html')) {
+      filePath = filePath + '.html';
+    } else {
+      filePath = path.join(distDir, 'index.html');
+    }
   }
   const ext = path.extname(filePath).toLowerCase();
   const mime = ext === '.html' ? 'text/html; charset=utf-8' : ext === '.js' ? 'text/javascript' : ext === '.css' ? 'text/css' : ext === '.webp' ? 'image/webp' : ext === '.woff2' ? 'font/woff2' : ext === '.png' ? 'image/png' : 'application/octet-stream';
@@ -42,12 +48,20 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(4174, () => {
-  const child = exec('npx lighthouse "http://localhost:4174/" --form-factor=mobile --output=json --output-path="./lh-detail.json" --chrome-flags="--headless=new --no-sandbox --disable-gpu" --only-categories=performance,accessibility,best-practices,seo,agentic-browsing', { cwd: path.resolve(__dirname, '..') });
+  console.log(`Auditing ${targetRoute} on 4174...`);
+  const child = exec(`npx lighthouse "http://localhost:4174${targetRoute}" --form-factor=mobile --output=json --output-path="./lh-detail.json" --chrome-flags="--headless=new --no-sandbox --disable-gpu" --only-categories=performance,accessibility,best-practices,seo,agentic-browsing`, { cwd: path.resolve(__dirname, '..') });
   
   child.on('exit', code => {
     if (fs.existsSync('./lh-detail.json')) {
       const rep = JSON.parse(fs.readFileSync('./lh-detail.json', 'utf8'));
       const a = rep.audits;
+      console.log('Scores:', {
+        perf: rep.categories.performance?.score,
+        a11y: rep.categories.accessibility?.score,
+        bp: rep.categories['best-practices']?.score,
+        seo: rep.categories.seo?.score,
+        agentic: rep.categories['agentic-browsing']?.score
+      });
       console.log('Metrics:', {
         FCP: a['first-contentful-paint']?.displayValue,
         LCP: a['largest-contentful-paint']?.displayValue,
@@ -55,17 +69,19 @@ server.listen(4174, () => {
         CLS: a['cumulative-layout-shift']?.displayValue,
         SI: a['speed-index']?.displayValue,
       });
-
-      console.log('Agentic audits:', {
-        tree: a['agent-accessibility-tree']?.score,
-        cls: a['cumulative-layout-shift']?.score,
-        llms: a['llms-txt']?.score,
-      });
+      console.log('Layout Shifts Audit:', JSON.stringify(a['layout-shifts'], null, 2));
 
       const failed = Object.entries(a)
-        .filter(([k, v]) => v.score !== null && v.score < 0.9 && v.scoreDisplayMode !== 'notApplicable')
-        .map(([k, v]) => ({ id: k, title: v.title, score: v.score, displayValue: v.displayValue }));
-      console.log('Failed Audits:', JSON.stringify(failed, null, 2));
+        .filter(([k, v]) => v.score !== null && v.score < 1 && v.scoreDisplayMode !== 'notApplicable' && v.scoreDisplayMode !== 'informative')
+        .map(([k, v]) => ({
+          id: k,
+          title: v.title,
+          score: v.score,
+          displayValue: v.displayValue,
+          explanation: v.explanation,
+          details: v.details?.items?.slice(0, 3)
+        }));
+      console.log('Failed Audits (< 1.0):', JSON.stringify(failed, null, 2));
       fs.unlinkSync('./lh-detail.json');
     }
     server.close();

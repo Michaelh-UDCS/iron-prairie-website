@@ -4,14 +4,14 @@ const brandLogo = '/images/logo.webp';
 import { siteConfig } from './config/siteConfig';
 
 import Home from './pages/Home.jsx';
-const About = lazy(() => import('./pages/About.jsx'));
-const Services = lazy(() => import('./pages/Services.jsx'));
-const Projects = lazy(() => import('./pages/Projects.jsx'));
-const WomanOwned = lazy(() => import('./pages/WomanOwned.jsx'));
-const Contact = lazy(() => import('./pages/Contact.jsx'));
-const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy.jsx'));
-const TermsOfService = lazy(() => import('./pages/TermsOfService.jsx'));
-const NotFound = lazy(() => import('./pages/NotFound.jsx'));
+import About from './pages/About.jsx';
+import Services from './pages/Services.jsx';
+import Projects from './pages/Projects.jsx';
+import WomanOwned from './pages/WomanOwned.jsx';
+import Contact from './pages/Contact.jsx';
+import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
+import TermsOfService from './pages/TermsOfService.jsx';
+import NotFound from './pages/NotFound.jsx';
 const OperationsApp = lazy(() =>
   import('./operations/OperationsApp').then((module) => ({ default: module.OperationsApp }))
 );
@@ -90,9 +90,8 @@ const dispatchOrderEmail = async (order: any) => {
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const pickRandom = <T,>(arr: readonly T[] | T[]): T => arr[Math.floor(Math.random() * arr.length)];
-const RapidMatrixOrderGrid = lazy(() =>
-  import('./components/RapidMatrixOrderGrid').then((m) => ({ default: m.RapidMatrixOrderGrid }))
-);
+import { RapidMatrixOrderGrid } from './components/RapidMatrixOrderGrid';
+import { saveCheckoutLead } from './services/leadService';
 const InstantProposalModal = lazy(() =>
   import('./components/InstantProposalModal').then((m) => ({ default: m.InstantProposalModal }))
 );
@@ -102,10 +101,61 @@ const BulkListRfqModal = lazy(() =>
 import { generateNextPoNumber, generateNextProposalNumber, generateNextWorkOrderNumber } from './utils/orderNumberGenerator';
 import { reportCheckoutCancelled } from './services/erpStorefrontFeed';
 
+const ROUTE_METADATA: Record<string, { title: string; desc: string }> = {
+  '/': {
+    title: 'Custom Metal Fabrication Shop Bay City & Houston TX | Iron Prairie',
+    desc: 'Custom metal fabrication shop serving Bay City & Houston TX. Structural steel fabrication, CNC plasma cutting, ranch gates, ASME paddle blinds & custom parts.'
+  },
+  '/services': {
+    title: 'Custom Metal Fabrication Services Bay City & Houston TX | Iron Prairie',
+    desc: 'Full-service custom metal fabrication shop: structural steel fabrication, CNC plasma cutting, ranch gates, livestock pens, ASME paddle blinds & custom shelters.'
+  },
+  '/about': {
+    title: 'About Iron Prairie | Custom Metal Fabrication Shop Bay City TX',
+    desc: 'Certified woman-owned custom metal fabrication shop in Bay City, TX. Structural steel, CNC plasma cutting, ranch equipment & industrial welding nationwide.'
+  },
+  '/projects': {
+    title: 'Metal Fabrication Projects | Custom Steel & Gates Bay City TX | Iron Prairie',
+    desc: 'Explore custom metal fabrication projects: architectural ranch entrance gates, heavy livestock pens, CNC plasma parts, structural steel & ASME blinds.'
+  },
+  '/woman-owned': {
+    title: 'Woman-Owned Fabrication Company Bay City TX | SAM.gov UEI | Iron Prairie',
+    desc: 'SAM.gov registered (UEI XX7XCMGN9XD5) woman-owned custom metal fabrication business in Bay City, TX. Structural steel, agency infrastructure & contract manufacturing.'
+  },
+  '/contact': {
+    title: 'Request Fabrication Quote | Metal Fab Shop Bay City TX | Iron Prairie',
+    desc: 'Request a fast custom metal fabrication quote. Structural steel, ranch gates, CNC plasma parts, ASME paddle blinds & custom builds. Direct line: (979) 248-9266.'
+  },
+  '/paddle-blinds': {
+    title: 'ASME B16.48 Paddle Blinds & Spacers | Iron Prairie Bay City TX',
+    desc: 'Order ASME B16.48 paddle blinds in SA-516-70, 304L & 316L with certified 3.1 MTRs. Bay City, TX shop with same-day pricing & daily nationwide shipping now!'
+  },
+  '/storefront': {
+    title: 'ASME Paddle Blind Storefront & Configurator | Iron Prairie TX',
+    desc: 'Configure ASME B16.48 paddle blinds with instant pricing, dimensional weights, certified MTR packets, Texas hot-shot delivery & nationwide checkout online.'
+  },
+  '/privacy-policy': {
+    title: 'Privacy Policy for Iron Prairie Fabrication Group LLC',
+    desc: 'Read how Iron Prairie Fabrication Group LLC protects inquiry data, project specs, and contact details for Texas and nationwide customers each day.'
+  },
+  '/terms-of-service': {
+    title: 'Terms of Service for Iron Prairie Fabrication Group',
+    desc: 'Review Iron Prairie Fabrication Group LLC terms for custom metal fabrication quotes, specifications, payments, and project agreements across Texas.'
+  }
+};
+
 function ScrollToTop() {
   const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
+    const meta = ROUTE_METADATA[pathname];
+    if (meta) {
+      document.title = meta.title;
+      const descEl = document.querySelector('meta[name="description"]');
+      if (descEl) {
+        descEl.setAttribute('content', meta.desc);
+      }
+    }
   }, [pathname]);
   return null;
 }
@@ -335,7 +385,7 @@ const THICKNESS_OPTIONS: ThicknessOption[] = [
   { label: '11 Gauge', thickness: 0.1196, fractionLabel: '11 Ga (0.120")', isDefault: true, description: 'Standard Turnaround Utility Isolation Blind (Owner Spec - Default)' },
   { label: '1/8"', thickness: 0.125, fractionLabel: '1/8" (0.125")', description: '1/8" Nominal Plate' },
   { label: '3/16"', thickness: 0.1875, fractionLabel: '3/16" (0.188")', description: 'Medium Duty Isolation' },
-  { label: '1/4"', thickness: 0.250, fractionLabel: '1/4" (0.250")', description: 'Heavy Duty Structural' },
+  { label: '1/4"', thickness: 0.250, fractionLabel: '1/4" (0.250")', description: 'Solid Structural Plate' },
   { label: '5/16"', thickness: 0.3125, fractionLabel: '5/16" (0.313")', description: 'High Pressure Rating' },
   { label: '3/8"', thickness: 0.375, fractionLabel: '3/8" (0.375")', description: 'Heavy Industrial Plate' },
   { label: '1/2"', thickness: 0.500, fractionLabel: '1/2" (0.500")', description: 'ASME Heavy Wall' },
@@ -1642,9 +1692,8 @@ export default function App() {
       localStorage.setItem('ipf_pending_stripe_order', JSON.stringify(pendingOrder));
     } catch (_) { /* storage full or private mode — proceed anyway */ }
 
-    // Save lead snapshot to Firestore for analytics & CRM follow-up lazily
+    // Save lead snapshot to Firestore for analytics & CRM follow-up
     try {
-      const { saveCheckoutLead } = await import('./services/leadService');
       await saveCheckoutLead({
         orderRefId: poNumber,
         buyerName: contactName,
@@ -1891,7 +1940,8 @@ export default function App() {
                 Submit Custom RFQ
               </a>
               <a
-                href="tel:+19792489266"
+                href="tel:(979)248-9266"
+                data-ga-location="storefront_urgent_rfq_phone"
                 className="text-brand-brown hover:text-brand-brown-light font-bold font-mono text-xs underline"
               >
                 (979) 248-9266
@@ -1909,17 +1959,20 @@ export default function App() {
             <span className="hidden sm:inline">Bay City, TX Facility &bull; ASME B16.48 In-House Plasma Cutting</span>
             <span className="sm:hidden">Bay City ASME B16.48</span>
           </div>
-          <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-mono text-slate-500 flex-wrap">
-            <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">Domestic Plate</span>
-            <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-200 hidden md:inline">Hi-Def Plasma</span>
+          <div className="flex items-center gap-1.5 text-[10px] sm:text-[11px] font-mono text-slate-700 flex-wrap">
+            <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-300">Domestic Plate</span>
+            <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-300 hidden md:inline">Hi-Def Plasma</span>
             <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded flex items-center gap-1 font-bold">
               <ShieldCheck className="h-3 w-3 text-emerald-600" /> Free 3.1 MTRs
             </span>
             <a
               href={`mailto:${IPG_SALES_EMAIL}?subject=Turnaround%20RFP%20/%20Proposal%20Request`}
-              className="bg-sky-50 hover:bg-sky-100 border border-sky-300 text-sky-900 font-bold px-2 py-0.5 rounded flex items-center gap-1 shadow-sm transition-colors"
+              aria-label="RFQ - Email Sales for Turnaround Proposal"
+              title="RFQ - Email Sales for Turnaround Proposal"
+              className="bg-sky-50 hover:bg-sky-100 border border-sky-300 text-sky-900 font-bold px-2 py-0.5 rounded flex items-center gap-1 shadow-sm transition-colors min-h-[28px] touch-manipulation"
             >
-              <Mail className="h-3 w-3 text-sky-700" />
+              <Mail className="h-3 w-3 text-sky-700" aria-hidden="true" />
+              <span className="text-[10px] font-mono">RFQ</span>
             </a>
           </div>
         </div>
@@ -1970,7 +2023,8 @@ export default function App() {
 
 
             <a
-              href="tel:+19792489266"
+              href="tel:(979)248-9266"
+              data-ga-location="header_topbar_phone"
               className="font-mono font-bold text-brand-bone hover:text-brand-brown-light transition-colors text-xs flex items-center gap-1.5 flex-shrink-0 py-1 px-1.5 rounded-md hover:bg-brand-panel touch-manipulation min-h-[44px]"
             >
               <Phone className="h-3.5 w-3.5 text-brand-brown-light shrink-0" />
@@ -2039,7 +2093,7 @@ export default function App() {
           <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
             {/* Gated Wholesale Login / Status Button */}
             {isClientLoggedIn && (
-              <div className="flex items-center gap-1 sm:gap-1.5">
+              <div className="hidden sm:flex items-center gap-1 sm:gap-1.5">
                 <button
                   onClick={() => setIsLoginModalOpen(true)}
                   className="flex items-center gap-1.5 bg-brand-panel-muted border border-brand-border text-brand-bone px-2 sm:px-3 py-2 rounded-lg text-xs font-semibold hover:bg-brand-panel transition-colors min-h-[44px] touch-manipulation"
@@ -2124,6 +2178,25 @@ export default function App() {
               );
             })}
             <div className="pt-2 border-t border-brand-border space-y-2">
+              {isClientLoggedIn && (
+                <div className="flex items-center justify-between gap-2 p-2.5 bg-brand-panel-muted rounded-xl border border-brand-border">
+                  <button
+                    onClick={() => { setIsLoginModalOpen(true); setMobileOpen(false); }}
+                    className="flex items-center gap-2 text-xs font-semibold text-brand-bone min-h-[44px] touch-manipulation"
+                  >
+                    <UserCheck className="h-4 w-4 text-brand-brown-light shrink-0" />
+                    <span className="truncate">{clientAccount?.companyName || 'Verified Trade Account'}</span>
+                  </button>
+                  <button
+                    onClick={() => { handleClientLogout(); setMobileOpen(false); }}
+                    className="p-2 text-stone-400 hover:text-rose-400 min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
+                    title="Log out"
+                    aria-label="Log out"
+                  >
+                    <LogOut className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
               <Link
                 to="/contact"
                 onClick={() => setMobileOpen(false)}
@@ -2132,7 +2205,8 @@ export default function App() {
                 Request a Quote
               </Link>
               <a
-                href="tel:+19792489266"
+                href="tel:(979)248-9266"
+                data-ga-location="mobile_nav_phone"
                 className="block w-full text-center rounded-xl bg-brand-panel-muted border border-brand-border py-2.5 text-xs font-bold text-brand-bone min-h-[44px] flex items-center justify-center gap-2 touch-manipulation"
               >
                 <Phone className="h-4 w-4 text-brand-brown-light" />
@@ -2146,7 +2220,7 @@ export default function App() {
       {/* -------------------------------------------------------------------- */}
       {/* MULTI-ROUTE APPLICATION CONTENT                                      */}
       {/* -------------------------------------------------------------------- */}
-      <main id="main-content" className="flex-1 min-w-0 w-full overflow-hidden pb-14 md:pb-0">
+      <main id="main-content" className="flex-1 min-w-0 w-full overflow-hidden pb-20 md:pb-0">
         <Suspense fallback={<RouteFallback />}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -2206,7 +2280,7 @@ export default function App() {
             <div>
               <div className="text-xs font-bold text-brand-bone uppercase tracking-wider mb-3">Facility &amp; Inquiries</div>
               <div className="space-y-2 text-xs text-stone-300">
-                <div>Phone: <a href="tel:+19792489266" className="text-brand-bone hover:text-brand-brown-light font-bold">(979) 248-9266</a></div>
+                <div>Phone: <a href="tel:(979)248-9266" data-ga-location="footer_phone" className="text-brand-bone hover:text-brand-brown-light font-bold">(979) 248-9266</a></div>
                 <div>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="text-brand-bone hover:text-brand-brown-light underline">Sales@ironprairiefabrication.com</a></div>
                 <div>Facility: <a href={siteConfig.googleMapsUrl} target="_blank" rel="noopener noreferrer" className="text-stone-200 hover:text-brand-bone underline">200 County Rd 170, Bay City, TX 77414</a> (Matagorda County)</div>
                 <div>Service Area: Texas Statewide &bull; <span className="text-brand-bone font-semibold">Nationwide Shipping (All 50 States)</span></div>
@@ -3601,27 +3675,28 @@ export default function App() {
       {/* -------------------------------------------------------------------- */}
       {/* MOBILE STICKY QUICK-ACTION CONVERSION BAR (85% Mobile Traffic)        */}
       {/* -------------------------------------------------------------------- */}
-      <nav aria-label="Mobile quick actions" className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-brand-panel/95 backdrop-blur-md border-t border-brand-border px-3 py-2 flex items-center justify-between gap-2 shadow-2xl safe-area-pb">
+      <nav aria-label="Mobile quick actions" className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-brand-panel/95 backdrop-blur-md border-t border-brand-border px-3 py-2 pb-[max(0.6rem,env(safe-area-inset-bottom))] flex items-center justify-between gap-2 shadow-2xl">
         <a
-          href="tel:+19792489266"
-          className="flex-1 inline-flex items-center justify-center gap-1.5 bg-emerald-700 hover:bg-emerald-600 text-white font-bold py-2 px-3 rounded-xl text-xs font-mono uppercase tracking-wider transition-all shadow-sm active:scale-95 touch-manipulation min-h-[44px]"
+          href="tel:(979)248-9266"
+          data-ga-location="mobile_sticky_bar_phone"
+          className="flex-1 inline-flex items-center justify-center gap-1.5 bg-emerald-700 hover:bg-emerald-600 text-white font-bold py-2.5 px-3 rounded-xl text-xs font-mono uppercase tracking-wider transition-all shadow-sm active:scale-95 touch-manipulation min-h-[48px]"
         >
-          <Phone className="h-3.5 w-3.5 shrink-0" />
+          <Phone className="h-4 w-4 shrink-0" />
           <span>Call Shop</span>
         </a>
         <Link
           to="/paddle-blinds"
-          className="flex-1 inline-flex items-center justify-center gap-1.5 bg-brand-panel-muted hover:bg-brand-panel text-brand-bone border border-brand-border font-bold py-2 px-3 rounded-xl text-xs uppercase tracking-wider transition-all shadow-sm active:scale-95 touch-manipulation min-h-[44px]"
+          className="inline-flex items-center justify-center gap-1 bg-brand-panel-muted hover:bg-brand-panel text-stone-300 border border-brand-border font-medium py-2.5 px-3 rounded-xl text-xs uppercase tracking-wider transition-all shadow-sm active:scale-95 touch-manipulation min-h-[48px]"
         >
           <Zap className="h-3.5 w-3.5 text-brand-brown-light fill-brand-brown-light shrink-0" />
           <span>Blinds</span>
         </Link>
         <Link
           to="/contact"
-          className="flex-1 inline-flex items-center justify-center gap-1.5 bg-brand-brown hover:bg-brand-brown-light text-white font-bold py-2 px-3 rounded-xl text-xs uppercase tracking-wider transition-all shadow-sm active:scale-95 touch-manipulation min-h-[44px]"
+          className="flex-1 inline-flex items-center justify-center gap-1.5 bg-brand-brown hover:bg-brand-brown-light text-white font-bold py-2.5 px-3 rounded-xl text-xs uppercase tracking-wider transition-all shadow-sm active:scale-95 touch-manipulation min-h-[48px]"
         >
           <span>Quote</span>
-          <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+          <ArrowRight className="h-4 w-4 shrink-0" />
         </Link>
       </nav>
 

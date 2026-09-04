@@ -24,15 +24,19 @@ export const siteConfig = {
   googleMapsUrl: 'https://maps.app.goo.gl/ipFsC9qtHyKwZZS39',
   serviceAreas: [
     'Bay City',
-    'Lake Jackson',
-    'Freeport',
-    'Angleton',
-    'Pearland',
-    'Houston',
     'Matagorda County',
+    'Freeport',
+    'Lake Jackson',
+    'Angleton',
+    'Houston',
+    'Baytown',
+    'Pearland',
+    'Pasadena',
+    'Corpus Christi',
     'Brazoria County',
-    'Texas',
-    'United States'
+    'Texas Gulf Coast',
+    'Statewide Texas',
+    'All 50 States (Nationwide)'
   ],
 
   primaryColor: '#6b3b2a',
@@ -65,29 +69,34 @@ export const siteConfig = {
 
   services: [
     {
-      title: 'ASME B16.48 Paddle Blinds',
-      desc: 'Positive isolation paddle blinds and spacer rings with certified MTRs and nationwide shipping.',
+      title: 'Custom Metal Fabrication & Structural Steel',
+      desc: 'Architectural ranch gates, boundary steel, structural welding, equipment skids, and custom part fabrication.',
+      slug: 'services'
+    },
+    {
+      title: 'High-Definition CNC Plasma Plate Cutting',
+      desc: 'Precision plate cutting from gauge sheet up to heavy structural plate in carbon, stainless, and aluminum.',
+      slug: 'services'
+    },
+    {
+      title: 'Agriculture & Livestock Equipment',
+      desc: 'Custom pens, squeeze chutes, modular hog traps, cattle guards, and hard-use ranch equipment.',
+      slug: 'services'
+    },
+    {
+      title: 'ASME B16.48 Paddle Blinds & Spacers',
+      desc: 'Positive isolation paddle blinds and spacer rings with certified MTRs, hot-shot turnaround, and nationwide shipping.',
       slug: 'paddle-blinds'
     },
     {
-      title: 'CNC Plasma Cutting & Welding',
-      desc: 'High-definition plasma plate cutting and practical welding for industrial and ranch assemblies.',
+      title: 'Custom Tornado Shelters & Underground Bunkers',
+      desc: 'Engineered protective steel storm shelters, underground survival bunkers, and heavy built-in security safes.',
       slug: 'services'
     },
     {
-      title: 'Agriculture & Ranch Fabrication',
-      desc: 'Custom pens, ranch gates, fence panels, and hard-use farm equipment steelwork.',
-      slug: 'services'
-    },
-    {
-      title: 'Public Agency Metalwork',
-      desc: 'Procurement-ready fabrication for municipalities, TPWD, National Parks, and federal buyers.',
+      title: 'Public Agency & Municipal Metalwork',
+      desc: 'Procurement-ready fabrication for municipalities, TPWD, National Parks, and federal buyers (SAM.gov UEI: XX7XCMGN9XD5).',
       slug: 'woman-owned'
-    },
-    {
-      title: 'Secure Specialty Builds',
-      desc: 'Custom bunkers, tornado shelter steelwork, and large built-in safes.',
-      slug: 'services'
     }
   ],
 

@@ -418,7 +418,7 @@ export const RapidMatrixOrderGrid: React.FC<RapidMatrixOrderGridProps> = ({
                       <span className="font-bold font-mono text-xs text-slate-900">{pillLabel}</span>
                       {isSelected && <Check className="h-3 w-3 text-sky-700 shrink-0" />}
                     </div>
-                    <div className="text-[9px] text-slate-500 truncate">
+                    <div className="text-[9px] text-slate-600 truncate">
                       {pillSub}
                     </div>
                   </button>
@@ -454,7 +454,7 @@ export const RapidMatrixOrderGrid: React.FC<RapidMatrixOrderGridProps> = ({
                 <span className="font-mono text-xs font-bold text-slate-900">⚡ 11 Ga (0.120")</span>
                 <span className="text-[9px] bg-emerald-200 text-emerald-950 px-1.5 py-0.2 rounded font-bold">Standard</span>
               </div>
-              <div className="text-[9px] text-slate-500">Turnaround Default</div>
+              <div className="text-[9px] text-slate-600">Turnaround Default</div>
             </button>
 
             <button
@@ -467,7 +467,7 @@ export const RapidMatrixOrderGrid: React.FC<RapidMatrixOrderGridProps> = ({
               }`}
             >
               <div className="font-mono text-xs font-bold text-slate-900">1/8" Plate (0.125")</div>
-              <div className="text-[9px] text-slate-500">Nominal Fractional</div>
+              <div className="text-[9px] text-slate-600">Nominal Fractional</div>
             </button>
 
             <button
@@ -480,7 +480,7 @@ export const RapidMatrixOrderGrid: React.FC<RapidMatrixOrderGridProps> = ({
               }`}
             >
               <div className="font-mono text-xs font-bold text-slate-900">1/4" Heavy (0.250")</div>
-              <div className="text-[9px] text-slate-500">Heavy Duty Plate</div>
+              <div className="text-[9px] text-slate-600">Solid Structural Plate</div>
             </button>
 
             <button
@@ -493,7 +493,7 @@ export const RapidMatrixOrderGrid: React.FC<RapidMatrixOrderGridProps> = ({
               }`}
             >
               <div className="font-mono text-xs font-bold text-slate-900">ASME B16.48 Spec</div>
-              <div className="text-[9px] text-slate-500">Heavy Wall Nominal</div>
+              <div className="text-[9px] text-slate-600">Heavy Wall Nominal</div>
             </button>
           </div>
         </div>

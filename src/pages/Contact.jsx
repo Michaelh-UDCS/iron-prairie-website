@@ -1,9 +1,57 @@
 import React, { useState } from 'react';
-import { Truck, MapPin, Phone, Mail, Clock, Flame, ShieldCheck, CheckCircle2, Building, Award, BadgeCheck } from 'lucide-react';
+import { Truck, MapPin, Phone, Mail, Clock, Flame, ShieldCheck, CheckCircle2, Building, Award, BadgeCheck, Loader2 } from 'lucide-react';
 import { siteConfig } from '../config/siteConfig';
+import { saveContactLead } from '../services/leadService';
+import { trackCustomQuoteSubmission } from '../services/analytics';
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    const name = formData.get('name')?.toString().trim() || '';
+    const organization = formData.get('organization')?.toString().trim() || '';
+    const phone = formData.get('phone')?.toString().trim() || '';
+    const email = formData.get('email')?.toString().trim() || '';
+    const projectType = formData.get('projectType')?.toString().trim() || 'Custom Metal Fabrication (General)';
+    const logisticsPreference = formData.get('logisticsPreference')?.toString().trim() || '';
+    const location = formData.get('location')?.toString().trim() || '';
+    const bidReference = formData.get('bidReference')?.toString().trim() || '';
+    const projectDetails = formData.get('projectDetails')?.toString().trim() || '';
+
+    const leadData = {
+      name,
+      organization,
+      phone,
+      email,
+      projectType,
+      logisticsPreference,
+      location,
+      bidReference,
+      projectDetails,
+      source: 'contact_page',
+    };
+
+    try {
+      await saveContactLead(leadData);
+    } catch (err) {
+      console.warn('[Contact] Error saving lead to Firestore:', err);
+    }
+
+    try {
+      trackCustomQuoteSubmission(projectType, organization);
+    } catch (err) {
+      console.warn('[Contact] Error dispatching quote analytics:', err);
+    }
+
+    setIsSubmitting(false);
+    setSubmitted(true);
+  };
 
   return (
     <div className="container-page grid gap-10 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
@@ -24,22 +72,28 @@ export default function Contact() {
         </p>
 
         {submitted ? (
-          <div className="mt-6 rounded-2xl bg-emerald-50 border border-emerald-300 p-6 text-emerald-900 space-y-2 animate-fadeIn">
+          <div className="mt-6 rounded-2xl bg-emerald-50 border border-emerald-300 p-6 text-emerald-900 space-y-3 animate-fadeIn">
             <div className="flex items-center gap-2 font-bold text-base">
-              <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+              <CheckCircle2 className="h-5 w-5 text-emerald-600 shrink-0" />
               <span>Thank you! Your quote request has been received.</span>
             </div>
             <p className="text-xs text-emerald-800 leading-relaxed">
-              Our estimators at <strong>Sales@ironprairiefabrication.com</strong> will review your specifications, calculate material and logistics, and follow up promptly with scope confirmation and pricing.
+              Our estimators will review your specifications, material requirements, and logistics options. Expect direct follow-up from <a href="mailto:Sales@ironprairiefabrication.com" className="font-bold underline text-emerald-950">Sales@ironprairiefabrication.com</a> or phone call from <a href="tel:(979)248-9266" data-ga-location="contact_confirmation_phone" className="font-bold underline text-emerald-950">(979) 248-9266</a> promptly with scope confirmation and pricing.
             </p>
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={() => setSubmitted(false)}
+                className="text-xs font-semibold text-brand-brown hover:underline"
+              >
+                &larr; Submit another inquiry or quote
+              </button>
+            </div>
           </div>
         ) : (
           <form
             className="mt-6 space-y-4"
-            onSubmit={(e) => {
-              e.preventDefault();
-              setSubmitted(true);
-            }}
+            onSubmit={handleSubmit}
           >
             <div className="grid gap-4 md:grid-cols-2">
               <div>
@@ -110,17 +164,18 @@ export default function Contact() {
                 <select
                   id="contact-project-type"
                   name="projectType"
+                  defaultValue="Custom Metal Fabrication (General)"
                   className="mt-1 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-brand-brown focus:ring-1 focus:ring-brand-brown"
                 >
-                  <option>ASME B16.48 Paddle Blinds / Spacers</option>
-                  <option>CNC Plasma Cutting / Weldment</option>
-                  <option>Agriculture / Ranch Equipment</option>
-                  <option>Gates / Fences</option>
-                  <option>Custom Bunker / Tornado Shelter</option>
-                  <option>Large Built-In Safe</option>
-                  <option>O&amp;G / Industrial Replacement Parts</option>
-                  <option>Parks / Public Infrastructure</option>
-                  <option>State or Federal Agency Request</option>
+                  <option value="Custom Metal Fabrication (General)">Custom Metal Fabrication (General)</option>
+                  <option value="Custom Ranch Entrance Gates & Boundary Steel">Custom Ranch Entrance Gates &amp; Boundary Steel</option>
+                  <option value="Agriculture & Livestock Equipment (Pens, Chutes, Implements)">Agriculture &amp; Livestock Equipment (Pens, Chutes, Implements)</option>
+                  <option value="CNC Plasma Cutting & Plate Components">CNC Plasma Cutting &amp; Plate Components</option>
+                  <option value="Structural Steel & Industrial Weldments">Structural Steel &amp; Industrial Weldments</option>
+                  <option value="ASME B16.48 Paddle Blinds & Spacers">ASME B16.48 Paddle Blinds &amp; Spacers</option>
+                  <option value="Custom Bunker / Tornado Shelter">Custom Bunker / Tornado Shelter</option>
+                  <option value="Large Built-In Safe">Large Built-In Safe</option>
+                  <option value="Municipal / Agency Infrastructure">Municipal / Agency Infrastructure</option>
                 </select>
               </div>
 
@@ -189,9 +244,18 @@ export default function Contact() {
 
             <button
               type="submit"
-              className="mt-2 inline-flex items-center justify-center rounded-full bg-brand-brown px-6 py-3 text-sm font-bold text-white shadow-md shadow-brand-brown/20 hover:bg-brand-brown-light focus:outline-none focus:ring-2 focus:ring-brand-brown active:scale-95 transition-all"
+              disabled={isSubmitting}
+              data-ga-location="contact_form_submit"
+              className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-brand-brown px-6 py-3 text-sm font-bold text-white shadow-md shadow-brand-brown/20 hover:bg-brand-brown-light focus:outline-none focus:ring-2 focus:ring-brand-brown active:scale-95 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Submit Quote Request
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Submitting Request...</span>
+                </>
+              ) : (
+                <span>Submit Quote Request</span>
+              )}
             </button>
           </form>
         )}
@@ -204,11 +268,11 @@ export default function Contact() {
           <div className="space-y-2 text-xs text-slate-800">
             <div className="flex items-center gap-2">
               <Phone className="h-4 w-4 text-brand-brown shrink-0" />
-              <span>Phone: <a href="tel:+19792489266" className="font-bold text-brand-brown underline hover:text-brand-brown-light">(979) 248-9266</a></span>
+              <span>Phone: <a href="tel:(979)248-9266" data-ga-location="contact_sidebar_phone" className="font-bold text-brand-brown underline hover:text-brand-brown-light py-1 inline-block min-h-[36px] items-center inline-flex">(979) 248-9266</a></span>
             </div>
             <div className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-brand-brown shrink-0" />
-              <span>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="font-bold text-brand-brown underline hover:text-brand-brown-light">Sales@ironprairiefabrication.com</a></span>
+              <span>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="font-bold text-brand-brown underline hover:text-brand-brown-light py-1 inline-block min-h-[36px] items-center inline-flex">Sales@ironprairiefabrication.com</a></span>
             </div>
             <div className="flex items-start gap-2 pt-1">
               <MapPin className="h-4 w-4 text-brand-brown shrink-0 mt-0.5" />
@@ -218,17 +282,14 @@ export default function Contact() {
                   href={siteConfig.googleMapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-slate-600 hover:text-brand-brown underline block"
+                  className="group block rounded-lg p-2 -ml-2 hover:bg-stone-50 transition-colors min-h-[44px]"
                 >
-                  200 County Rd 170, Bay City, TX 77414 (Matagorda County)
-                </a>
-                <a
-                  href={siteConfig.googleMapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[11px] font-semibold text-brand-brown underline hover:text-brand-brown-light block mt-0.5"
-                >
-                  View on Google Maps &rarr;
+                  <span className="text-slate-600 group-hover:text-brand-brown underline block leading-relaxed">
+                    200 County Rd 170, Bay City, TX 77414 (Matagorda County)
+                  </span>
+                  <span className="text-[11px] font-semibold text-brand-brown group-hover:text-brand-brown-light underline block mt-1">
+                    View on Google Maps &rarr;
+                  </span>
                 </a>
               </div>
             </div>

@@ -5,73 +5,117 @@ import { Truck, MapPin, ShieldCheck, PackageCheck, CheckCircle2, ArrowRight, Zap
 
 export default function Home() {
   return (
-    <div className="space-y-0">
-      {/* FULL-BLEED HERO — brand + headline + support + CTAs + edge-to-edge gate media */}
-      <section className="home-hero" aria-label="Iron Prairie Fabrication Group hero">
-        <picture>
-          <source media="(max-width: 640px)" srcSet="/images/hero-gate-mobile.webp" type="image/webp" />
-          <source srcSet="/images/hero-gate.webp" type="image/webp" />
-          <img
-            src="/images/hero-gate.webp"
-            alt="Custom fabricated ranch gate and fence installation by Iron Prairie Fabrication Group LLC"
-            width="1024"
-            height="768"
-            fetchpriority="high"
-            decoding="async"
-            className="home-hero__media"
-          />
-        </picture>
-        <div className="home-hero__veil" aria-hidden="true" />
+    <div className="space-y-0 w-full">
+      {/* FULL-BLEED HERO — Edge-to-edge custom fabrication showcase with perfectly scaled gate media */}
+      <section className="home-hero border-b border-brand-border" aria-label="Iron Prairie Fabrication Group hero">
+        {/* Right-aligned edge-to-edge media plane */}
+        <div className="home-hero__media-wrapper" aria-hidden="true">
+          <picture className="w-full h-full block">
+            <source media="(max-width: 640px)" srcSet="/images/hero-gate-mobile.webp" type="image/webp" />
+            <source srcSet="/images/hero-gate.webp" type="image/webp" />
+            <img
+              src="/images/hero-gate.webp"
+              alt="Custom fabricated ranch gate and fence installation by Iron Prairie Fabrication Group LLC"
+              width="1024"
+              height="768"
+              fetchpriority="high"
+              decoding="async"
+              className="home-hero__media"
+            />
+          </picture>
+          <div className="home-hero__media-fade" />
+        </div>
+
+        {/* Hero Content Container */}
         <div className="home-hero__content">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-bone/80 font-mono mb-3">
-            Bay City, Texas · Ships All 50 States
-          </p>
-          <h1 className="home-hero__brand">
-            Iron Prairie Fabrication Group LLC
-          </h1>
-          <p className="home-hero__support">
-            Built-to-last metal for ranches, industry, and agencies — ASME paddle blinds, CNC plasma, and custom steel from Bay City, TX.
-          </p>
-          <div className="home-hero__ctas">
-            <Link to="/storefront" className="btn-primary">
-              <Zap className="h-4 w-4 fill-white" aria-hidden="true" />
-              Paddle Blinds Catalog
-            </Link>
-            <Link to="/contact" className="btn-secondary">
-              Request a Quote
-            </Link>
+          <div className="max-w-xl xl:max-w-2xl space-y-5">
+            <div className="inline-flex items-center gap-2 self-start px-3 py-1 rounded-full bg-brand-brown/20 border border-brand-brown/40 text-brand-bone text-xs font-mono font-bold uppercase tracking-wider">
+              <MapPin className="h-3.5 w-3.5 text-brand-brown-light shrink-0" aria-hidden="true" />
+              <span>Custom Fabrication Shop · Bay City, TX · Ships All 50 States</span>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-brown-light font-mono">
+                Iron Prairie Fabrication Group LLC
+              </p>
+              <h1 className="home-hero__brand">
+                Custom Metal Fabrication &amp; Precision Steelwork
+              </h1>
+            </div>
+
+            <p className="home-hero__support">
+              Built-to-last metal for ranches, agriculture, commercial builders, and agencies. From architectural entrance gates and livestock handling systems to CNC plasma cutting, structural steel, and ASME components from Bay City, TX.
+            </p>
+
+            <div className="home-hero__ctas">
+              <Link to="/contact" className="btn-primary">
+                <ShieldCheck className="h-4 w-4 fill-white text-brand-brown" aria-hidden="true" />
+                <span>Request Custom Quote</span>
+              </Link>
+              <Link to="/services" className="btn-secondary">
+                <span>View Custom Capabilities</span>
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </div>
+
+            {/* B2B Catalog Secondary Link */}
+            <div className="pt-0.5">
+              <Link to="/paddle-blinds" className="inline-flex items-center gap-1.5 text-xs font-mono text-stone-300 hover:text-brand-ivory transition-colors">
+                <Zap className="h-3.5 w-3.5 text-brand-brown-light shrink-0" aria-hidden="true" />
+                <span>Also manufacturing ASME B16.48 Paddle Blinds &amp; Spacers — View Catalog &rarr;</span>
+              </Link>
+            </div>
+
+            {/* Capability highlights — Core Custom Fabrication */}
+            <div className="pt-4 border-t border-brand-border/60 grid grid-cols-3 gap-2 text-xs font-mono text-stone-300">
+              <div>
+                <span className="text-brand-brown-light font-bold">Custom</span> Ranch Gates
+              </div>
+              <div>
+                <span className="text-brand-brown-light font-bold">Ag &amp; Livestock</span> Steel
+              </div>
+              <div>
+                <span className="text-brand-brown-light font-bold">CNC Plasma</span> &amp; Welding
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       <div className="container-page space-y-10">
-        {/* Audience lanes — below first viewport */}
+        {/* Core Custom Capabilities & Markets */}
         <section className="section-reveal grid gap-4 text-xs text-slate-800 sm:grid-cols-3">
           <div className="rounded-xl bg-white p-4 shadow-sm border border-stone-200/80">
-            <div className="font-bold text-brand-brown">Agriculture &amp; Ranch</div>
+            <div className="font-bold text-brand-brown">Ranch &amp; Agricultural Steel</div>
             <p className="mt-1 text-slate-600">
-              Custom hog and livestock pens, farm equipment, ranch gates, and fence-line steel fabrication.
+              Custom entrance gates, livestock handling pens, cattle guards, hog traps, farm equipment repairs, and fence-line steel.
             </p>
           </div>
-          <Link to="/paddle-blinds" className="rounded-xl bg-brand-brown/5 border border-brand-brown/30 p-4 shadow-sm block hover:bg-brand-brown/10 transition-colors group">
+          <div className="rounded-xl bg-white p-4 shadow-sm border border-stone-200/80">
+            <div className="font-bold text-brand-brown">Industrial &amp; Structural Fabrication</div>
+            <p className="mt-1 text-slate-600">
+              High-definition CNC plasma plate cutting, structural weldments, pipe welding, equipment skids, and custom assemblies.
+            </p>
+          </div>
+          <div className="rounded-xl bg-white p-4 shadow-sm border border-stone-200/80">
+            <div className="font-bold text-brand-brown">Public Agencies &amp; Municipalities</div>
+            <p className="mt-1 text-slate-600">
+              Park infrastructure, fire rings, pedestrian handrails, and municipal steel structures for TPWD, county, and state entities.
+            </p>
+          </div>
+          <Link to="/paddle-blinds" className="rounded-xl bg-brand-brown/5 border border-brand-brown/30 p-4 shadow-sm block hover:bg-brand-brown/10 transition-colors group sm:col-span-2">
             <div className="font-bold text-brand-brown flex items-center justify-between">
-              <span>O&amp;G &amp; Paddle Blinds</span>
-              <span className="text-[10px] bg-brand-brown text-white px-1.5 py-0.5 rounded font-black">CATALOG</span>
+              <span>Manufactured Product Line: ASME B16.48 Paddle Blinds &amp; Spacers</span>
+              <span className="text-[10px] bg-brand-brown text-white px-2 py-0.5 rounded font-mono font-bold">ONLINE CATALOG</span>
             </div>
             <p className="mt-1 text-slate-700">
-              ASME B16.48 paddle blinds &amp; spacers. Fast turnaround grid ordering, traceable MTRs, and direct shipping.
+              In-house manufactured positive isolation paddle blinds &amp; spacers (150# - 2500#). Fast turnaround matrix ordering, certified MTRs, and direct shipping nationwide.
             </p>
           </Link>
           <div className="rounded-xl bg-white p-4 shadow-sm border border-stone-200/80">
-            <div className="font-bold text-brand-brown">Public Agencies</div>
-            <p className="mt-1 text-slate-600">
-              Fire rings, fire pits, handrails, and park infrastructure for TPWD, National Parks, and municipal entities.
-            </p>
-          </div>
-          <div className="rounded-xl bg-white p-4 shadow-sm border border-stone-200/80 sm:col-span-3">
             <div className="font-bold text-brand-brown">Secure Specialty Builds</div>
             <p className="mt-1 text-slate-600">
-              Custom bunkers, tornado shelter steelwork, and large built-in safes for properties and protected storage.
+              Custom storm shelters, underground bunkers, and heavy-gauge steel safe construction for properties.
             </p>
           </div>
         </section>
@@ -149,7 +193,7 @@ export default function Home() {
                   <ul className="space-y-1.5 text-xs text-slate-700">
                     <li className="flex items-start gap-2">
                       <PackageCheck className="h-3.5 w-3.5 text-brand-brown shrink-0 mt-0.5" aria-hidden="true" />
-                      <span><strong>UPS Ground &amp; Express Parcel:</strong> Foam-wrapped and heavy-duty boxed dispatch for items under 150 lbs.</span>
+                      <span><strong>UPS Ground &amp; Express Parcel:</strong> Foam-wrapped and reinforced boxed dispatch for items under 150 lbs.</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <Truck className="h-3.5 w-3.5 text-brand-brown shrink-0 mt-0.5" aria-hidden="true" />

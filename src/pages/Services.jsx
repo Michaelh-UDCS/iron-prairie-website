@@ -1,63 +1,126 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Flame, ArrowRight, ShieldCheck, Zap, Truck, PackageCheck, MapPin, CheckCircle2, Clock, Phone, Factory } from 'lucide-react';
+import { Flame, ArrowRight, ShieldCheck, Zap, Truck, PackageCheck, MapPin, CheckCircle2, Clock, Phone, Factory, Landmark, Shield, Cpu } from 'lucide-react';
+import { trackCustomFabInterest } from '../services/analytics';
 
 const sections = [
   {
-    title: 'CNC Plasma Cutting & Welding',
+    id: 'cnc-plasma',
+    title: 'CNC Plasma Cutting & Precision Plate Fabrication',
+    badge: 'Section 01 &bull; High-Definition Plasma',
     summary:
-      'Fast-turn plate and practical fabrication support for parts, custom assemblies, and maintenance replacements.',
+      'High-definition CNC plasma plate cutting for domestic carbon and stainless steel plate, custom shapes, baseplates, gussets, and rapid-turn blanks.',
     logistics: 'Daily Nationwide Parcel & LTL Freight Shipping',
     items: [
-      'CNC plasma plate cutting for production and one-off jobs',
-      'Simple welding and shop-built assemblies',
-      'Custom gates and fence panel fabrication',
-      'Custom brackets, plates, and structural supports',
-      'Repair fabrication for damaged steel components',
-      'Material prep and fit-up for install crews',
+      'High-definition CNC plasma cutting up to 1-1/2" plate thickness',
+      'SA-516 Grade 70 PVQ, A36 carbon steel, 304L & 316L stainless plate',
+      'Production blanking runs, custom bracket packages, and one-off parts',
+      'Rapid CAD / DXF drawing processing and precision material nesting',
+      'Beveling, precision hole piercing, clean edge finishing, and fit-up prep',
+      'Same-day emergency burn dispatch for urgent plant maintenance',
     ],
+    primaryLink: '/contact',
+    primaryText: 'Request Cutting Quote',
+    dataGaLocation: 'services_cnc_plasma',
   },
   {
-    title: 'Agriculture, Ranch & Blinds',
+    id: 'ranch-ag',
+    title: 'Custom Ranch & Agricultural Steel (Gates, livestock pens, boundary pickets)',
+    badge: 'Section 02 &bull; Working Ranch Tough',
     summary:
-      'Custom builds designed for hard-use environments across farms, ranches, and outdoor operations.',
+      'Heavy-duty ranch equipment and perimeter steel built in Texas to endure hard livestock pressure, aggressive weather, and continuous daily work.',
     logistics: 'Texas Site Drop-Off & Nationwide Flatbed / Freight',
     items: [
-      'Custom hog and livestock pens',
-      'Farm and ranch equipment fabrication',
-      'Farm and ranch gates with matching fence components',
-      'Commercial paddle blind builds',
-      'Spec blind fabrication and modifications',
-      'Machining support for blind components',
+      'Custom ranch entrance gates, overhead archways, and boundary steel',
+      'Heavy-duty livestock pens, crowding alleys, sweep tubs, and working chutes',
+      'Welded wire panels, continuous fence panels, and decorative ranch pickets',
+      'Cattle guards, crossing barriers, and reinforced hinge assemblies',
+      'Tractor implement repair, bucket hardfacing, and equipment reinforcement',
+      'Custom heavy-gauge hay rings, feed bunks, and livestock trailer ramps',
     ],
+    primaryLink: '/contact',
+    primaryText: 'Request Ranch Quote',
+    dataGaLocation: 'services_ranch_ag',
   },
   {
-    title: 'Public Sector & O&G Support',
+    id: 'industrial-structural',
+    title: 'Industrial & Structural Steel Fabrication',
+    badge: 'Section 03 &bull; Plant & Structural Specs',
     summary:
-      'Procurement-ready support for Texas agencies, parks, and industrial/O&G clients nationwide.',
-    logistics: 'Texas Priority Regional Delivery & Nationwide Logistics',
+      'Engineered structural weldments, equipment skids, heavy pipe supports, and industrial assemblies built to rigid shop specifications.',
+    logistics: 'Texas Emergency Hot-Shot & Dedicated Flatbed',
     items: [
-      'Fire rings and fire pits for parks and public sites',
-      'Handrails and safety steel for facilities',
-      'Durable gates and fencing for public access and safety zones',
-      'Parts and assemblies for O&G operations',
-      'Machined support pieces where needed',
-      'Scope support for TPWD, National Parks, and agency projects',
+      'Industrial equipment skid bases, equipment stands, and machine frames',
+      'Heavy pipe saddles, shoe supports, structural gussets, and embed plates',
+      'Facility catwalks, safety handrails, stair stringers, and bollards',
+      'Certified SMAW/GMAW/FCAW welding on carbon and stainless assemblies',
+      'Plant maintenance replacement parts and emergency turnaround rebuilds',
+      'Pre-assembly bolt-up verification, weld inspection, and surface prep',
     ],
+    primaryLink: '/contact',
+    primaryText: 'Request Structural Quote',
+    dataGaLocation: 'services_industrial_structural',
   },
   {
-    title: 'Secure Steel & Specialty Builds',
+    id: 'asme-blinds',
+    title: 'ASME B16.48 Paddle Blinds & Spacers (In-House Manufactured Line)',
+    badge: 'Section 04 &bull; In-House Product Line',
     summary:
-      'Heavy steel fabrication for protective, secure, and purpose-built installations.',
+      'Standard and custom positive isolation line blinds, slip blinds, and ring spacers manufactured in-house with full mill test traceability.',
+    logistics: 'Same-Day Texas Courier & Nationwide Daily Parcel/Freight',
+    items: [
+      'ASME B16.48 Class 150#, 300#, 600#, 900#, 1500# (Class 2500# on RFQ)',
+      '1/2" through 24" pipe sizes standard (custom diameters up to 60"+ on RFQ)',
+      'In-stock domestic SA-516 Gr 70 PVQ carbon steel & 304L/316L stainless',
+      'Certified EN 10204 3.1 Mill Test Reports (MTRs) with complete heat tracking',
+      'Smooth/serrated Raised Face (RF) and Ring Type Joint (RTJ) configurations',
+      'Emergency 2-4 hr hot-shot courier across Texas petrochemical corridors',
+    ],
+    primaryLink: '/paddle-blinds',
+    primaryText: 'Launch Blind Catalog',
+    secondaryLink: '/contact',
+    secondaryText: 'Custom RFQ',
+    dataGaLocation: 'services_asme_blinds',
+  },
+  {
+    id: 'public-agencies',
+    title: 'Public Agencies & Municipalities',
+    badge: 'Section 05 &bull; SAM.gov Registered Entity',
+    summary:
+      'Procurement-ready fabrication for Texas state parks, county road departments, TxDOT, municipal utilities, and federal public works.',
+    logistics: 'Regional Jobsite Delivery & Direct Procurement Freight',
+    items: [
+      'Heavy-gauge park fire rings, campsite campfire grates, and site amenities',
+      'Public access swing gates, vehicular barrier gates, and security fences',
+      'Pedestrian handrails, ADA ramp railings, and safety guardrails',
+      'Municipal drainage grates, culvert trash racks, and catch basin covers',
+      'State agency scope support (TPWD, TxDOT, River Authorities)',
+      'SAM.gov Active registered entity with Unique Entity Identifier (UEI)',
+    ],
+    primaryLink: '/contact',
+    primaryText: 'Submit Agency RFQ',
+    secondaryLink: '/woman-owned',
+    secondaryText: 'Procurement Specs',
+    dataGaLocation: 'services_public_agencies',
+  },
+  {
+    id: 'secure-specialty',
+    title: 'Secure Steel & Specialty Builds (Bunkers & Shelters)',
+    badge: 'Section 06 &bull; High-Security Fabrication',
+    summary:
+      'Reinforced armor-plate fabrication for severe weather shelters, subterranean bunkers, secure walk-in safes, and fortified safe rooms.',
     logistics: 'Crated Freight & Direct Flatbed Delivery Nationwide',
     items: [
-      'Custom bunker fabrication and steel buildouts',
-      'Tornado shelter components and reinforced assemblies',
-      'Large built-in safes and secure room steelwork',
-      'Heavy doors, frames, hinges, and locking support steel',
-      'Custom plate packages for protected storage areas',
-      'Custom shop fabrication built to exact project specifications',
+      'FEMA P-361 & ICC 500 compliant tornado shelter steel assemblies',
+      'Custom subterranean bunker fabrication, intake vents, and hatch steel',
+      'Large built-in walk-in safes, reinforced gun rooms, and vault enclosures',
+      'Heavy multi-point locking doors, blast-resistant hinges, and jamb steel',
+      'Reinforced plate packages for protected storage and equipment shelters',
+      'Discreet crating and private flatbed transport across the United States',
     ],
+    primaryLink: '/contact',
+    primaryText: 'Inquire on Shelter Steel',
+    dataGaLocation: 'services_secure_specialty',
   },
 ];
 
@@ -92,6 +155,7 @@ export default function Services() {
         <div className="flex flex-col sm:flex-row md:flex-col gap-3 w-full md:w-auto shrink-0">
           <Link
             to="/paddle-blinds"
+            data-ga-location="services_hero_catalog"
             className="inline-flex items-center justify-center gap-2 bg-brand-brown hover:bg-brand-brown-light text-white font-bold px-6 py-3.5 rounded-2xl text-xs sm:text-sm uppercase tracking-wider shadow-sm transition-all active:scale-95 text-center"
           >
             <Zap className="h-4 w-4 fill-white" />
@@ -100,6 +164,7 @@ export default function Services() {
           </Link>
           <Link
             to="/contact"
+            data-ga-location="services_hero_rfq"
             className="inline-flex items-center justify-center gap-2 bg-stone-100 hover:bg-stone-200 border border-stone-300 text-slate-800 font-semibold px-6 py-3 rounded-2xl text-xs tracking-wider transition-all text-center"
           >
             Custom RFQ &amp; Drawings
@@ -122,29 +187,54 @@ export default function Services() {
         </p>
       </section>
 
-      {/* SERVICE TILES */}
-      <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      {/* 6 DEDICATED CUSTOM FABRICATION SERVICE TILES */}
+      <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {sections.map((section) => (
-          <div key={section.title} className="flex flex-col justify-between rounded-2xl bg-white p-5 shadow-sm border border-stone-200/80">
+          <div
+            key={section.id}
+            className="flex flex-col justify-between rounded-2xl bg-white p-6 shadow-sm border border-stone-200/90 hover:border-brand-brown/40 transition-colors"
+          >
             <div>
-              <div className="text-[10px] font-mono font-bold text-brand-brown bg-brand-brown/10 px-2 py-0.5 rounded border border-brand-brown/30 mb-2 inline-block">
-                {section.logistics}
+              <div className="flex items-center justify-between gap-2 mb-3">
+                <span className="text-[10px] font-mono font-bold text-brand-brown bg-brand-brown/10 px-2 py-0.5 rounded border border-brand-brown/30">
+                  {section.badge}
+                </span>
+                <span className="text-[10px] font-mono font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                  {section.logistics}
+                </span>
               </div>
-              <h2 className="text-sm font-bold text-slate-900">{section.title}</h2>
+              <h2 className="text-base font-bold text-slate-900 leading-snug">{section.title}</h2>
               <p className="mt-2 text-xs text-slate-600 leading-relaxed">{section.summary}</p>
-              <ul className="mt-3 space-y-1 text-xs text-slate-700">
-                {section.items.map((item) => (
-                  <li key={item} className="flex gap-2">
-                    <span className="mt-0.5 h-1.5 w-1.5 rounded-full bg-brand-brown shrink-0" />
+              <ul className="mt-4 space-y-2 text-xs text-slate-700">
+                {section.items.map((item, idx) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <span className="mt-1 h-1.5 w-1.5 rounded-full bg-brand-brown shrink-0" />
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="pt-4 mt-4 border-t border-stone-100">
-              <Link to="/contact" className="text-xs font-bold text-brand-brown hover:text-brand-brown-light flex items-center gap-1">
-                Request Service Quote <ArrowRight className="h-3 w-3" />
+
+            <div className="pt-5 mt-5 border-t border-stone-100 flex flex-wrap items-center gap-2.5">
+              <Link
+                to={section.primaryLink}
+                data-ga-location={section.dataGaLocation}
+                onClick={() => trackCustomFabInterest(section.title, 'services_grid')}
+                className="inline-flex items-center justify-center gap-1.5 bg-brand-brown hover:bg-brand-brown-light text-white text-xs font-bold px-4 py-2.5 rounded-xl uppercase tracking-wider transition-all shadow-sm active:scale-95 flex-1 text-center"
+              >
+                <span>{section.primaryText}</span>
+                <ArrowRight className="h-3 w-3" />
               </Link>
+              {section.secondaryLink && (
+                <Link
+                  to={section.secondaryLink}
+                  data-ga-location={`${section.dataGaLocation}_secondary`}
+                  onClick={() => trackCustomFabInterest(`${section.title} (Secondary)`, 'services_grid')}
+                  className="inline-flex items-center justify-center text-xs font-semibold text-slate-700 hover:text-brand-brown bg-stone-100 hover:bg-stone-200 px-3 py-2.5 rounded-xl transition-all"
+                >
+                  {section.secondaryText}
+                </Link>
+              )}
             </div>
           </div>
         ))}
@@ -163,6 +253,7 @@ export default function Services() {
           </div>
           <Link
             to="/contact"
+            data-ga-location="services_logistics_shipping_rates"
             className="self-start md:self-auto inline-flex items-center gap-1.5 bg-brand-brown hover:bg-brand-brown-light text-white font-bold px-4 py-2 rounded-xl text-xs uppercase tracking-wider transition-all shadow-sm"
           >
             Inquire on Shipping Rates
@@ -214,7 +305,8 @@ export default function Services() {
             </h2>
           </div>
           <a
-            href="tel:+19792489266"
+            href="tel:(979)248-9266"
+            data-ga-location="services_gulf_coast_phone"
             className="self-start md:self-auto inline-flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl text-xs font-mono uppercase tracking-wider transition-all shadow-sm"
           >
             <Phone className="h-3.5 w-3.5" />
@@ -259,6 +351,7 @@ export default function Services() {
         <div className="pt-2 flex flex-wrap items-center gap-3">
           <Link
             to="/paddle-blinds"
+            data-ga-location="services_turnaround_catalog"
             className="inline-flex items-center gap-2 bg-brand-brown hover:bg-brand-brown-light text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-sm"
           >
             <Zap className="h-3.5 w-3.5 fill-white" />
@@ -267,6 +360,7 @@ export default function Services() {
           </Link>
           <Link
             to="/contact"
+            data-ga-location="services_turnaround_quote"
             className="inline-flex items-center gap-2 bg-stone-100 hover:bg-stone-200 border border-stone-300 text-slate-800 font-semibold px-5 py-2.5 rounded-xl text-xs tracking-wider transition-all"
           >
             Request Turnaround Quote

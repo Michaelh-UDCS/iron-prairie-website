@@ -1,4 +1,4 @@
-﻿import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db, initAppCheck } from '../firebase';
 
 export interface CheckoutLeadData {
@@ -17,6 +17,39 @@ export interface CheckoutLeadData {
   grandTotal: number;
   hasMTR: boolean;
   source: string;
+}
+
+export interface ContactLeadData {
+  name: string;
+  email: string;
+  phone: string;
+  organization?: string;
+  projectType: string;
+  logisticsPreference?: string;
+  location?: string;
+  bidReference?: string;
+  projectDetails?: string;
+  source?: string;
+  [key: string]: any;
+}
+
+/**
+ * Lazily records a custom fabrication quote request / contact lead in Firestore.
+ * Initializes App Check if configured, without blocking main thread.
+ */
+export async function saveContactLead(leadData: ContactLeadData): Promise<void> {
+  try {
+    initAppCheck();
+    if (db) {
+      await addDoc(collection(db, 'contact_leads'), {
+        ...leadData,
+        createdAt: serverTimestamp(),
+      });
+    }
+  } catch (err) {
+    // Non-fatal analytics/CRM recording
+    console.warn('[leadService] Firestore contact lead snapshot skipped:', err);
+  }
 }
 
 /**

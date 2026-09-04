@@ -22,6 +22,31 @@ service cloud.firestore {
       allow read, update, delete: if false;
     }
 
+    // contact_leads: written by frontend quote request form (unauthenticated)
+    // Require Firebase App Check + validate shape/size; no client read/update/delete
+    match /contact_leads/{docId} {
+      allow create: if request.app != null
+        && request.resource.data.keys().hasAll([
+          'name',
+          'email',
+          'phone',
+          'projectType',
+          'createdAt'
+        ])
+        && request.resource.data.keys().size() <= 40
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 150
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 3
+        && request.resource.data.email.size() <= 254
+        && request.resource.data.phone is string
+        && request.resource.data.phone.size() >= 7
+        && request.resource.data.phone.size() <= 40
+        && request.resource.data.projectType is string;
+      allow read, update, delete: if false;
+    }
+
     // checkout_carts: written/read only by Cloud Functions (Admin SDK). Never client-readable.
     match /checkout_carts/{docId} {
       allow read, write: if false;

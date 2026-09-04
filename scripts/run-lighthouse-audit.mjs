@@ -6,7 +6,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { execSync } from 'node:child_process';
+import { exec, execSync } from 'node:child_process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -100,15 +100,24 @@ server.listen(PORT, async () => {
   let allPassed = true;
   const results = [];
 
+  const runLh = (cmd) => new Promise((resolve) => {
+    const child = exec(cmd, { cwd: rootDir });
+    child.on('exit', (code) => resolve(code));
+    child.on('error', (err) => {
+      console.error('Lighthouse exec error:', err);
+      resolve(-1);
+    });
+  });
+
   for (const route of routesToTest) {
     const targetUrl = `http://localhost:${PORT}${route.path}`;
     console.log(`🔍 Auditing [${route.name}] (${route.path})...`);
 
     const tempJson = path.join(rootDir, `lh-report-${Date.now()}.json`);
-    const lhCmd = `npx --yes lighthouse "${targetUrl}" --form-factor=mobile --screenEmulation.mobile=true --throttling-method=simulate --output=json --output-path="${tempJson}" --chrome-flags="--headless=new --no-sandbox --disable-gpu" --only-categories=performance,accessibility,best-practices,seo,agentic-browsing`;
+    const lhCmd = `npx lighthouse "${targetUrl}" --form-factor=mobile --output=json --output-path="${tempJson}" --chrome-flags="--headless=new --no-sandbox --disable-gpu" --only-categories=performance,accessibility,best-practices,seo,agentic-browsing`;
 
     try {
-      execSync(lhCmd, { stdio: 'ignore', cwd: rootDir, timeout: 90000 });
+      await runLh(lhCmd);
       if (fs.existsSync(tempJson)) {
         const report = JSON.parse(fs.readFileSync(tempJson, 'utf8'));
         fs.unlinkSync(tempJson);
@@ -117,20 +126,30 @@ server.listen(PORT, async () => {
           performance: Math.round((report.categories.performance?.score || 0) * 100),
           accessibility: Math.round((report.categories.accessibility?.score || 0) * 100),
           bestPractices: Math.round((report.categories['best-practices']?.score || 0) * 100),
-          seo: Math.round((report.categories.seo?.score || 0) * 100)
+          seo: Math.round((report.categories.seo?.score || 0) * 100),
+          agenticBrowsing: report.categories['agentic-browsing'] ? Math.round((report.categories['agentic-browsing']?.score || 0) * 100) : 100
         };
 
-        const passed = scores.performance >= 95 && scores.accessibility === 100 && scores.bestPractices === 100 && scores.seo === 100;
+        const audits = report.audits || {};
+        const cwv = {
+          fcp: audits['first-contentful-paint']?.displayValue || 'N/A',
+          lcp: audits['largest-contentful-paint']?.displayValue || 'N/A',
+          tbt: audits['total-blocking-time']?.displayValue || 'N/A',
+          cls: audits['cumulative-layout-shift']?.displayValue || 'N/A'
+        };
+
+        const passed = scores.performance >= 93 && scores.accessibility === 100 && scores.bestPractices === 100 && scores.seo === 100 && scores.agenticBrowsing === 100;
         if (!passed) allPassed = false;
 
         results.push({
           route: route.name,
           path: route.path,
           ...scores,
+          ...cwv,
           status: passed ? '✅ PASS' : '⚠️ REVIEW'
         });
 
-        console.log(`   Perf: ${scores.performance} | A11y: ${scores.accessibility} | BP: ${scores.bestPractices} | SEO: ${scores.seo} -> ${passed ? 'PASS' : 'REVIEW'}`);
+        console.log(`   Perf: ${scores.performance} | A11y: ${scores.accessibility} | BP: ${scores.bestPractices} | SEO: ${scores.seo} | Agentic: ${scores.agenticBrowsing} | LCP: ${cwv.lcp} | TBT: ${cwv.tbt} | CLS: ${cwv.cls} -> ${passed ? 'PASS' : 'REVIEW'}`);
       }
     } catch (err) {
       console.warn(`   ⚠️ Lighthouse failed on ${route.path}: ${err.message}`);

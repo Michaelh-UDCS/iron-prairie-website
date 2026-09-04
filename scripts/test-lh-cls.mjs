@@ -1,4 +1,4 @@
-﻿import http from 'node:http';
+import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -19,7 +19,7 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(4175, () => {
-  const child = exec('npx lighthouse "http://localhost:4175/" --form-factor=mobile --output=json --output-path="./lh-cls.json" --chrome-flags="--headless=new --no-sandbox --disable-gpu" --only-audits=layout-shifts,cls-culprits-insight,cumulative-layout-shift,largest-contentful-paint-element', { cwd: path.resolve(__dirname, '..') });
+  const child = exec('npx lighthouse "http://localhost:4175/services" --form-factor=mobile --output=json --output-path="./lh-cls.json" --chrome-flags="--headless=new --no-sandbox --disable-gpu" --only-audits=layout-shifts,cls-culprits-insight,cumulative-layout-shift,largest-contentful-paint-element', { cwd: path.resolve(__dirname, '..') });
   
   child.on('exit', code => {
     if (fs.existsSync('./lh-cls.json')) {
