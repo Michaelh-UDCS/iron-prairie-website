@@ -25,22 +25,43 @@ let analytics = null;
 let db = null;
 let appCheck = null;
 
+export function getFirebaseApp() {
+  if (!app && coreConfigComplete()) {
+    app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+  }
+  return app;
+}
+
+export function getFirestoreDb() {
+  if (!db) {
+    const a = getFirebaseApp();
+    if (a) {
+      db = getFirestore(a);
+    }
+  }
+  return db;
+}
+
+export function initAppCheck() {
+  if (typeof window === 'undefined' || appCheck || !appCheckSiteKey) return appCheck;
+  const a = getFirebaseApp();
+  if (!a) return null;
+  try {
+    appCheck = initializeAppCheck(a, {
+      provider: new ReCaptchaEnterpriseProvider(appCheckSiteKey),
+      isTokenAutoRefreshEnabled: false,
+    });
+  } catch (err) {
+    if (import.meta.env.DEV) {
+      console.warn('[firebase] App Check init notice:', err);
+    }
+  }
+  return appCheck;
+}
+
 if (coreConfigComplete()) {
   app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
   db = getFirestore(app);
-
-  if (typeof window !== 'undefined' && appCheckSiteKey) {
-    try {
-      appCheck = initializeAppCheck(app, {
-        provider: new ReCaptchaEnterpriseProvider(appCheckSiteKey),
-        isTokenAutoRefreshEnabled: true,
-      });
-    } catch (err) {
-      if (import.meta.env.DEV) {
-        console.warn('[firebase] App Check init failed:', err);
-      }
-    }
-  }
 } else if (import.meta.env.DEV) {
   console.warn(
     '[firebase] Web SDK is not initialized. Create `.env.local` from `.env.example` and add your Firebase web app config from the console.',

@@ -8,15 +8,19 @@ export default function Home() {
     <div className="space-y-0">
       {/* FULL-BLEED HERO — brand + headline + support + CTAs + edge-to-edge gate media */}
       <section className="home-hero" aria-label="Iron Prairie Fabrication Group hero">
-        <img
-          src={gatePhoto}
-          alt="Custom fabricated ranch gate and fence installation by Iron Prairie Fabrication Group LLC"
-          width="1600"
-          height="1000"
-          fetchpriority="high"
-          decoding="async"
-          className="home-hero__media"
-        />
+        <picture>
+          <source media="(max-width: 640px)" srcSet="/images/hero-gate-mobile.webp" type="image/webp" />
+          <source srcSet="/images/hero-gate.webp" type="image/webp" />
+          <img
+            src="/images/hero-gate.webp"
+            alt="Custom fabricated ranch gate and fence installation by Iron Prairie Fabrication Group LLC"
+            width="1024"
+            height="768"
+            fetchpriority="high"
+            decoding="async"
+            className="home-hero__media"
+          />
+        </picture>
         <div className="home-hero__veil" aria-hidden="true" />
         <div className="home-hero__content">
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-bone/80 font-mono mb-3">
@@ -49,7 +53,7 @@ export default function Home() {
               Custom hog and livestock pens, farm equipment, ranch gates, and fence-line steel fabrication.
             </p>
           </div>
-          <Link to="/storefront" className="rounded-xl bg-brand-brown/5 border border-brand-brown/30 p-4 shadow-sm block hover:bg-brand-brown/10 transition-colors group">
+          <Link to="/paddle-blinds" className="rounded-xl bg-brand-brown/5 border border-brand-brown/30 p-4 shadow-sm block hover:bg-brand-brown/10 transition-colors group">
             <div className="font-bold text-brand-brown flex items-center justify-between">
               <span>O&amp;G &amp; Paddle Blinds</span>
               <span className="text-[10px] bg-brand-brown text-white px-1.5 py-0.5 rounded font-black">CATALOG</span>
@@ -161,8 +165,8 @@ export default function Home() {
 
               <div className="pt-3 border-t border-stone-200 flex items-center justify-between text-xs text-slate-600 font-mono">
                 <span>Daily UPS &amp; Freight Carrier Pickups</span>
-                <Link to="/storefront" className="text-brand-brown hover:text-brand-brown-light font-bold flex items-center gap-1">
-                  Storefront Catalog <ArrowRight className="h-3 w-3" aria-hidden="true" />
+                <Link to="/paddle-blinds" className="text-brand-brown hover:text-brand-brown-light font-bold flex items-center gap-1">
+                  ASME Paddle Blinds <ArrowRight className="h-3 w-3" aria-hidden="true" />
                 </Link>
               </div>
             </div>

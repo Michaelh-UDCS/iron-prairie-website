@@ -3,10 +3,15 @@ import react from '@vitejs/plugin-react-swc';
 
 export default defineConfig({
   plugins: [react()],
+  esbuild: {
+    legalComments: 'none'
+  },
   server: {
     port: 5173
   },
   build: {
+    target: 'es2022',
+    cssMinify: true,
     rollupOptions: {
       output: {
         manualChunks(id) {

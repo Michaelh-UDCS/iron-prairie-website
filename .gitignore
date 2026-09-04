@@ -30,4 +30,5 @@ Thumbs.db
 .cursor/
 *_last-*.txt
 functions/scripts/_last-*.txt
+https___*
 

@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
-import brandLogo from '../Logo.jpg';
+const brandLogo = '/images/logo.webp';
 import { siteConfig } from './config/siteConfig';
 
-const Home = lazy(() => import('./pages/Home.jsx'));
+import Home from './pages/Home.jsx';
 const About = lazy(() => import('./pages/About.jsx'));
 const Services = lazy(() => import('./pages/Services.jsx'));
 const Projects = lazy(() => import('./pages/Projects.jsx'));
@@ -76,29 +76,20 @@ import {
   Share2,
   SlidersHorizontal
 } from 'lucide-react';
-import {
-  INDUSTRIAL_TEST_CLIENTS,
-  ALL_NPS_SIZES,
-  ALL_PRESSURE_CLASSES,
-  ALL_MATERIAL_CODES,
-  ALL_THICKNESSES,
-  ALL_PAYMENT_METHODS,
-  pickRandom,
-  randomInt,
-  IndustrialClientProfile,
-  LARGE_QTY_TURNAROUND_SCENARIOS
-} from './data/testClientsData';
-import {
-  OWNER_NOTIFICATION_RECIPIENTS,
-  triggerOrderEmailNotification,
-  generateOrderEmailText,
-  generateOrderEmailHtml,
-  generateOrderMailtoUrl,
-  generateAbandonedCartQuoteEmail,
-  getEmailDispatchLogs,
-  EmailNotificationRecord,
-  IPG_SALES_EMAIL
-} from './services/emailService';
+import type { EmailNotificationRecord } from './services/emailService';
+const IPG_SALES_EMAIL = 'sales@ironprairiefabrication.com';
+
+const dispatchOrderEmail = async (order: any) => {
+  try {
+    const { triggerOrderEmailNotification } = await import('./services/emailService');
+    return await triggerOrderEmailNotification(order);
+  } catch (err) {
+    console.warn('[email] Deferred email dispatch failed:', err);
+  }
+};
+
+const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
+const pickRandom = <T,>(arr: readonly T[] | T[]): T => arr[Math.floor(Math.random() * arr.length)];
 const RapidMatrixOrderGrid = lazy(() =>
   import('./components/RapidMatrixOrderGrid').then((m) => ({ default: m.RapidMatrixOrderGrid }))
 );
@@ -109,10 +100,7 @@ const BulkListRfqModal = lazy(() =>
   import('./components/BulkListRfqModal').then((m) => ({ default: m.BulkListRfqModal }))
 );
 import { generateNextPoNumber, generateNextProposalNumber, generateNextWorkOrderNumber } from './utils/orderNumberGenerator';
-import { initiateStripeCheckout } from './services/stripeService';
 import { reportCheckoutCancelled } from './services/erpStorefrontFeed';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from './firebase';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -840,7 +828,7 @@ export default function App() {
           };
           setOrders(prev => [restoredOrder, ...prev]);
           setConfirmedOrder(restoredOrder);
-          triggerOrderEmailNotification(restoredOrder);
+          dispatchOrderEmail(restoredOrder);
           localStorage.removeItem('ipf_pending_stripe_order');
         }
       } catch (err) {
@@ -1010,7 +998,7 @@ export default function App() {
     setAbandonedCarts(prev => prev.map(c => c.cartId === cartId ? { ...c, status: 'Recovered' } : c));
 
     // Dispatch email alert to sales@ironprairiefabrication.com & IPG team
-    triggerOrderEmailNotification(recoveredOrder);
+    dispatchOrderEmail(recoveredOrder);
 
     setNotificationToast({
       type: 'email',
@@ -1032,7 +1020,13 @@ export default function App() {
   // --------------------------------------------------------------------------
 
   // 1. Generate 1 Single Random Client Order & Trigger Email to Russell & Alicia
-  const handleSimulateRandomOrder = () => {
+  const handleSimulateRandomOrder = async () => {
+    const {
+      INDUSTRIAL_TEST_CLIENTS,
+      ALL_NPS_SIZES,
+      ALL_PRESSURE_CLASSES,
+      ALL_THICKNESSES
+    } = await import('./data/testClientsData');
     const client = pickRandom(INDUSTRIAL_TEST_CLIENTS);
     const itemCount = randomInt(1, 3);
     const items: ConfiguredItem[] = [];
@@ -1081,7 +1075,7 @@ export default function App() {
         unitPrice: spec.unitPrice,
         quantity: qty,
         handleStamp: `${client.poPrefix.split('-')[0]}-UNIT-${randomInt(1, 9)}`,
-        requireMTR: Math.random() > 0.2, // 80% require MTR
+        requireMTR: Math.random() > 0.3,
         addTHadle: addT,
         addLiftingLug: addLug,
         addPlateDog: addDog,
@@ -1089,14 +1083,14 @@ export default function App() {
       });
     }
 
-    const sub = items.reduce((s, it) => s + it.unitPrice * it.quantity, 0);
-    const wt = Math.round(items.reduce((s, it) => s + it.actualWeightLbs * it.quantity, 0) * 10) / 10;
-    const isHot = Math.random() > 0.75; // 25% Hot Shot rush
+    const sub = items.reduce((acc, it) => acc + it.unitPrice * it.quantity, 0);
+    const wt = Math.round(items.reduce((acc, it) => acc + it.actualWeightLbs * it.quantity, 0) * 10) / 10;
+    const isHot = Math.random() > 0.75;
+    const isLrg = sub >= 10000 || wt >= 1000;
     const hotFee = isHot ? pricingConfig.hotShotEmergencyFee : 0;
     const ship = wt > 150 ? 245 : Math.max(18, Math.round(wt * 1.45 + 12));
     const total = sub + ship + hotFee;
-    const payMethod = client.preferredPaymentMethod;
-    const isLrg = sub >= 10000 || wt >= 1000;
+    const payMethod = pickRandom(['Credit Card', 'ACH Direct Debit', 'Net 30 Invoiced']);
 
     const newSimOrder: CustomerOrder = {
       orderId: isHot ? `HOT-2026-${randomInt(1000, 9999)}` : `PO-2026-${randomInt(1000, 9999)}`,
@@ -1129,7 +1123,7 @@ export default function App() {
     setOrders(prev => [newSimOrder, ...prev]);
 
     // Dispatch Email to sales@ironprairiefabrication.com & IPG Team
-    triggerOrderEmailNotification(newSimOrder);
+    dispatchOrderEmail(newSimOrder);
 
     setNotificationToast({
       type: 'email',
@@ -1138,7 +1132,11 @@ export default function App() {
   };
 
   // 1.5 Generate High-Quantity Turnaround Special Order (>100 units / >1,000 lbs / >$10k)
-  const handleSimulateLargeTurnaroundOrder = () => {
+  const handleSimulateLargeTurnaroundOrder = async () => {
+    const {
+      INDUSTRIAL_TEST_CLIENTS,
+      LARGE_QTY_TURNAROUND_SCENARIOS
+    } = await import('./data/testClientsData');
     const scenario = pickRandom(LARGE_QTY_TURNAROUND_SCENARIOS);
     const client = INDUSTRIAL_TEST_CLIENTS[scenario.clientIndex] || INDUSTRIAL_TEST_CLIENTS[0];
 
@@ -1223,7 +1221,7 @@ export default function App() {
     setOrders(prev => [largeOrder, ...prev]);
 
     // Dispatch email to sales@ironprairiefabrication.com & IPG team
-    triggerOrderEmailNotification(largeOrder);
+    dispatchOrderEmail(largeOrder);
 
     setNotificationToast({
       type: 'email',
@@ -1232,7 +1230,13 @@ export default function App() {
   };
 
   // 2. Generate Simulated Abandoned Cart
-  const handleSimulateAbandonedCart = () => {
+  const handleSimulateAbandonedCart = async () => {
+    const {
+      INDUSTRIAL_TEST_CLIENTS,
+      ALL_NPS_SIZES,
+      ALL_PRESSURE_CLASSES,
+      ALL_THICKNESSES
+    } = await import('./data/testClientsData');
     const client = pickRandom(INDUSTRIAL_TEST_CLIENTS);
     const nps = pickRandom(ALL_NPS_SIZES);
     const pClass = pickRandom(ALL_PRESSURE_CLASSES);
@@ -1310,7 +1314,13 @@ export default function App() {
   };
 
   // 3. Batch Stress Test: Generate Multiple Orders across all 5 Kanban Stages
-  const handleRunBatchSimulation = (count = 5) => {
+  const handleRunBatchSimulation = async (count = 5) => {
+    const {
+      INDUSTRIAL_TEST_CLIENTS,
+      ALL_NPS_SIZES,
+      ALL_PRESSURE_CLASSES,
+      ALL_THICKNESSES
+    } = await import('./data/testClientsData');
     const stages: ProductionStatus[] = ['queued', 'plasma_cutting', 'deburred_stamped', 'ready_to_ship', 'shipped'];
     const newBatch: CustomerOrder[] = [];
 
@@ -1398,7 +1408,7 @@ export default function App() {
       };
 
       newBatch.push(batchOrder);
-      triggerOrderEmailNotification(batchOrder);
+      dispatchOrderEmail(batchOrder);
     }
 
     setOrders(prev => [...newBatch, ...prev]);
@@ -1410,7 +1420,13 @@ export default function App() {
   };
 
   // 4. Run Full 11,880 Matrix Sweep in Browser
-  const handleRunLiveMatrixSweep = () => {
+  const handleRunLiveMatrixSweep = async () => {
+    const {
+      ALL_PRESSURE_CLASSES,
+      ALL_NPS_SIZES,
+      ALL_MATERIAL_CODES,
+      ALL_THICKNESSES
+    } = await import('./data/testClientsData');
     let tested = 0;
     let passed = 0;
     let minP = Infinity;
@@ -1577,7 +1593,7 @@ export default function App() {
     };
 
     setOrders(prev => [newOrder, ...prev]);
-    await triggerOrderEmailNotification(newOrder);
+    await dispatchOrderEmail(newOrder);
     setCart([]);
     setIsCartOpen(false);
     setNotificationToast({
@@ -1626,44 +1642,32 @@ export default function App() {
       localStorage.setItem('ipf_pending_stripe_order', JSON.stringify(pendingOrder));
     } catch (_) { /* storage full or private mode — proceed anyway */ }
 
-    // Save lead snapshot to Firestore for analytics & CRM follow-up
-    if (db) {
-      try {
-        await addDoc(collection(db, 'checkout_leads'), {
-          orderRefId: poNumber,
-          buyerName: contactName,
-          buyerEmail: email,
-          buyerPhone: phone,
-          companyName,
-          deliveryAddress: address,
-          paymentType,
-          itemsCount: cart.length,
-          totalWeightLbs: cartTotalWeight,
-          cartSubtotal,
-          shippingCost: shippingEstimate,
-          hotShotFee: activeHotShotFee,
-          grandTotal,
-          cartItems: cart.map(item => ({
-            sku: item.partNumber,
-            nps: item.nps,
-            pressureClass: item.pressureClass,
-            material: item.materialName,
-            facing: item.facing,
-            thickness: item.thicknessLabel,
-            quantity: item.quantity,
-            unitPrice: item.unitPrice,
-            lineTotal: item.unitPrice * item.quantity,
-          })),
-          source: 'storefront_stripe_checkout',
-          status: 'initiated',
-          createdAt: serverTimestamp(),
-        });
-      } catch (leadErr) {
-        console.warn('Firestore lead save notice (non-fatal):', leadErr);
-      }
+    // Save lead snapshot to Firestore for analytics & CRM follow-up lazily
+    try {
+      const { saveCheckoutLead } = await import('./services/leadService');
+      await saveCheckoutLead({
+        orderRefId: poNumber,
+        buyerName: contactName,
+        buyerEmail: email,
+        buyerPhone: phone,
+        companyName,
+        deliveryAddress: address,
+        paymentType,
+        itemsCount: cart.length,
+        totalWeightLbs: cartTotalWeight,
+        cartSubtotal,
+        shippingCost: shippingEstimate,
+        hotShotFee: activeHotShotFee,
+        grandTotal,
+        hasMTR,
+        source: 'storefront_stripe_checkout',
+      });
+    } catch (leadErr) {
+      console.warn('Firestore lead save notice (non-fatal):', leadErr);
     }
 
     try {
+      const { initiateStripeCheckout } = await import('./services/stripeService');
       const result = await initiateStripeCheckout({
         cartItems: cart as any,
         buyerEmail: email,
@@ -1729,7 +1733,7 @@ export default function App() {
         };
 
         setOrders(prev => [newOrder, ...prev]);
-        await triggerOrderEmailNotification(newOrder);
+        await dispatchOrderEmail(newOrder);
         setAbandonedCarts(prev => prev.map(c =>
           c.companyName === companyName || c.email === email ? { ...c, status: 'Recovered' } : c
         ));
@@ -1831,9 +1835,72 @@ export default function App() {
     );
   }
 
-  const renderStorefrontView = () => (
+  const renderStorefrontView = (isPaddleBlindsDedicated = false) => (
     <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-3 sm:py-5 space-y-3 sm:space-y-4 w-full min-w-0">
-          
+      {isPaddleBlindsDedicated && (
+        <section className="bg-white border border-stone-200/90 rounded-2xl p-4 sm:p-6 shadow-sm space-y-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-brown/10 text-brand-brown border border-brand-brown/20 text-xs font-mono font-bold uppercase tracking-wider">
+              ASME B16.48 Standard Specification
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-300 px-2.5 py-1 text-xs font-bold text-emerald-800 font-mono">
+              <ShieldCheck className="h-3 w-3 text-emerald-600" /> Certified EN 10204 3.1 MTRs Included
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 border border-sky-300 px-2.5 py-1 text-xs font-bold text-sky-800 font-mono">
+              <Truck className="h-3 w-3 text-sky-600" /> Daily Nationwide Freight &amp; Texas Hot-Shot
+            </span>
+          </div>
+
+          <div>
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold font-display text-brand-brown tracking-tight">
+              ASME B16.48 Paddle Blinds &amp; Spacer Rings
+            </h1>
+            <p className="mt-1 text-xs sm:text-sm text-slate-700 leading-relaxed max-w-4xl">
+              Direct shop manufacturing of precision CNC plasma-cut paddle blinds (slip / spade blinds) and matching spacer rings for positive pipeline isolation. Fabricated from domestic SA-516 Grade 70 PVQ carbon steel, 304/304L stainless, and 316/316L stainless plate. All shipments include traceable heat numbers and certified material test reports for plant QA/QC compliance.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 text-[11px] font-mono text-slate-600">
+            <div className="bg-stone-50 p-2.5 rounded-lg border border-stone-200">
+              <span className="font-bold text-slate-800 block text-xs">Pressure Classes:</span>
+              <span>150# – 1500# standard <span className="text-brand-brown font-bold">(2500# upon RFQ)</span></span>
+            </div>
+            <div className="bg-stone-50 p-2.5 rounded-lg border border-stone-200">
+              <span className="font-bold text-slate-800 block text-xs">Size Range:</span>
+              <span>1/2&quot; to 24&quot; NPS standard <span className="text-brand-brown font-bold">(&gt;24&quot; to 60&quot;+ upon RFQ)</span></span>
+            </div>
+            <div className="bg-stone-50 p-2.5 rounded-lg border border-stone-200">
+              <span className="font-bold text-slate-800 block text-xs">Facing &amp; Alloys:</span>
+              <span>RF &amp; RTJ <span className="text-brand-brown font-bold">(Exotics/Duplex upon RFQ)</span></span>
+            </div>
+            <div className="bg-stone-50 p-2.5 rounded-lg border border-stone-200">
+              <span className="font-bold text-slate-800 block text-xs">Emergency Hot-Shot:</span>
+              <span>2–4 hr courier to Gulf Coast plants</span>
+            </div>
+          </div>
+
+          <div className="pt-1 flex flex-wrap items-center justify-between gap-2 text-xs bg-brand-brown/5 border border-brand-brown/20 rounded-xl px-3.5 py-2">
+            <span className="text-slate-700">
+              <strong>Need non-standard specs?</strong> Class 2500#, custom thicknesses, &gt;24&quot; large diameter, or Hastelloy/Duplex alloys:
+            </span>
+            <div className="flex items-center gap-2">
+              <a
+                href={`mailto:${IPG_SALES_EMAIL}?subject=Custom%20ASME%20Blind%20RFQ%20(Class%202500%20/%20Custom)`}
+                className="bg-brand-brown hover:bg-brand-brown-light text-white font-bold px-3 py-1 rounded-lg text-xs transition-colors"
+              >
+                Submit Custom RFQ
+              </a>
+              <a
+                href="tel:+19792489266"
+                className="text-brand-brown hover:text-brand-brown-light font-bold font-mono text-xs underline"
+              >
+                (979) 248-9266
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Compact Top Bar: Facility Specs & Catalog Mode Switcher */}
       <div className="bg-white border border-slate-200 rounded-xl p-3 sm:p-4 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5 sm:gap-3 min-w-0">
         <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 min-w-0">
@@ -1878,7 +1945,7 @@ export default function App() {
       <ScrollToTop />
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-brand-brown focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:outline-none focus:ring-2 focus:ring-brand-bone"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md bg-[#161413] text-[#f7f5f0] focus:bg-brand-brown focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:outline-none focus:ring-2 focus:ring-brand-bone"
       >
         Skip to main content
       </a>
@@ -1886,7 +1953,7 @@ export default function App() {
       {/* -------------------------------------------------------------------- */}
       {/* TOP EMERGENCY DISPATCH & OWNER PRICING STATUS BAR                    */}
       {/* -------------------------------------------------------------------- */}
-      <div className="border-b border-brand-border bg-brand-panel px-3 sm:px-4 lg:px-6 py-1.5 sm:py-2 text-xs text-stone-400 shadow-sm w-full min-w-0">
+      <div className="border-b border-brand-border bg-brand-panel px-3 sm:px-4 lg:px-6 py-1.5 sm:py-2 text-xs text-stone-300 shadow-sm w-full min-w-0">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-3 min-w-0">
           <div className="flex items-center gap-2 min-w-0 truncate">
             <span className="inline-flex items-center gap-1.5 text-emerald-400 font-mono text-[10px] sm:text-[11px] font-semibold bg-emerald-950/60 px-2 sm:px-2.5 py-0.5 rounded-full border border-emerald-800 flex-shrink-0">
@@ -1894,7 +1961,7 @@ export default function App() {
               <span className="hidden xs:inline">Plasma Cutting Queue:</span> LIVE
             </span>
             <span className="hidden lg:inline text-brand-border flex-shrink-0">|</span>
-            <span className="hidden lg:inline text-stone-400 font-medium text-[11px] truncate">
+            <span className="hidden lg:inline text-stone-300 font-medium text-[11px] truncate">
               Texas Fabrication Hub &bull; Daily Nationwide Shipping Across All 50 States &bull; Emergency Hot-Shot Logistics
             </span>
           </div>
@@ -1904,7 +1971,7 @@ export default function App() {
 
             <a
               href="tel:+19792489266"
-              className="font-mono font-bold text-brand-bone hover:text-brand-brown-light transition-colors text-xs flex items-center gap-1.5 flex-shrink-0 py-1 px-1.5 rounded-md hover:bg-brand-panel touch-manipulation min-h-[32px]"
+              className="font-mono font-bold text-brand-bone hover:text-brand-brown-light transition-colors text-xs flex items-center gap-1.5 flex-shrink-0 py-1 px-1.5 rounded-md hover:bg-brand-panel touch-manipulation min-h-[44px]"
             >
               <Phone className="h-3.5 w-3.5 text-brand-brown-light shrink-0" />
               <span>(979) 248-9266</span>
@@ -1924,7 +1991,9 @@ export default function App() {
             <img
               src={brandLogo}
               alt="Iron Prairie Fabrication Group LLC logo"
-              className="h-9 sm:h-11 w-auto rounded-lg border border-brand-border bg-brand-panel-muted p-1 shadow-sm object-contain flex-shrink-0"
+              width="44"
+              height="44"
+              className="h-9 sm:h-11 w-9 sm:w-11 rounded-lg border border-brand-border bg-brand-panel-muted p-1 shadow-sm object-contain flex-shrink-0 aspect-square"
             />
             <div className="leading-tight min-w-0">
               <span className="text-sm sm:text-base lg:text-lg font-display font-bold uppercase tracking-wide text-brand-bone group-hover:text-brand-brown-light transition-colors whitespace-nowrap block truncate">
@@ -1947,15 +2016,15 @@ export default function App() {
                   end={item.to === '/'}
                   className={({ isActive }) =>
                     isCatalog
-                      ? `px-2.5 xl:px-3.5 py-1.5 text-xs font-bold rounded-xl transition-all whitespace-nowrap shadow-sm flex items-center gap-1.5 ${
+                      ? `px-3 xl:px-4 py-2 text-xs font-bold rounded-xl transition-all whitespace-nowrap shadow-sm flex items-center gap-1.5 min-h-[44px] touch-manipulation ${
                           isActive
                             ? 'bg-brand-brown text-brand-ivory ring-2 ring-brand-brown-light shadow-md'
                             : 'bg-brand-brown hover:bg-brand-brown-light text-brand-ivory shadow-sm'
                         }`
-                      : `px-2 xl:px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap ${
+                      : `px-2.5 xl:px-3 py-2 text-xs font-medium rounded-lg transition-colors whitespace-nowrap min-h-[44px] inline-flex items-center touch-manipulation ${
                           isActive
                             ? 'bg-brand-panel-muted text-brand-bone font-bold border border-brand-border'
-                            : 'text-stone-400 hover:text-brand-bone hover:bg-brand-panel-muted'
+                            : 'text-stone-300 hover:text-brand-bone hover:bg-brand-panel-muted'
                         }`
                   }
                 >
@@ -1973,19 +2042,21 @@ export default function App() {
               <div className="flex items-center gap-1 sm:gap-1.5">
                 <button
                   onClick={() => setIsLoginModalOpen(true)}
-                  className="flex items-center gap-1.5 bg-brand-panel-muted border border-brand-border text-brand-bone px-2 sm:px-3 py-2 rounded-lg text-xs font-semibold hover:bg-brand-panel transition-colors min-h-[40px] sm:min-h-[44px] touch-manipulation"
+                  className="flex items-center gap-1.5 bg-brand-panel-muted border border-brand-border text-brand-bone px-2 sm:px-3 py-2 rounded-lg text-xs font-semibold hover:bg-brand-panel transition-colors min-h-[44px] touch-manipulation"
                   title="Click to view client account details"
+                  aria-label="View client account details"
                 >
-                  <UserCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-brand-brown-light shrink-0" />
+                  <UserCheck className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-brand-brown-light shrink-0" aria-hidden="true" />
                   <span className="hidden sm:inline max-w-[90px] xl:max-w-[130px] truncate">{clientAccount?.companyName || 'Verified Trade'}</span>
                   <span className="sm:hidden text-[11px] font-bold">Trade</span>
                 </button>
                 <button
                   onClick={handleClientLogout}
-                  className="p-2 sm:p-2 rounded-lg bg-brand-panel-muted border border-brand-border text-stone-400 hover:text-rose-400 hover:bg-rose-950/40 transition-colors min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center touch-manipulation"
+                  className="p-2 sm:p-2 rounded-lg bg-brand-panel-muted border border-brand-border text-stone-400 hover:text-rose-400 hover:bg-rose-950/40 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
                   title="Log out"
+                  aria-label="Log out"
                 >
-                  <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                  <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" />
                 </button>
               </div>
             )}
@@ -1993,9 +2064,10 @@ export default function App() {
             {/* Cart Button */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative flex items-center gap-1.5 bg-brand-panel hover:bg-brand-panel-muted border border-brand-border text-brand-bone px-2.5 sm:px-3 py-2 rounded-lg font-bold transition-all shadow-sm active:scale-95 text-xs min-h-[40px] sm:min-h-[44px] touch-manipulation"
+              className="relative flex items-center gap-1.5 bg-brand-panel hover:bg-brand-panel-muted border border-brand-border text-brand-bone px-2.5 sm:px-3 py-2 rounded-lg font-bold transition-all shadow-sm active:scale-95 text-xs min-h-[44px] min-w-[44px] touch-manipulation"
+              aria-label="View shopping cart"
             >
-              <ShoppingCart className="h-4 w-4 text-brand-brown-light shrink-0" />
+              <ShoppingCart className="h-4 w-4 text-brand-brown-light shrink-0" aria-hidden="true" />
               <span className="hidden sm:inline">Cart</span>
               {cart.length > 0 && (
                 <span className="bg-brand-brown text-brand-ivory font-mono text-[10px] px-1.5 py-0.5 rounded-full font-bold">
@@ -2007,7 +2079,7 @@ export default function App() {
             {/* Request a Quote Button */}
             <Link
               to="/contact"
-              className="hidden xl:inline-flex rounded-full bg-brand-brown hover:bg-brand-brown-light px-4 py-2 text-xs font-bold text-brand-ivory shadow-sm transition-all active:scale-95 whitespace-nowrap min-h-[40px] items-center touch-manipulation"
+              className="hidden xl:inline-flex rounded-full bg-brand-brown hover:bg-brand-brown-light px-4 py-2 text-xs font-bold text-brand-ivory shadow-sm transition-all active:scale-95 whitespace-nowrap min-h-[44px] items-center touch-manipulation"
             >
               Request a Quote
             </Link>
@@ -2016,7 +2088,7 @@ export default function App() {
             <button
               type="button"
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="p-2 sm:p-2.5 rounded-lg border border-brand-border text-stone-300 hover:bg-brand-panel-muted lg:hidden min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] flex items-center justify-center touch-manipulation"
+              className="p-2 sm:p-2.5 rounded-lg border border-brand-border text-stone-300 hover:bg-brand-panel-muted lg:hidden min-h-[44px] min-w-[44px] flex items-center justify-center touch-manipulation"
               aria-label="Toggle navigation menu"
               aria-expanded={mobileOpen}
               aria-controls="mobile-primary-nav"
@@ -2074,7 +2146,7 @@ export default function App() {
       {/* -------------------------------------------------------------------- */}
       {/* MULTI-ROUTE APPLICATION CONTENT                                      */}
       {/* -------------------------------------------------------------------- */}
-      <main id="main-content" className="flex-1 min-w-0 w-full overflow-hidden">
+      <main id="main-content" className="flex-1 min-w-0 w-full overflow-hidden pb-14 md:pb-0">
         <Suspense fallback={<RouteFallback />}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -2085,8 +2157,8 @@ export default function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
-            <Route path="/storefront" element={renderStorefrontView()} />
-            <Route path="/paddle-blinds" element={renderStorefrontView()} />
+            <Route path="/storefront" element={renderStorefrontView(false)} />
+            <Route path="/paddle-blinds" element={renderStorefrontView(true)} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
@@ -2103,43 +2175,45 @@ export default function App() {
                 <img
                   src={brandLogo}
                   alt="Iron Prairie Fabrication Group LLC"
-                  className="h-10 w-auto rounded border border-brand-border bg-brand-panel-muted p-0.5"
+                  width="40"
+                  height="40"
+                  className="h-10 w-10 rounded border border-brand-border bg-brand-panel-muted p-0.5 object-contain aspect-square"
                 />
                 <div>
                   <span className="font-display text-base font-bold uppercase tracking-wider text-brand-bone block">
                     Iron Prairie Fabrication Group LLC
                   </span>
-                  <span className="text-[11px] text-brand-muted block">ASME B16.48 Paddle Blinds &bull; Industrial Metal Fabrication</span>
+                  <span className="text-[11px] text-stone-300 font-medium block">ASME B16.48 Paddle Blinds &bull; Industrial Metal Fabrication</span>
                 </div>
               </div>
-              <p className="text-xs text-stone-400 max-w-md leading-relaxed">
+              <p className="text-xs text-stone-300 max-w-md leading-relaxed">
                 Certified woman-owned metal fabrication enterprise based in Bay City, Texas. Precision CNC plasma plate cutting, ASME B16.48 positive isolation paddle blinds, custom ranch gates, animal pens, tornado shelters, custom bunkers, and municipal infrastructure steelwork. Serving Bay City, Matagorda County, Texas Gulf Coast, and statewide Texas with rapid site delivery, plus daily nationwide shipping across all 50 states.
               </p>
             </div>
 
             <div>
               <div className="text-xs font-bold text-brand-bone uppercase tracking-wider mb-3">Quick Navigation</div>
-              <ul className="space-y-1.5 text-xs text-stone-400">
-                <li><Link to="/about" className="hover:text-brand-bone transition-colors">About Our Shop</Link></li>
-                <li><Link to="/services" className="hover:text-brand-bone transition-colors">Fabrication Services</Link></li>
-                <li><Link to="/projects" className="hover:text-brand-bone transition-colors">Project Portfolio</Link></li>
-                <li><Link to="/woman-owned" className="hover:text-brand-bone transition-colors">Woman-Owned Enterprise</Link></li>
-                <li><Link to="/storefront" className="hover:text-brand-bone transition-colors">ASME B16.48 Paddle Blinds</Link></li>
-                <li><Link to="/contact" className="hover:text-brand-bone transition-colors">Request a Quote</Link></li>
+              <ul className="space-y-2 text-xs text-stone-300">
+                <li><Link to="/about" className="hover:text-brand-bone transition-colors py-1.5 inline-block">About Our Shop</Link></li>
+                <li><Link to="/services" className="hover:text-brand-bone transition-colors py-1.5 inline-block">Fabrication Services</Link></li>
+                <li><Link to="/projects" className="hover:text-brand-bone transition-colors py-1.5 inline-block">Project Portfolio</Link></li>
+                <li><Link to="/woman-owned" className="hover:text-brand-bone transition-colors py-1.5 inline-block">Woman-Owned Enterprise</Link></li>
+                <li><Link to="/storefront" className="hover:text-brand-bone transition-colors py-1.5 inline-block">ASME B16.48 Paddle Blinds</Link></li>
+                <li><Link to="/contact" className="hover:text-brand-bone transition-colors py-1.5 inline-block">Request a Quote</Link></li>
               </ul>
             </div>
 
             <div>
               <div className="text-xs font-bold text-brand-bone uppercase tracking-wider mb-3">Facility &amp; Inquiries</div>
-              <div className="space-y-2 text-xs text-stone-400">
+              <div className="space-y-2 text-xs text-stone-300">
                 <div>Phone: <a href="tel:+19792489266" className="text-brand-bone hover:text-brand-brown-light font-bold">(979) 248-9266</a></div>
                 <div>Email: <a href="mailto:Sales@ironprairiefabrication.com" className="text-brand-bone hover:text-brand-brown-light underline">Sales@ironprairiefabrication.com</a></div>
-                <div>Facility: <a href={siteConfig.googleMapsUrl} target="_blank" rel="noopener noreferrer" className="text-stone-300 hover:text-brand-bone underline">200 County Rd 170, Bay City, TX 77414</a> (Matagorda County)</div>
+                <div>Facility: <a href={siteConfig.googleMapsUrl} target="_blank" rel="noopener noreferrer" className="text-stone-200 hover:text-brand-bone underline">200 County Rd 170, Bay City, TX 77414</a> (Matagorda County)</div>
                 <div>Service Area: Texas Statewide &bull; <span className="text-brand-bone font-semibold">Nationwide Shipping (All 50 States)</span></div>
-                <div>Government Contractor: <span className="text-emerald-400 font-bold">SAM.gov Registered</span> &bull; <span className="font-mono text-stone-300 font-bold">UEI: XX7XCMGN9XD5</span></div>
-                <div className="pt-2 flex gap-4 text-[11px] text-stone-500">
-                  <Link to="/privacy-policy" className="hover:text-brand-bone underline">Privacy Policy</Link>
-                  <Link to="/terms-of-service" className="hover:text-brand-bone underline">Terms of Service</Link>
+                <div>Government Contractor: <span className="text-emerald-400 font-bold">SAM.gov Registered</span> &bull; <span className="font-mono text-stone-200 font-bold">UEI: XX7XCMGN9XD5</span></div>
+                <div className="pt-2 flex gap-4 text-xs text-stone-300">
+                  <Link to="/privacy-policy" className="text-stone-300 hover:text-brand-bone underline py-1 inline-block">Privacy Policy</Link>
+                  <Link to="/terms-of-service" className="text-stone-300 hover:text-brand-bone underline py-1 inline-block">Terms of Service</Link>
                 </div>
               </div>
             </div>
@@ -3271,7 +3345,13 @@ export default function App() {
       {/* ABANDONED CART QUOTE FOLLOW-UP EMAIL MODAL                           */}
       {/* -------------------------------------------------------------------- */}
       {selectedQuoteCart && (() => {
-        const quote = generateAbandonedCartQuoteEmail(selectedQuoteCart);
+        const quoteSubject = `Formal Turnaround Proposal - Paddle Blind Order #${selectedQuoteCart.cartId || 'QUOTE'} (${selectedQuoteCart.companyName})`;
+        const quoteBody = `Dear ${selectedQuoteCart.buyerName || 'Purchasing Team'},\n\nThank you for visiting the Iron Prairie Fabrication Group online ordering portal. We noticed you configured ASME B16.48 paddle blinds for ${selectedQuoteCart.companyName}:\n\nEstimated Weight: ${selectedQuoteCart.totalWeightLbs} lbs\n\nOur CNC plasma cutting shop in Texas has the domestic plate in-stock (A516-70, 304L, 316L) ready for same-day cut and dispatch with certified MTR packets.\n\nWould you like us to formalize this into an active Purchase Order and lock in your production table slot?\n\nPlease reply directly to this email (${IPG_SALES_EMAIL}) or call us at (979) 248-9266.\n\nBest regards,\nSales & Estimating Team\nIron Prairie Fabrication Group LLC`;
+        const quote = {
+          subject: quoteSubject,
+          body: quoteBody,
+          mailtoUrl: `mailto:${selectedQuoteCart.email}?subject=${encodeURIComponent(quoteSubject)}&body=${encodeURIComponent(quoteBody)}`
+        };
         return (
           <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-5">
@@ -3517,6 +3597,33 @@ export default function App() {
           </button>
         </div>
       )}
+
+      {/* -------------------------------------------------------------------- */}
+      {/* MOBILE STICKY QUICK-ACTION CONVERSION BAR (85% Mobile Traffic)        */}
+      {/* -------------------------------------------------------------------- */}
+      <nav aria-label="Mobile quick actions" className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-brand-panel/95 backdrop-blur-md border-t border-brand-border px-3 py-2 flex items-center justify-between gap-2 shadow-2xl safe-area-pb">
+        <a
+          href="tel:+19792489266"
+          className="flex-1 inline-flex items-center justify-center gap-1.5 bg-emerald-700 hover:bg-emerald-600 text-white font-bold py-2 px-3 rounded-xl text-xs font-mono uppercase tracking-wider transition-all shadow-sm active:scale-95 touch-manipulation min-h-[44px]"
+        >
+          <Phone className="h-3.5 w-3.5 shrink-0" />
+          <span>Call Shop</span>
+        </a>
+        <Link
+          to="/paddle-blinds"
+          className="flex-1 inline-flex items-center justify-center gap-1.5 bg-brand-panel-muted hover:bg-brand-panel text-brand-bone border border-brand-border font-bold py-2 px-3 rounded-xl text-xs uppercase tracking-wider transition-all shadow-sm active:scale-95 touch-manipulation min-h-[44px]"
+        >
+          <Zap className="h-3.5 w-3.5 text-brand-brown-light fill-brand-brown-light shrink-0" />
+          <span>Blinds</span>
+        </Link>
+        <Link
+          to="/contact"
+          className="flex-1 inline-flex items-center justify-center gap-1.5 bg-brand-brown hover:bg-brand-brown-light text-white font-bold py-2 px-3 rounded-xl text-xs uppercase tracking-wider transition-all shadow-sm active:scale-95 touch-manipulation min-h-[44px]"
+        >
+          <span>Quote</span>
+          <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+        </Link>
+      </nav>
 
     </div>
   );

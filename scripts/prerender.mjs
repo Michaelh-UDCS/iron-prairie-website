@@ -20,8 +20,8 @@ const OG_IMAGE = `${DOMAIN}/og-banner.jpg`;
 const routes = [
   {
     path: '/',
-    title: 'Custom Metal Fabrication in Bay City, TX | Iron Prairie',
-    description: 'Get custom metal fabrication in Bay City, TX. ASME B16.48 paddle blinds, CNC plasma, ranch steel. Ships all 50 states. Call (979) 248-9266 today!',
+    title: 'Metal Fabrication Shop Bay City & Houston | Iron Prairie',
+    description: 'Fast custom metal fabrication, CNC plasma & ASME paddle blinds in Bay City & Houston area. Direct shop pricing & fast quotes. Call (979) 248-9266 today!',
     canonical: `${DOMAIN}/`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` }
@@ -83,8 +83,8 @@ const routes = [
   },
   {
     path: '/services',
-    title: 'Fabrication Services in Bay City, TX | Iron Prairie',
-    description: 'Expert Texas metal fabrication: ASME paddle blinds, CNC plasma, structural steel, ranch gates, shelters. Local delivery plus nationwide freight today.',
+    title: 'Fabrication Services Bay City & Houston | Iron Prairie',
+    description: 'Expert Texas metal fabrication: ASME paddle blinds, CNC plasma, structural steel, ranch gates & shelters. Local delivery plus nationwide freight today.',
     canonical: `${DOMAIN}/services`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
@@ -174,8 +174,8 @@ const routes = [
   },
   {
     path: '/paddle-blinds',
-    title: 'ASME B16.48 Paddle Blinds | Ships Nationwide Daily',
-    description: 'Order ASME B16.48 paddle blinds in SA-516-70, 304L, and 316L with certified MTRs. Bay City, TX shop with daily nationwide shipping across all USA.',
+    title: 'ASME B16.48 Paddle Blinds & Spacers | Iron Prairie TX',
+    description: 'Order ASME B16.48 paddle blinds in SA-516-70, 304L & 316L with certified MTRs. Bay City, TX shop with same-day pricing & daily nationwide shipping now!',
     canonical: `${DOMAIN}/paddle-blinds`,
     breadcrumbs: [
       { name: 'Home', url: `${DOMAIN}/` },
@@ -244,6 +244,9 @@ function buildJsonLd(route) {
         { "@type": "City", "name": "Angleton", "sameAs": "https://en.wikipedia.org/wiki/Angleton,_Texas" },
         { "@type": "City", "name": "Pearland", "sameAs": "https://en.wikipedia.org/wiki/Pearland,_Texas" },
         { "@type": "City", "name": "Houston", "sameAs": "https://en.wikipedia.org/wiki/Houston" },
+        { "@type": "City", "name": "Baytown", "sameAs": "https://en.wikipedia.org/wiki/Baytown,_Texas" },
+        { "@type": "City", "name": "Pasadena", "sameAs": "https://en.wikipedia.org/wiki/Pasadena,_Texas" },
+        { "@type": "City", "name": "Corpus Christi", "sameAs": "https://en.wikipedia.org/wiki/Corpus_Christi,_Texas" },
         { "@type": "AdministrativeArea", "name": "Matagorda County, TX" },
         { "@type": "AdministrativeArea", "name": "Brazoria County, TX" },
         { "@type": "State", "name": "Texas" },
@@ -296,6 +299,90 @@ function buildJsonLd(route) {
     "@context": "https://schema.org",
     "@graph": graph
   };
+}
+
+function buildStaticBody(route) {
+  const isPaddleBlinds = route.path === '/paddle-blinds' || route.path === '/storefront';
+  const isHome = route.path === '/';
+  return `
+    <header style="padding:1rem 1.5rem;background:#241d1a;color:#f7f5f0;font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;">
+      <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <span style="font-size:1.1rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#f7f5f0;">Iron Prairie Fabrication Group LLC</span>
+          <span style="display:block;font-size:0.8rem;color:#d7ccc8;">Bay City, TX &bull; ASME B16.48 Paddle Blinds &bull; Custom Metal Fabrication</span>
+        </div>
+        <div style="font-size:0.9rem;">
+          <a href="tel:+19792489266" style="color:#6ee7b7;font-weight:700;text-decoration:none;">Call Shop: (979) 248-9266</a>
+        </div>
+      </div>
+    </header>
+    <main style="max-width:1100px;margin:2rem auto;padding:0 1.5rem;font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;color:#1e293b;">
+      ${isHome ? `
+      <section style="margin-bottom:2rem;border-radius:16px;overflow:hidden;background:#161413;">
+        <picture>
+          <source media="(max-width: 640px)" srcset="/images/hero-gate-mobile.webp" type="image/webp" />
+          <source srcset="/images/hero-gate.webp" type="image/webp" />
+          <img
+            src="/images/hero-gate.webp"
+            alt="Custom fabricated ranch gate and fence installation by Iron Prairie Fabrication Group LLC"
+            width="1024"
+            height="768"
+            fetchpriority="high"
+            decoding="async"
+            style="width:100%;height:auto;max-height:480px;object-fit:cover;display:block;"
+          />
+        </picture>
+      </section>
+      ` : ''}
+      <h1 style="font-size:2.2rem;font-weight:800;color:#241d1a;margin-bottom:1rem;line-height:1.2;">${route.title}</h1>
+      <p style="font-size:1.15rem;line-height:1.6;color:#334155;max-width:850px;margin-bottom:1.5rem;">${route.description}</p>
+      
+      <nav aria-label="Quick links" style="margin-bottom:2rem;padding:0.85rem 1.2rem;background:#f1f5f9;border-radius:12px;display:flex;flex-wrap:wrap;gap:0.75rem;font-size:0.9rem;">
+        <strong style="color:#0f172a;">Quick Navigation:</strong>
+        <a href="/" style="color:#241d1a;font-weight:600;">Home</a>
+        <a href="/about" style="color:#241d1a;font-weight:600;">About</a>
+        <a href="/services" style="color:#241d1a;font-weight:600;">Services</a>
+        <a href="/projects" style="color:#241d1a;font-weight:600;">Projects</a>
+        <a href="/paddle-blinds" style="color:#241d1a;font-weight:600;">ASME Paddle Blinds</a>
+        <a href="/woman-owned" style="color:#241d1a;font-weight:600;">Woman-Owned (SAM.gov)</a>
+        <a href="/contact" style="color:#241d1a;font-weight:600;">Request Quote</a>
+      </nav>
+
+      ${isPaddleBlinds ? `
+      <section style="margin:2rem 0;padding:1.5rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;">
+        <h2 style="font-size:1.4rem;color:#241d1a;margin-bottom:0.75rem;">ASME B16.48 Positive Isolation Paddle Blinds &amp; Spacers</h2>
+        <p style="font-size:0.95rem;line-height:1.6;color:#475569;margin-bottom:1rem;">
+          In-house precision CNC plasma cutting for positive pipeline isolation. Fully traceable domestic SA-516-70 carbon steel, 304/304L stainless, and 316/316L stainless plate. All orders include certified EN 10204 3.1 Mill Test Reports (MTRs).
+        </p>
+        <ul style="font-size:0.9rem;line-height:1.8;color:#334155;">
+          <li><strong>Pressure Classes:</strong> Class 150#, 300#, 600#, 900#, and 1500# standard in matrix (Class 2500# and custom pressure ratings available upon RFQ).</li>
+          <li><strong>Pipe Sizes:</strong> 1/2" NPS up to 24" NPS standard catalog sizes (oversized diameters up to 60"+ available upon custom RFQ).</li>
+          <li><strong>Materials &amp; Alloys:</strong> Domestic SA-516 Grade 70 PVQ Carbon Steel, 304/304L Stainless, and 316/316L Stainless (Duplex 2205, Inconel, Monel, and exotic alloys upon RFQ).</li>
+          <li><strong>Gasket Facings:</strong> Raised Face (RF) smooth/serrated finish, Ring Type Joint (RTJ) male octagonal, and custom groove profiles upon RFQ.</li>
+          <li><strong>Texas Turnaround Logistics:</strong> Emergency 2-4 hour hot-shot courier delivery to Freeport, Baytown, Houston, Texas City, Corpus Christi, and Beaumont/Port Arthur.</li>
+          <li><strong>Nationwide Logistics:</strong> Daily UPS Ground/Air parcel for boxed blinds; palletized LTL freight and dedicated flatbeds across all 50 states.</li>
+        </ul>
+      </section>
+      ` : `
+      <section style="margin:2rem 0;padding:1.5rem;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;">
+        <h2 style="font-size:1.4rem;color:#241d1a;margin-bottom:0.75rem;">Fabrication Capabilities &amp; Service Highlights</h2>
+        <ul style="font-size:0.95rem;line-height:1.8;color:#475569;">
+          <li><strong>CNC Plasma Plate Cutting:</strong> Precision plate cutting from gauge sheet up to heavy structural steel plate.</li>
+          <li><strong>ASME B16.48 Paddle Blinds:</strong> Positive isolation blinds and spacer rings with certified 3.1 MTR paperwork.</li>
+          <li><strong>Ranch &amp; Agricultural Equipment:</strong> Heavy-duty custom gates, livestock pens, cattle guards, and field equipment.</li>
+          <li><strong>Protective Steel Builds:</strong> Tornado shelter components, custom bunkers, and heavy built-in security safes.</li>
+          <li><strong>Public Agency &amp; Municipal Metalwork:</strong> TPWD park infrastructure, fire rings, railings, and municipal steel components.</li>
+        </ul>
+      </section>
+      `}
+
+      <footer style="margin-top:3rem;padding:1.5rem 0;border-top:1px solid #e2e8f0;font-size:0.85rem;color:#64748b;line-height:1.6;">
+        <p><strong>Iron Prairie Fabrication Group LLC</strong> &bull; 200 County Rd 170, Bay City, TX 77414</p>
+        <p>Direct Inquiries: <a href="tel:+19792489266" style="color:#0f172a;font-weight:700;">(979) 248-9266</a> | Email: <a href="mailto:Sales@ironprairiefabrication.com" style="color:#0f172a;">Sales@ironprairiefabrication.com</a></p>
+        <p>Serving Bay City, Matagorda County, Brazoria County, Freeport, Lake Jackson, Angleton, Houston, Baytown, Pasadena, Corpus Christi, Texas statewide, and nationwide freight shipping across all 50 US states.</p>
+      </footer>
+    </main>
+  `;
 }
 
 let generatedCount = 0;
@@ -357,6 +444,34 @@ for (const route of routes) {
   html = html.replace(
     /<script\s+type="application\/ld\+json">.*?<\/script>/s,
     jsonLdScript
+  );
+
+  // Inject semantic static body fallback inside #root for crawlers, AI agents, and non-JS clients
+  const staticBody = buildStaticBody(route);
+  html = html.replace(
+    /<div\s+id="root"><\/div>/s,
+    `<div id="root">${staticBody}</div>`
+  );
+
+  // Async CSS loading via hashed script (zero CSP inline event handler violations)
+  const loadCssScript = `<script>
+    (function(){
+      var el = document.getElementById('app-css');
+      if (el) el.media = 'all';
+    })();
+  </script>`;
+
+  const criticalCss = `<style id="critical-css">
+    :root { --brand-ink: #161413; --brand-bone: #f7f5f0; --brand-brown: #6b3b2a; --brand-panel: #1f1c1a; }
+    body { background: #161413; color: #f7f5f0; margin: 0; font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif; }
+    .home-hero { position: relative; background: #161413; min-height: 380px; display: block; overflow: hidden; }
+    .home-hero__media { width: 100%; height: auto; max-height: 600px; object-fit: cover; display: block; }
+    input, select, textarea { color: #f7f5f0; }
+  </style>`;
+
+  html = html.replace(
+    /<link\s+rel="stylesheet"\s+crossorigin\s+href="(\/assets\/index-[^"]+\.css)">/s,
+    `<link id="app-css" rel="stylesheet" crossorigin href="$1" media="print">\n    ${loadCssScript}\n    <noscript><link rel="stylesheet" crossorigin href="$1"></noscript>\n    ${criticalCss}`
   );
 
   if (route.path === '/') {

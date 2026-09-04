@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Flame, ArrowRight, ShieldCheck, Zap, Truck, PackageCheck, MapPin, CheckCircle2, Clock } from 'lucide-react';
+import { Flame, ArrowRight, ShieldCheck, Zap, Truck, PackageCheck, MapPin, CheckCircle2, Clock, Phone, Factory } from 'lucide-react';
 
 const sections = [
   {
@@ -83,7 +83,7 @@ export default function Services() {
             In-house high-definition CNC cutting from domestic A516-70 carbon and 304L/316L stainless plate. Multi-size turnaround table ordering, certified EN 10204 3.1 MTRs, same-day emergency hot-shot courier across Texas, and <strong>daily UPS &amp; LTL freight shipping across all 50 states</strong>.
           </p>
           <div className="flex flex-wrap gap-4 pt-1 text-xs text-slate-600 font-mono">
-            <span className="flex items-center gap-1"><ShieldCheck className="h-4 w-4 text-emerald-600" /> 1/2" to 24" (150# - 1500#)</span>
+            <span className="flex items-center gap-1"><ShieldCheck className="h-4 w-4 text-emerald-600" /> 1/2" to 24" (150# - 1500# &bull; 2500# on RFQ)</span>
             <span className="flex items-center gap-1"><Flame className="h-4 w-4 text-brand-brown" /> Domestic Staged Plate</span>
             <span className="flex items-center gap-1"><Truck className="h-4 w-4 text-brand-brown" /> UPS Parcel &amp; LTL Freight</span>
           </div>
@@ -91,11 +91,11 @@ export default function Services() {
 
         <div className="flex flex-col sm:flex-row md:flex-col gap-3 w-full md:w-auto shrink-0">
           <Link
-            to="/storefront"
+            to="/paddle-blinds"
             className="inline-flex items-center justify-center gap-2 bg-brand-brown hover:bg-brand-brown-light text-white font-bold px-6 py-3.5 rounded-2xl text-xs sm:text-sm uppercase tracking-wider shadow-sm transition-all active:scale-95 text-center"
           >
             <Zap className="h-4 w-4 fill-white" />
-            <span>Launch Paddle Blind Catalog</span>
+            <span>Launch ASME Paddle Blind Catalog</span>
             <ArrowRight className="h-4 w-4" />
           </Link>
           <Link
@@ -199,6 +199,78 @@ export default function Services() {
               Steel-banded, shrink-wrapped wooden pallet freight with liftgate delivery for heavy blind runs (&ge;150 lbs) and oversized agricultural or structural steel builds nationwide.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* TEXAS GULF COAST PETROCHEMICAL & REFINERY SUPPORT CORRIDOR */}
+      <section className="rounded-2xl border border-stone-200/90 bg-white p-6 sm:p-8 shadow-sm space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-stone-200">
+          <div className="space-y-1">
+            <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-brand-brown uppercase tracking-wider">
+              <Factory className="h-4 w-4 text-brand-brown" /> Texas Petrochemical Hub &bull; Emergency Turnaround Dispatch
+            </div>
+            <h2 className="text-xl sm:text-2xl font-bold text-brand-brown font-display">
+              Gulf Coast Refinery, Chemical Plant &amp; Pipeline Turnaround Fabrication
+            </h2>
+          </div>
+          <a
+            href="tel:+19792489266"
+            className="self-start md:self-auto inline-flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-4 py-2 rounded-xl text-xs font-mono uppercase tracking-wider transition-all shadow-sm"
+          >
+            <Phone className="h-3.5 w-3.5" />
+            <span>(979) 248-9266</span>
+          </a>
+        </div>
+
+        <p className="text-xs sm:text-sm text-slate-700 leading-relaxed max-w-4xl">
+          Strategically located in Bay City, Texas (Matagorda County), Iron Prairie Fabrication Group LLC delivers urgent turnaround and maintenance fabrication for the Texas Gulf Coast petrochemical belt. When unplanned outages or scheduled turnaround windows demand immediate turnaround, our CNC plasma tables burn positive isolation paddle blinds, slip blinds, spacer rings, spectacle blinds, and structural pipe supports on rapid turnarounds with complete mill test report (MTR) documentation.
+        </p>
+
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 text-xs">
+          <div className="bg-stone-50/90 p-4 rounded-xl border border-stone-200 space-y-1.5">
+            <span className="font-bold text-slate-900 block text-sm">Freeport &amp; Brazoria Corridor</span>
+            <p className="text-slate-600 leading-relaxed">
+              30–45 min hot-shot courier response to Freeport LNG, Dow Chemical, BASF, and Phillips 66 Sweeny Refinery.
+            </p>
+          </div>
+
+          <div className="bg-stone-50/90 p-4 rounded-xl border border-stone-200 space-y-1.5">
+            <span className="font-bold text-slate-900 block text-sm">Houston &amp; Baytown Complex</span>
+            <p className="text-slate-600 leading-relaxed">
+              Direct hot-shot truck runs to Baytown ExxonMobil, Pasadena, Deer Park, and Houston Ship Channel refining plants.
+            </p>
+          </div>
+
+          <div className="bg-stone-50/90 p-4 rounded-xl border border-stone-200 space-y-1.5">
+            <span className="font-bold text-slate-900 block text-sm">Texas City &amp; Galveston Bay</span>
+            <p className="text-slate-600 leading-relaxed">
+              Rapid courier delivery for Marathon, Valero, and coastal tank farm positive pipeline blanking projects.
+            </p>
+          </div>
+
+          <div className="bg-stone-50/90 p-4 rounded-xl border border-stone-200 space-y-1.5">
+            <span className="font-bold text-slate-900 block text-sm">Corpus Christi &amp; South Texas</span>
+            <p className="text-slate-600 leading-relaxed">
+              Direct highway route 35 delivery to Corpus Christi marine terminals, Ingleside, and regional petrochemical facilities.
+            </p>
+          </div>
+        </div>
+
+        <div className="pt-2 flex flex-wrap items-center gap-3">
+          <Link
+            to="/paddle-blinds"
+            className="inline-flex items-center gap-2 bg-brand-brown hover:bg-brand-brown-light text-white font-bold px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-sm"
+          >
+            <Zap className="h-3.5 w-3.5 fill-white" />
+            <span>ASME Paddle Blind Matrix</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+          <Link
+            to="/contact"
+            className="inline-flex items-center gap-2 bg-stone-100 hover:bg-stone-200 border border-stone-300 text-slate-800 font-semibold px-5 py-2.5 rounded-xl text-xs tracking-wider transition-all"
+          >
+            Request Turnaround Quote
+          </Link>
         </div>
       </section>
 

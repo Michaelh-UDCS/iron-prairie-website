@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App.tsx';
-import './firebase.js';
 import './index.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -13,9 +12,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   </React.StrictMode>,
 );
 
-// Zero-Hydration GA4 Island: dynamically imported strictly when browser thread is idle
+// Zero-Hydration GA4 Island: loaded strictly upon user interaction or long fallback
 if (typeof window !== 'undefined') {
+  let analyticsLoaded = false;
   const launchAnalytics = () => {
+    if (analyticsLoaded) return;
+    analyticsLoaded = true;
+    ['pointerdown', 'keydown', 'scroll', 'touchstart'].forEach((event) => {
+      window.removeEventListener(event, launchAnalytics);
+    });
     import('./services/analytics')
       .then(({ initAnalyticsIsland }) => {
         initAnalyticsIsland();
@@ -27,12 +32,11 @@ if (typeof window !== 'undefined') {
       });
   };
 
-  if ('requestIdleCallback' in window) {
-    window.requestIdleCallback(launchAnalytics, { timeout: 3500 });
-  } else if (document.readyState === 'complete') {
-    setTimeout(launchAnalytics, 1000);
-  } else {
-    window.addEventListener('load', () => setTimeout(launchAnalytics, 1000), { once: true });
-  }
+  ['pointerdown', 'keydown', 'scroll', 'touchstart'].forEach((event) => {
+    window.addEventListener(event, launchAnalytics, { once: true, passive: true });
+  });
+
+  // 10s fallback for headless or non-scrolling viewers
+  setTimeout(launchAnalytics, 10000);
 }
 
