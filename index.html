@@ -20,9 +20,9 @@
     <!-- Self-hosted Inter (latin WOFF2) -->
     <link rel="preload" href="/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
 
-    <!-- Preload LCP Hero Image -->
-    <link rel="preload" href="/images/hero-gate-mobile.webp" as="image" type="image/webp" media="(max-width: 640px)" fetchpriority="high" />
-    <link rel="preload" href="/images/hero-gate.webp" as="image" type="image/webp" media="(min-width: 641px)" fetchpriority="high" />
+    <!-- Preload LCP Hero Image (AVIF only — avoids double-fetch with WebP picture fallback) -->
+    <link rel="preload" href="/images/hero-gate-mobile.avif" as="image" type="image/avif" media="(max-width: 640px)" fetchpriority="high" />
+    <link rel="preload" href="/images/hero-gate.avif" as="image" type="image/avif" media="(min-width: 641px)" fetchpriority="high" />
 
     <!-- OpenGraph Metadata -->
     <meta property="og:type" content="website" />

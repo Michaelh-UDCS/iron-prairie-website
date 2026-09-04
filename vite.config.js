@@ -12,6 +12,13 @@ export default defineConfig({
   build: {
     target: 'es2022',
     cssMinify: true,
+    modulePreload: {
+      resolveDependencies(filename, deps) {
+        return deps.filter(
+          (dep) => !dep.includes('firebase') && !dep.includes('analytics') && !dep.includes('stripe')
+        );
+      }
+    },
     rollupOptions: {
       output: {
         manualChunks(id) {

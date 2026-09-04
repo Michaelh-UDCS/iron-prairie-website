@@ -9,22 +9,22 @@
 - **GitHub push**: `Michaelh-UDCS`
 
 ### Current Phase
-- **Storefront Cart / Checkout Scaling Fix — DONE** (2026-08-29)
-- **Track Incomplete Storefront Checkouts in ERP — DONE** (2026-08-29)
+- **Gate 100 — Verified Live Scorecard (PSI)** — hero image restored in React tree (no external LCP plane)
 
-### Active Task — Canceled / Unfulfilled Paddle Blind Checkouts
-1. [x] Confirm gap: Stripe cancel only toasts on storefront; ERP cannot read `checkout_leads` / `checkout_carts`
-2. [x] Persist checkout status (`open` / `cancelled` / `expired` / `completed`) from session create, cancel URL, and Stripe webhooks
-3. [x] Expose authenticated ERP feed of incomplete checkouts (merge Firestore + Stripe)
-4. [x] Show incomplete checkouts on ERP dashboard + dedicated follow-up screen
-5. [x] Capture buyer cancel on return from Stripe (`order_status=cancelled`)
-6. [x] Restore `/operations` ERP gate (was not routed on the public site)
-7. [x] Deploy functions + hosting; verified live dashboard shows the unpaid paddle-blind checkout
+### Active Task — Material Market Cost Ledger
+1. [x] Document bidirectional market pass-through method (raise **and** cut)
+2. [x] Create `logs/paddle-blind-prices/materialCostLedger.json` (anchor + policy + history — **internal only**)
+3. [x] Add `scripts/apply-material-market-adjustment.mjs` (`--propose` / `--apply` / `--across ±N`)
+4. [x] Micro gradual bump **$0.02→$0.06/lb** (cheapest→most expensive) — files/ledger only, **no website UI**
+5. [x] Seal MCH audit for 2026-09-04 (timestamps **internal logs only**, never on live site)
+6. [ ] Replace PLACEHOLDER mill quotes with real Bay City/Houston tickets
+7. [ ] Deploy catalog rate changes when ready
 
 ### Status Update (Latest)
-- Canceled / unpaid storefront checkouts now appear on the ERP dashboard and **Incomplete Checkouts**.
-- Live verification: ref **IPG-046686**, 1/2" SA-516-70 paddle blind, $62.00, Universal Dynamic Consulting Services LLC — checkout started, not paid.
-- `/operations` is live again behind the executive passkey gate.
+- Catalog rates implemented; micro-bump live in code defaults.
+- **Timestamps / MCH audit stay in `logs/paddle-blind-prices/` only** — not bundled, not displayed on the website.
+- Ledger moved out of `src/` → `logs/paddle-blind-prices/materialCostLedger.json`.
+- Audit: `AUDIT-2026-09-04-MCH.md` + `audit-2026-09-04-MCH.json` (performedBy: **MCH**).
 
 ### Notes
 - **Live Stripe**: `acct_1Tzf7K2NddnbOHqL`

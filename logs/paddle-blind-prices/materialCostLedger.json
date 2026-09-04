@@ -1,0 +1,300 @@
+{
+  "version": 1,
+  "title": "Iron Prairie — Paddle Blind Material Cost Ledger",
+  "owner": "Iron Prairie Fabrication Group LLC",
+  "notes": [
+    "Append-only history. Never overwrite anchorBaseline.",
+    "marketQuotePerLb values should be replaced with real Bay City/Houston delivered plate quotes.",
+    "Catalog $/lb is what the storefront uses; market quote is what you pay."
+  ],
+  "anchorBaseline": {
+    "id": "catalog-freeze-2026-09-04",
+    "frozenAt": "2026-09-04",
+    "source": "logs/paddle-blind-prices/baseline-2026-09-04.csv + graduated raise after-2026-09-04",
+    "description": "Formal catalog freeze after first graduated $/lb raise. Index = 100 for each grade.",
+    "grades": {
+      "304": {
+        "family": "SS",
+        "catalogRatePerLb": 5.55,
+        "marketQuotePerLb": 4.4,
+        "marketQuoteNote": "PLACEHOLDER — 304 plate; nickel-sensitive"
+      },
+      "SA-36": {
+        "family": "CS",
+        "catalogRatePerLb": 1.87,
+        "marketQuotePerLb": 1.45,
+        "marketQuoteNote": "PLACEHOLDER — replace with actual A36 plate delivered $/lb on freeze date"
+      },
+      "SA-516-70": {
+        "family": "CS",
+        "catalogRatePerLb": 2.18,
+        "marketQuotePerLb": 1.75,
+        "marketQuoteNote": "PLACEHOLDER — PVQ plate delivered $/lb on freeze date"
+      },
+      "304L": {
+        "family": "SS",
+        "catalogRatePerLb": 6.01,
+        "marketQuotePerLb": 4.75,
+        "marketQuoteNote": "PLACEHOLDER — 304/304L dual-cert plate"
+      },
+      "316L": {
+        "family": "SS",
+        "catalogRatePerLb": 7.48,
+        "marketQuotePerLb": 6.2,
+        "marketQuoteNote": "PLACEHOLDER — 316L moly plate; Ni + Mo sensitive"
+      },
+      "AL-6061": {
+        "family": "AL",
+        "catalogRatePerLb": 5.1,
+        "marketQuotePerLb": 3.85,
+        "marketQuoteNote": "PLACEHOLDER — 6061-T6 plate delivered $/lb"
+      }
+    }
+  },
+  "policy": {
+    "formula": "candidate = anchorCatalog + passThrough * (marketNow - marketAtAnchor)",
+    "bidirectional": true,
+    "bidirectionalNote": "Negative mill deltas produce catalog cuts (same deadband, max step, and 85% floor). Prices are not ratchet-only-up.",
+    "roundTo": 0.01,
+    "grades": {
+      "304": {
+        "family": "SS",
+        "stability": "volatile_nickel",
+        "reviewCadence": "biweekly",
+        "passThroughPct": 85,
+        "deadbandPct": 1.5,
+        "maxStepPerReview": 0.35,
+        "floorPctOfAnchor": 85,
+        "surgeIndexAlert": 130
+      },
+      "SA-36": {
+        "family": "CS",
+        "stability": "high",
+        "reviewCadence": "monthly",
+        "passThroughPct": 60,
+        "deadbandPct": 2,
+        "maxStepPerReview": 0.1,
+        "floorPctOfAnchor": 85,
+        "surgeIndexAlert": 115
+      },
+      "SA-516-70": {
+        "family": "CS",
+        "stability": "high",
+        "reviewCadence": "monthly",
+        "passThroughPct": 65,
+        "deadbandPct": 2,
+        "maxStepPerReview": 0.12,
+        "floorPctOfAnchor": 85,
+        "surgeIndexAlert": 115
+      },
+      "304L": {
+        "family": "SS",
+        "stability": "volatile_nickel",
+        "reviewCadence": "biweekly",
+        "passThroughPct": 85,
+        "deadbandPct": 1.5,
+        "maxStepPerReview": 0.35,
+        "floorPctOfAnchor": 85,
+        "surgeIndexAlert": 130
+      },
+      "316L": {
+        "family": "SS",
+        "stability": "volatile_nickel_moly",
+        "reviewCadence": "weekly_when_surging",
+        "passThroughPct": 90,
+        "deadbandPct": 1,
+        "maxStepPerReview": 0.45,
+        "floorPctOfAnchor": 85,
+        "surgeIndexAlert": 130
+      },
+      "AL-6061": {
+        "family": "AL",
+        "stability": "volatile_aluminum",
+        "reviewCadence": "biweekly",
+        "passThroughPct": 80,
+        "deadbandPct": 2,
+        "maxStepPerReview": 0.3,
+        "floorPctOfAnchor": 85,
+        "surgeIndexAlert": 130
+      }
+    }
+  },
+  "current": {
+    "asOf": "2026-09-04",
+    "alignedWithCodeDefaults": true,
+    "grades": {
+      "304": {
+        "catalogRatePerLb": 5.59,
+        "marketQuotePerLb": 4.4,
+        "marketIndex": 100
+      },
+      "SA-36": {
+        "catalogRatePerLb": 1.89,
+        "marketQuotePerLb": 1.45,
+        "marketIndex": 100
+      },
+      "SA-516-70": {
+        "catalogRatePerLb": 2.21,
+        "marketQuotePerLb": 1.75,
+        "marketIndex": 100
+      },
+      "304L": {
+        "catalogRatePerLb": 6.06,
+        "marketQuotePerLb": 4.75,
+        "marketIndex": 100
+      },
+      "316L": {
+        "catalogRatePerLb": 7.54,
+        "marketQuotePerLb": 6.2,
+        "marketIndex": 100
+      },
+      "AL-6061": {
+        "catalogRatePerLb": 5.13,
+        "marketQuotePerLb": 3.85,
+        "marketIndex": 100
+      }
+    }
+  },
+  "history": [
+    {
+      "id": "evt-2026-09-04-catalog-freeze",
+      "at": "2026-09-04T10:42:00.000Z",
+      "type": "catalog_freeze",
+      "note": "Graduated $/lb raise applied; matrix baseline+after logged. Market quotes are placeholders until real mill tickets entered.",
+      "ratesApplied": {
+        "304": 5.55,
+        "SA-36": 1.87,
+        "SA-516-70": 2.18,
+        "304L": 6.01,
+        "316L": 7.48,
+        "AL-6061": 5.1
+      }
+    },
+    {
+      "id": "evt-micro-bump-2026-09-04",
+      "at": "2026-09-04T10:58:50.835Z",
+      "sealedAt": "2026-09-04T11:01:00.000Z",
+      "localTimestamp": "2026-09-04T06:01:00-05:00",
+      "performedBy": "MCH",
+      "performedByFull": "Michael Huerta (MCH)",
+      "type": "micro_gradual_catalog_bump",
+      "note": "Slight gradual raise $0.02→$0.06/lb least→most expensive grade. Internal log only; no website price adjuster UI. Implemented by MCH.",
+      "visibility": "internal_files_only",
+      "websiteUi": false,
+      "bumps": {
+        "SA-36": 0.02,
+        "SA-516-70": 0.03,
+        "AL-6061": 0.03,
+        "304": 0.04,
+        "304L": 0.05,
+        "316L": 0.06
+      },
+      "ratesBefore": {
+        "SA-36": 1.87,
+        "SA-516-70": 2.18,
+        "AL-6061": 5.1,
+        "304": 5.55,
+        "304L": 6.01,
+        "316L": 7.48
+      },
+      "ratesApplied": {
+        "SA-36": 1.89,
+        "SA-516-70": 2.21,
+        "AL-6061": 5.13,
+        "304": 5.59,
+        "304L": 6.06,
+        "316L": 7.54
+      },
+      "auditRef": "logs/paddle-blind-prices/audit-2026-09-04-MCH.json",
+      "sampleBlinds": [
+        {
+          "nps": "4\"",
+          "mat": "SA-516-70",
+          "thk": 0.1196,
+          "label": "4\" 150# 11ga SA-516-70 (common utility)",
+          "adjustedLbs": 2.16,
+          "wholesaleBefore": 40,
+          "wholesaleAfter": 40,
+          "delta": 0,
+          "rateBefore": 2.18,
+          "rateAfter": 2.21,
+          "bumpPerLb": 0.03
+        },
+        {
+          "nps": "2\"",
+          "mat": "SA-36",
+          "thk": 0.1196,
+          "label": "2\" 150# 11ga SA-36",
+          "adjustedLbs": 0.8,
+          "wholesaleBefore": 36,
+          "wholesaleAfter": 36,
+          "delta": 0,
+          "rateBefore": 1.87,
+          "rateAfter": 1.89,
+          "bumpPerLb": 0.02
+        },
+        {
+          "nps": "6\"",
+          "mat": "304L",
+          "thk": 0.1196,
+          "label": "6\" 150# 11ga 304L",
+          "adjustedLbs": 3.61,
+          "wholesaleBefore": 57,
+          "wholesaleAfter": 57,
+          "delta": 0,
+          "rateBefore": 6.01,
+          "rateAfter": 6.06,
+          "bumpPerLb": 0.05
+        },
+        {
+          "nps": "4\"",
+          "mat": "316L",
+          "thk": 0.1196,
+          "label": "4\" 150# 11ga 316L",
+          "adjustedLbs": 2.27,
+          "wholesaleBefore": 52,
+          "wholesaleAfter": 52,
+          "delta": 0,
+          "rateBefore": 7.48,
+          "rateAfter": 7.54,
+          "bumpPerLb": 0.06
+        }
+      ]
+    }
+  ],
+  "examples": {
+    "nickelSurge316L": {
+      "title": "316L nickel surge — stepped pass-through",
+      "marketQuoteAtAnchor": 6.2,
+      "marketQuoteNow": 7.1,
+      "anchorCatalog": 7.48,
+      "passThroughPct": 90,
+      "uncappedCandidate": 8.29,
+      "maxStep": 0.45,
+      "appliedThisReview": 7.93,
+      "remainderNextReview": 0.36
+    },
+    "acrossTheBoard3Pct": {
+      "title": "All mills +3% — fair differential catalog move",
+      "marketMovePct": 3,
+      "approximateNewCatalog": {
+        "304": 5.69,
+        "SA-36": 1.9,
+        "SA-516-70": 2.22,
+        "304L": 6.16,
+        "316L": 7.68,
+        "AL-6061": 5.22
+      }
+    },
+    "acrossTheBoardMinus3Pct": {
+      "title": "All mills -3% — fair differential catalog cuts",
+      "marketMovePct": -3,
+      "note": "Same pass-through math with negative sign; CS cuts less than 316L",
+      "howToRun": "node scripts/apply-material-market-adjustment.mjs --propose --across -3"
+    },
+    "nickelRelief316L": {
+      "title": "316L mill drop — bring catalog down",
+      "howToRun": "node scripts/apply-material-market-adjustment.mjs --propose --quote 316L=5.50"
+    }
+  }
+}

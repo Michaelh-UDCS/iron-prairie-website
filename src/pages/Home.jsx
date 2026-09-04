@@ -1,17 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import gatePhoto from '../assets/front-gate-no-trailer-v2~2.png';
-import { Truck, MapPin, ShieldCheck, PackageCheck, CheckCircle2, ArrowRight, Zap } from 'lucide-react';
+import { Truck, MapPin, ShieldCheck, PackageCheck, CheckCircle2, ArrowRight } from 'lucide-react';
 
 export default function Home() {
   return (
     <div className="space-y-0 w-full">
       {/* FULL-BLEED HERO — Edge-to-edge custom fabrication showcase with perfectly scaled gate media */}
       <section className="home-hero border-b border-brand-border" aria-label="Iron Prairie Fabrication Group hero">
-        {/* Right-aligned edge-to-edge media plane */}
+        {/* Right-aligned edge-to-edge media plane — always render the gate image */}
         <div className="home-hero__media-wrapper" aria-hidden="true">
           <picture className="w-full h-full block">
+            <source media="(max-width: 640px)" srcSet="/images/hero-gate-mobile.avif" type="image/avif" />
             <source media="(max-width: 640px)" srcSet="/images/hero-gate-mobile.webp" type="image/webp" />
+            <source srcSet="/images/hero-gate.avif" type="image/avif" />
             <source srcSet="/images/hero-gate.webp" type="image/webp" />
             <img
               src="/images/hero-gate.webp"
@@ -19,21 +20,16 @@ export default function Home() {
               width="1024"
               height="768"
               fetchpriority="high"
-              decoding="async"
+              decoding="sync"
               className="home-hero__media"
             />
           </picture>
           <div className="home-hero__media-fade" />
         </div>
 
-        {/* Hero Content Container */}
+        {/* Hero Content Container — brand, headline, support, CTAs only */}
         <div className="home-hero__content">
           <div className="max-w-xl xl:max-w-2xl space-y-5">
-            <div className="inline-flex items-center gap-2 self-start px-3 py-1 rounded-full bg-brand-brown/20 border border-brand-brown/40 text-brand-bone text-xs font-mono font-bold uppercase tracking-wider">
-              <MapPin className="h-3.5 w-3.5 text-brand-brown-light shrink-0" aria-hidden="true" />
-              <span>Custom Fabrication Shop · Bay City, TX · Ships All 50 States</span>
-            </div>
-
             <div className="space-y-2">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-brown-light font-mono">
                 Iron Prairie Fabrication Group LLC
@@ -56,27 +52,6 @@ export default function Home() {
                 <span>View Custom Capabilities</span>
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
-            </div>
-
-            {/* B2B Catalog Secondary Link */}
-            <div className="pt-0.5">
-              <Link to="/paddle-blinds" className="inline-flex items-center gap-1.5 text-xs font-mono text-stone-300 hover:text-brand-ivory transition-colors">
-                <Zap className="h-3.5 w-3.5 text-brand-brown-light shrink-0" aria-hidden="true" />
-                <span>Also manufacturing ASME B16.48 Paddle Blinds &amp; Spacers — View Catalog &rarr;</span>
-              </Link>
-            </div>
-
-            {/* Capability highlights — Core Custom Fabrication */}
-            <div className="pt-4 border-t border-brand-border/60 grid grid-cols-3 gap-2 text-xs font-mono text-stone-300">
-              <div>
-                <span className="text-brand-brown-light font-bold">Custom</span> Ranch Gates
-              </div>
-              <div>
-                <span className="text-brand-brown-light font-bold">Ag &amp; Livestock</span> Steel
-              </div>
-              <div>
-                <span className="text-brand-brown-light font-bold">CNC Plasma</span> &amp; Welding
-              </div>
             </div>
           </div>
         </div>

@@ -72,7 +72,7 @@
   --color-panel-muted: #2a2623;
   --color-border: #3d3834;
   --color-bone: #e8e4de;
-  --color-muted: #78716c;
+  --color-muted: #9c9690;
   --color-text: #1e293b;
   --color-text-secondary: #334155;
 
@@ -174,7 +174,14 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 30%;
+  object-position: 58% 32%;
+}
+
+@media (max-width: 1023px) {
+  .home-hero__media {
+    /* Gate/flag sit mid-right — bias framing so subject stays clear under text */
+    object-position: 68% 34%;
+  }
 }
 
 .home-hero__media-fade {
@@ -185,24 +192,34 @@ body {
 
 @media (min-width: 1024px) {
   .home-hero__media-fade {
+    /* Softer left fade: keep left copy legible, reveal more gate/flag sooner */
     background: linear-gradient(
       90deg,
       var(--color-ink) 0%,
-      rgba(22, 20, 19, 0.95) 12%,
-      rgba(22, 20, 19, 0.35) 45%,
-      transparent 85%
+      rgba(22, 20, 19, 0.82) 10%,
+      rgba(22, 20, 19, 0.22) 38%,
+      transparent 72%
     );
   }
 }
 
 @media (max-width: 1023px) {
   .home-hero__media-fade {
-    background: linear-gradient(
-      180deg,
-      rgba(22, 20, 19, 0.92) 0%,
-      rgba(22, 20, 19, 0.78) 55%,
-      rgba(22, 20, 19, 0.96) 100%
-    );
+    /* Left/bottom-weighted wash (~0.55–0.72); open mid-right so gate details read */
+    background:
+      linear-gradient(
+        105deg,
+        rgba(22, 20, 19, 0.70) 0%,
+        rgba(22, 20, 19, 0.55) 42%,
+        rgba(22, 20, 19, 0.32) 72%,
+        rgba(22, 20, 19, 0.28) 100%
+      ),
+      linear-gradient(
+        180deg,
+        rgba(22, 20, 19, 0.22) 0%,
+        transparent 45%,
+        rgba(22, 20, 19, 0.58) 100%
+      );
   }
 }
 

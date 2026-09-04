@@ -94,7 +94,7 @@ export const OwnerPricingModal: React.FC<OwnerPricingModalProps> = ({
                   type="number"
                   step="0.05"
                   value={pricingConfig.sa516PricePerLb}
-                  onChange={(e) => setPricingConfig({ ...pricingConfig, sa516PricePerLb: parseFloat(e.target.value) || 2.15 })}
+                  onChange={(e) => setPricingConfig({ ...pricingConfig, sa516PricePerLb: parseFloat(e.target.value) || 2.18 })}
                   className="w-full bg-slate-950 border border-slate-700 px-3 py-1.5 rounded-lg text-slate-100 focus:border-amber-500 focus:outline-none"
                 />
               </div>
@@ -105,7 +105,7 @@ export const OwnerPricingModal: React.FC<OwnerPricingModalProps> = ({
                   type="number"
                   step="0.05"
                   value={pricingConfig.sa36PricePerLb}
-                  onChange={(e) => setPricingConfig({ ...pricingConfig, sa36PricePerLb: parseFloat(e.target.value) || 1.85 })}
+                  onChange={(e) => setPricingConfig({ ...pricingConfig, sa36PricePerLb: parseFloat(e.target.value) || 1.87 })}
                   className="w-full bg-slate-950 border border-slate-700 px-3 py-1.5 rounded-lg text-slate-100 focus:border-amber-500 focus:outline-none"
                 />
               </div>
@@ -116,7 +116,7 @@ export const OwnerPricingModal: React.FC<OwnerPricingModalProps> = ({
                   type="number"
                   step="0.10"
                   value={pricingConfig.ss304PricePerLb}
-                  onChange={(e) => setPricingConfig({ ...pricingConfig, ss304PricePerLb: parseFloat(e.target.value) || 5.50 })}
+                  onChange={(e) => setPricingConfig({ ...pricingConfig, ss304PricePerLb: parseFloat(e.target.value) || 5.55 })}
                   className="w-full bg-slate-950 border border-slate-700 px-3 py-1.5 rounded-lg text-slate-100 focus:border-amber-500 focus:outline-none"
                 />
               </div>
@@ -127,7 +127,7 @@ export const OwnerPricingModal: React.FC<OwnerPricingModalProps> = ({
                   type="number"
                   step="0.10"
                   value={pricingConfig.ss304LPricePerLb}
-                  onChange={(e) => setPricingConfig({ ...pricingConfig, ss304LPricePerLb: parseFloat(e.target.value) || 5.95 })}
+                  onChange={(e) => setPricingConfig({ ...pricingConfig, ss304LPricePerLb: parseFloat(e.target.value) || 6.01 })}
                   className="w-full bg-slate-950 border border-slate-700 px-3 py-1.5 rounded-lg text-slate-100 focus:border-amber-500 focus:outline-none"
                 />
               </div>
@@ -138,7 +138,7 @@ export const OwnerPricingModal: React.FC<OwnerPricingModalProps> = ({
                   type="number"
                   step="0.10"
                   value={pricingConfig.ss316LPricePerLb}
-                  onChange={(e) => setPricingConfig({ ...pricingConfig, ss316LPricePerLb: parseFloat(e.target.value) || 7.40 })}
+                  onChange={(e) => setPricingConfig({ ...pricingConfig, ss316LPricePerLb: parseFloat(e.target.value) || 7.48 })}
                   className="w-full bg-slate-950 border border-slate-700 px-3 py-1.5 rounded-lg text-slate-100 focus:border-amber-500 focus:outline-none"
                 />
               </div>
@@ -149,7 +149,7 @@ export const OwnerPricingModal: React.FC<OwnerPricingModalProps> = ({
                   type="number"
                   step="0.10"
                   value={pricingConfig.alPricePerLb}
-                  onChange={(e) => setPricingConfig({ ...pricingConfig, alPricePerLb: parseFloat(e.target.value) || 5.00 })}
+                  onChange={(e) => setPricingConfig({ ...pricingConfig, alPricePerLb: parseFloat(e.target.value) || 5.10 })}
                   className="w-full bg-slate-950 border border-slate-700 px-3 py-1.5 rounded-lg text-slate-100 focus:border-amber-500 focus:outline-none"
                 />
               </div>

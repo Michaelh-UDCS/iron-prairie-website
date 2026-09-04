@@ -553,13 +553,6 @@ function buildJsonLd(route) {
 
 function buildStaticBody(route) {
   const isPaddleBlinds = route.path === '/paddle-blinds' || route.path === '/storefront';
-  const isHome = route.path === '/';
-  const isServices = route.path === '/services';
-  const isAbout = route.path === '/about';
-  const isWomanOwned = route.path === '/woman-owned';
-  const isProjects = route.path === '/projects';
-  const isContact = route.path === '/contact';
-
   return `
     <header style="padding:1rem 1.5rem;background:#241d1a;color:#f7f5f0;font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;">
       <div style="max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
@@ -573,18 +566,21 @@ function buildStaticBody(route) {
       </div>
     </header>
     <main style="max-width:1100px;margin:2rem auto;padding:0 1.5rem;min-height:950px;font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;color:#1e293b;">
-      ${isHome ? `
-      <section style="margin-bottom:2rem;border-radius:16px;overflow:hidden;background:#161413;">
+      ${route.path === '/' ? `
+      <section class="home-hero" style="margin-bottom:2rem;border-radius:16px;overflow:hidden;background:#161413;min-height:320px;position:relative;">
         <picture>
+          <source media="(max-width: 640px)" srcset="/images/hero-gate-mobile.avif" type="image/avif" />
           <source media="(max-width: 640px)" srcset="/images/hero-gate-mobile.webp" type="image/webp" />
+          <source srcset="/images/hero-gate.avif" type="image/avif" />
           <source srcset="/images/hero-gate.webp" type="image/webp" />
           <img
+            class="home-hero__media"
             src="/images/hero-gate.webp"
             alt="Custom fabricated ranch entrance gate and boundary steel by Iron Prairie Fabrication Group LLC"
             width="1024"
             height="768"
             fetchpriority="high"
-            decoding="async"
+            decoding="sync"
             style="width:100%;height:auto;max-height:480px;object-fit:cover;display:block;"
           />
         </picture>
@@ -715,11 +711,15 @@ for (const route of routes) {
 
   // Only preload the hero-gate LCP image on the home page
   if (route.path !== '/') {
-    html = html.replace(/<!-- Preload LCP Hero Image -->[\s\S]*?<link rel="preload" href="\/images\/hero-gate\.webp"[^>]+>\s*/, '');
+    html = html.replace(
+      /<!-- Preload LCP Hero Image[\s\S]*?-->\s*(?:<link rel="preload" href="\/images\/hero-gate[^"]+"[^>]+>\s*)+/,
+      ''
+    );
   }
 
   // Inject semantic static body fallback inside #root for crawlers, AI agents, and non-JS clients
   const staticBody = buildStaticBody(route);
+
   html = html.replace(
     /<div\s+id="root"><\/div>/s,
     `<div id="root">${staticBody}</div>`
@@ -734,10 +734,38 @@ for (const route of routes) {
   </script>`;
 
   const criticalCss = `<style id="critical-css">
-    :root { --brand-ink: #161413; --brand-bone: #f7f5f0; --brand-brown: #6b3b2a; --brand-panel: #1f1c1a; }
+    :root { --brand-ink: #161413; --brand-bone: #f7f5f0; --brand-brown: #6b3b2a; --brand-panel: #1f1c1a; --header-offset: 8.25rem; }
     body { background: #161413; color: #f7f5f0; margin: 0; font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif; }
-    .home-hero { position: relative; background: #161413; min-height: 380px; display: block; overflow: hidden; }
-    .home-hero__media { width: 100%; height: auto; max-height: 600px; object-fit: cover; display: block; }
+    .home-hero {
+      position: relative;
+      background: #161413;
+      min-height: calc(100svh - var(--header-offset));
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      width: 100%;
+    }
+    .home-hero__media-wrapper {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    @media (min-width: 1024px) {
+      .home-hero__media-wrapper { left: 40%; width: 60%; }
+    }
+    .home-hero__media {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 58% 32%;
+      display: block;
+    }
+    @media (max-width: 1023px) {
+      .home-hero__media { object-position: 68% 34%; }
+    }
   </style>`;
 
   html = html.replace(

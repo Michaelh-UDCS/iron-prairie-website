@@ -1,0 +1,111 @@
+{
+  "auditId": "IPF-PB-AUDIT-2026-09-04-MCH",
+  "performedBy": "MCH",
+  "performedByFull": "Michael Huerta (MCH)",
+  "timezone": "America/Chicago",
+  "localTimestamp": "2026-09-04T06:01:00-05:00",
+  "utcTimestamp": "2026-09-04T11:01:00.000Z",
+  "visibility": "internal_files_only",
+  "websiteUi": false,
+  "summary": "Implemented gradual catalog $/lb micro-bump ($0.02→$0.06) least→most expensive grade; logged baseline matrix, market ledger method, and final applied rates. No public price-adjuster UI.",
+  "actionsToday": [
+    {
+      "seq": 1,
+      "at": "2026-09-04T10:42:00.000Z",
+      "type": "catalog_freeze_and_graduated_raise",
+      "performedBy": "MCH",
+      "detail": "Froze baseline price matrix (11,880 SKUs) then applied first graduated material $/lb raise; exported baseline/after/delta logs."
+    },
+    {
+      "seq": 2,
+      "at": "2026-09-04T10:45:00.000Z",
+      "type": "material_market_ledger_created",
+      "performedBy": "MCH",
+      "detail": "Created internal materialCostLedger.json + MATERIAL_MARKET_METHOD.md + CLI adjuster (files only). Bidirectional raise/cut policy."
+    },
+    {
+      "seq": 3,
+      "at": "2026-09-04T10:58:50.833Z",
+      "type": "micro_gradual_catalog_bump",
+      "performedBy": "MCH",
+      "detail": "Applied exact gradual bump $0.02→$0.06/lb cheapest→most expensive with light randomness; patched storefront/ERP defaults; logged samples."
+    },
+    {
+      "seq": 4,
+      "at": "2026-09-04T11:01:00.000Z",
+      "type": "audit_seal",
+      "performedBy": "MCH",
+      "detail": "Sealed today's internal audit with MCH attribution and timestamps. Confirmed no website price-adjuster UI exposure."
+    }
+  ],
+  "microBumpImplemented": {
+    "rangeUsdPerLb": {
+      "min": 0.02,
+      "max": 0.06
+    },
+    "gradeOrderLeastToMost": [
+      "SA-36",
+      "SA-516-70",
+      "AL-6061",
+      "304",
+      "304L",
+      "316L"
+    ],
+    "bumps": {
+      "304": 0.04,
+      "SA-36": 0.02,
+      "SA-516-70": 0.03,
+      "AL-6061": 0.03,
+      "304L": 0.05,
+      "316L": 0.06
+    },
+    "ratesBefore": {
+      "304": 5.55,
+      "SA-36": 1.87,
+      "SA-516-70": 2.18,
+      "AL-6061": 5.1,
+      "304L": 6.01,
+      "316L": 7.48
+    },
+    "ratesAfter": {
+      "304": 5.59,
+      "SA-36": 1.89,
+      "SA-516-70": 2.21,
+      "AL-6061": 5.13,
+      "304L": 6.06,
+      "316L": 7.54
+    },
+    "filesPatched": [
+      "src/data/masterGeometry.ts",
+      "src/App.tsx",
+      "src/data/paddleBlindMasterData.ts",
+      "IPG-Custom-ERP/src/data/masterGeometry.ts",
+      "IPG-Custom-ERP/src/data/paddleBlindMasterData.ts",
+      "logs/paddle-blind-prices/materialCostLedger.json"
+    ],
+    "exampleIfWas45": {
+      "blind": "4\" 150# 1/4\" SA-516-70",
+      "wholesaleBefore": 45,
+      "wholesaleAfter": 45,
+      "subtotalBefore": 44.14,
+      "subtotalAfter": 44.27,
+      "materialCostDeltaUsd": 0.13,
+      "note": "True cost +~$0.13; wholesale unchanged due to Math.ceil dollar tick."
+    }
+  },
+  "artifacts": [
+    "logs/paddle-blind-prices/baseline-2026-09-04.csv",
+    "logs/paddle-blind-prices/baseline-2026-09-04.json",
+    "logs/paddle-blind-prices/after-2026-09-04.csv",
+    "logs/paddle-blind-prices/after-2026-09-04.json",
+    "logs/paddle-blind-prices/delta-2026-09-04.csv",
+    "logs/paddle-blind-prices/delta-2026-09-04.json",
+    "logs/paddle-blind-prices/summary-2026-09-04.json",
+    "logs/paddle-blind-prices/micro-bump-2026-09-04.json",
+    "logs/paddle-blind-prices/MATERIAL_MARKET_METHOD.md",
+    "logs/paddle-blind-prices/AUDIT-2026-09-04-MCH.md",
+    "logs/paddle-blind-prices/audit-2026-09-04-MCH.json",
+    "logs/paddle-blind-prices/materialCostLedger.json"
+  ],
+  "visibilityNote": "Timestamps and MCH audit exist only under logs/; never rendered on the live website; hosting public=dist only."
+}

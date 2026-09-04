@@ -8,7 +8,7 @@ import About from './pages/About.jsx';
 import Services from './pages/Services.jsx';
 import Projects from './pages/Projects.jsx';
 import WomanOwned from './pages/WomanOwned.jsx';
-import Contact from './pages/Contact.jsx';
+const Contact = lazy(() => import('./pages/Contact.jsx'));
 import PrivacyPolicy from './pages/PrivacyPolicy.jsx';
 import TermsOfService from './pages/TermsOfService.jsx';
 import NotFound from './pages/NotFound.jsx';
@@ -90,8 +90,9 @@ const dispatchOrderEmail = async (order: any) => {
 
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const pickRandom = <T,>(arr: readonly T[] | T[]): T => arr[Math.floor(Math.random() * arr.length)];
-import { RapidMatrixOrderGrid } from './components/RapidMatrixOrderGrid';
-import { saveCheckoutLead } from './services/leadService';
+const RapidMatrixOrderGrid = lazy(() =>
+  import('./components/RapidMatrixOrderGrid').then((m) => ({ default: m.RapidMatrixOrderGrid }))
+);
 const InstantProposalModal = lazy(() =>
   import('./components/InstantProposalModal').then((m) => ({ default: m.InstantProposalModal }))
 );
@@ -99,7 +100,6 @@ const BulkListRfqModal = lazy(() =>
   import('./components/BulkListRfqModal').then((m) => ({ default: m.BulkListRfqModal }))
 );
 import { generateNextPoNumber, generateNextProposalNumber, generateNextWorkOrderNumber } from './utils/orderNumberGenerator';
-import { reportCheckoutCancelled } from './services/erpStorefrontFeed';
 
 const ROUTE_METADATA: Record<string, { title: string; desc: string }> = {
   '/': {
@@ -294,12 +294,12 @@ const DEFAULT_PRICING_CONFIG: PricingConfig = {
   globalMarkupPct: 0,
   publicListBufferPct: 10,
   commercialDiscountPct: 10,
-  sa36PricePerLb: 1.85,
-  sa516PricePerLb: 2.15,
-  ss304PricePerLb: 5.50,
-  ss304LPricePerLb: 5.95,
-  ss316LPricePerLb: 7.40,
-  alPricePerLb: 5.00,
+  sa36PricePerLb: 1.89,
+  sa516PricePerLb: 2.21,
+  ss304PricePerLb: 5.59,
+  ss304LPricePerLb: 6.06,
+  ss316LPricePerLb: 7.54,
+  alPricePerLb: 5.13,
   laborRatePerHour: 83.85,
   baseHandlingFee: 5.00,
   scrapMultiplier: 1.40,
@@ -323,7 +323,7 @@ const MATERIALS: Record<MaterialCode, MaterialConfig> = {
     name: 'Carbon Steel SA-36 (Structural Plate)',
     shortSpec: 'ASME SA-36 / ASTM A36',
     density1InchSqFt: 40.84,
-    defaultPricePerLb: 1.85,
+    defaultPricePerLb: 1.89,
     badge: 'Utility / Line Testing',
   },
   'SA-516-70': {
@@ -332,7 +332,7 @@ const MATERIALS: Record<MaterialCode, MaterialConfig> = {
     name: 'Carbon Steel SA-516 Gr. 70 (PVQ Pressure Vessel)',
     shortSpec: 'ASME SA-516 Gr. 70 (PVQ Boiler)',
     density1InchSqFt: 40.84,
-    defaultPricePerLb: 2.15,
+    defaultPricePerLb: 2.21,
     badge: 'Standard Refinery Spec',
   },
   '304': {
@@ -341,7 +341,7 @@ const MATERIALS: Record<MaterialCode, MaterialConfig> = {
     name: 'Stainless Steel 304 (Commercial Grade)',
     shortSpec: 'ASTM A240 304 Commercial',
     density1InchSqFt: 42.665,
-    defaultPricePerLb: 5.50,
+    defaultPricePerLb: 5.59,
     badge: 'Commercial SS',
   },
   '304L': {
@@ -350,7 +350,7 @@ const MATERIALS: Record<MaterialCode, MaterialConfig> = {
     name: 'Stainless Steel 304/304L (Dual-Certified Low Carbon)',
     shortSpec: 'ASTM A240 304/304L Dual-Cert',
     density1InchSqFt: 42.665,
-    defaultPricePerLb: 5.95,
+    defaultPricePerLb: 6.06,
     badge: 'Dual Certified SS',
   },
   '316L': {
@@ -359,7 +359,7 @@ const MATERIALS: Record<MaterialCode, MaterialConfig> = {
     name: 'Stainless Steel 316L (Acid & Marine Refinery Grade)',
     shortSpec: 'ASTM A240 316L Moly Acid Grade',
     density1InchSqFt: 43.15,
-    defaultPricePerLb: 7.40,
+    defaultPricePerLb: 7.54,
     badge: 'Chemical / Marine SS',
   },
   'AL-6061': {
@@ -368,7 +368,7 @@ const MATERIALS: Record<MaterialCode, MaterialConfig> = {
     name: 'Aluminum 6061-T6 (Structural Industrial Plate)',
     shortSpec: 'ASTM B209 6061-T6 High Strength',
     density1InchSqFt: 14.39,
-    defaultPricePerLb: 5.00,
+    defaultPricePerLb: 5.13,
     badge: 'Lightweight Industrial',
   },
 };
@@ -688,15 +688,27 @@ export default function App() {
       const saved = localStorage.getItem('ipf_pricing_config');
       if (saved) {
         const parsed = JSON.parse(saved);
+        // Migrate frozen pre-raise defaults → new graduated $/lb rates (preserve custom owner overrides).
+        const migrateRate = (value: unknown, oldDefault: number, nextDefault: number) =>
+          value === oldDefault || value == null ? nextDefault : Number(value);
+
         return {
           ...DEFAULT_PRICING_CONFIG,
           ...parsed,
-          sa36PricePerLb: parsed.sa36PricePerLb ?? DEFAULT_PRICING_CONFIG.sa36PricePerLb,
-          sa516PricePerLb: parsed.sa516PricePerLb ?? parsed.csPricePerLb ?? DEFAULT_PRICING_CONFIG.sa516PricePerLb,
-          ss304PricePerLb: parsed.ss304PricePerLb ?? DEFAULT_PRICING_CONFIG.ss304PricePerLb,
-          ss304LPricePerLb: parsed.ss304LPricePerLb ?? parsed.ssPricePerLb ?? DEFAULT_PRICING_CONFIG.ss304LPricePerLb,
-          ss316LPricePerLb: parsed.ss316LPricePerLb ?? DEFAULT_PRICING_CONFIG.ss316LPricePerLb,
-          alPricePerLb: parsed.alPricePerLb ?? DEFAULT_PRICING_CONFIG.alPricePerLb,
+          sa36PricePerLb: migrateRate(parsed.sa36PricePerLb, 1.85, DEFAULT_PRICING_CONFIG.sa36PricePerLb),
+          sa516PricePerLb: migrateRate(
+            parsed.sa516PricePerLb ?? parsed.csPricePerLb,
+            2.15,
+            DEFAULT_PRICING_CONFIG.sa516PricePerLb
+          ),
+          ss304PricePerLb: migrateRate(parsed.ss304PricePerLb, 5.50, DEFAULT_PRICING_CONFIG.ss304PricePerLb),
+          ss304LPricePerLb: migrateRate(
+            parsed.ss304LPricePerLb ?? parsed.ssPricePerLb,
+            5.95,
+            DEFAULT_PRICING_CONFIG.ss304LPricePerLb
+          ),
+          ss316LPricePerLb: migrateRate(parsed.ss316LPricePerLb, 7.40, DEFAULT_PRICING_CONFIG.ss316LPricePerLb),
+          alPricePerLb: migrateRate(parsed.alPricePerLb, 5.00, DEFAULT_PRICING_CONFIG.alPricePerLb),
         };
       }
       return DEFAULT_PRICING_CONFIG;
@@ -895,11 +907,13 @@ export default function App() {
         const pendingRaw = localStorage.getItem('ipf_pending_stripe_order');
         const pending = pendingRaw ? JSON.parse(pendingRaw) : null;
         const orderRefId = poFromUrl || pending?.poNumber || '';
-        void reportCheckoutCancelled({
-          orderRefId,
-          sessionId: sessionId || '',
-          reason: 'buyer_cancelled',
-        });
+        void import('./services/erpStorefrontFeed').then(({ reportCheckoutCancelled }) =>
+          reportCheckoutCancelled({
+            orderRefId,
+            sessionId: sessionId || '',
+            reason: 'buyer_cancelled',
+          })
+        );
         if (pending?.cart?.length) {
           recordAbandonedCartSession(pending.cart, 'Stripe Checkout Cancelled', {
             companyName: pending.companyName,
@@ -912,7 +926,9 @@ export default function App() {
       } catch (err) {
         console.error('Failed to record cancelled checkout:', err);
         if (poFromUrl || sessionId) {
-          void reportCheckoutCancelled({ orderRefId: poFromUrl, sessionId: sessionId || '', reason: 'buyer_cancelled' });
+          void import('./services/erpStorefrontFeed').then(({ reportCheckoutCancelled }) =>
+            reportCheckoutCancelled({ orderRefId: poFromUrl, sessionId: sessionId || '', reason: 'buyer_cancelled' })
+          );
         }
       }
       window.history.replaceState({}, '', window.location.pathname);
@@ -1694,6 +1710,7 @@ export default function App() {
 
     // Save lead snapshot to Firestore for analytics & CRM follow-up
     try {
+      const { saveCheckoutLead } = await import('./services/leadService');
       await saveCheckoutLead({
         orderRefId: poNumber,
         buyerName: contactName,
@@ -1978,17 +1995,19 @@ export default function App() {
         </div>
       </div>
 
-      <RapidMatrixOrderGrid
-        onAddBatchToCart={handleBatchAddToCart}
-        onOpenProposalModal={handleOpenProposalForItems}
-        masterGeometry={MASTER_GEOMETRY}
-        materials={MATERIALS}
-        calculateBlindPrice={calculateDynamicBlindPrice}
-        pricingConfig={pricingConfig}
-        isClientLoggedIn={isClientLoggedIn}
-        onOpenLoginModal={() => setIsLoginModalOpen(true)}
-        onOpenBulkRfqModal={() => setIsBulkRfqModalOpen(true)}
-      />
+      <Suspense fallback={<RouteFallback />}>
+        <RapidMatrixOrderGrid
+          onAddBatchToCart={handleBatchAddToCart}
+          onOpenProposalModal={handleOpenProposalForItems}
+          masterGeometry={MASTER_GEOMETRY}
+          materials={MATERIALS}
+          calculateBlindPrice={calculateDynamicBlindPrice}
+          pricingConfig={pricingConfig}
+          isClientLoggedIn={isClientLoggedIn}
+          onOpenLoginModal={() => setIsLoginModalOpen(true)}
+          onOpenBulkRfqModal={() => setIsBulkRfqModalOpen(true)}
+        />
+      </Suspense>
     </div>
   );
 
@@ -2381,7 +2400,7 @@ export default function App() {
                         min="0.50"
                         max="10.00"
                         value={pricingConfig.sa36PricePerLb}
-                        onChange={e => setPricingConfig(prev => ({ ...prev, sa36PricePerLb: parseFloat(e.target.value) || 1.85 }))}
+                        onChange={e => setPricingConfig(prev => ({ ...prev, sa36PricePerLb: parseFloat(e.target.value) || 1.87 }))}
                         className="w-full bg-transparent text-slate-900 font-bold focus:outline-none"
                       />
                       <span className="text-slate-500 text-[10px]">/lb</span>
@@ -2401,7 +2420,7 @@ export default function App() {
                         min="0.50"
                         max="10.00"
                         value={pricingConfig.sa516PricePerLb}
-                        onChange={e => setPricingConfig(prev => ({ ...prev, sa516PricePerLb: parseFloat(e.target.value) || 2.15 }))}
+                        onChange={e => setPricingConfig(prev => ({ ...prev, sa516PricePerLb: parseFloat(e.target.value) || 2.18 }))}
                         className="w-full bg-transparent text-slate-900 font-bold focus:outline-none"
                       />
                       <span className="text-slate-500 text-[10px]">/lb</span>
@@ -2421,7 +2440,7 @@ export default function App() {
                         min="1.00"
                         max="20.00"
                         value={pricingConfig.ss304PricePerLb}
-                        onChange={e => setPricingConfig(prev => ({ ...prev, ss304PricePerLb: parseFloat(e.target.value) || 5.50 }))}
+                        onChange={e => setPricingConfig(prev => ({ ...prev, ss304PricePerLb: parseFloat(e.target.value) || 5.55 }))}
                         className="w-full bg-transparent text-slate-900 font-bold focus:outline-none"
                       />
                       <span className="text-slate-500 text-[10px]">/lb</span>
@@ -2441,7 +2460,7 @@ export default function App() {
                         min="1.00"
                         max="20.00"
                         value={pricingConfig.ss304LPricePerLb}
-                        onChange={e => setPricingConfig(prev => ({ ...prev, ss304LPricePerLb: parseFloat(e.target.value) || 5.95 }))}
+                        onChange={e => setPricingConfig(prev => ({ ...prev, ss304LPricePerLb: parseFloat(e.target.value) || 6.01 }))}
                         className="w-full bg-transparent text-slate-900 font-bold focus:outline-none"
                       />
                       <span className="text-slate-500 text-[10px]">/lb</span>
@@ -2461,7 +2480,7 @@ export default function App() {
                         min="1.00"
                         max="25.00"
                         value={pricingConfig.ss316LPricePerLb}
-                        onChange={e => setPricingConfig(prev => ({ ...prev, ss316LPricePerLb: parseFloat(e.target.value) || 7.40 }))}
+                        onChange={e => setPricingConfig(prev => ({ ...prev, ss316LPricePerLb: parseFloat(e.target.value) || 7.48 }))}
                         className="w-full bg-transparent text-slate-900 font-bold focus:outline-none"
                       />
                       <span className="text-slate-500 text-[10px]">/lb</span>
@@ -2481,7 +2500,7 @@ export default function App() {
                         min="1.00"
                         max="15.00"
                         value={pricingConfig.alPricePerLb}
-                        onChange={e => setPricingConfig(prev => ({ ...prev, alPricePerLb: parseFloat(e.target.value) || 5.00 }))}
+                        onChange={e => setPricingConfig(prev => ({ ...prev, alPricePerLb: parseFloat(e.target.value) || 5.10 }))}
                         className="w-full bg-transparent text-slate-900 font-bold focus:outline-none"
                       />
                       <span className="text-slate-500 text-[10px]">/lb</span>

@@ -18,7 +18,7 @@ export default {
         'brand-border': '#3d3834',
         // Text + accents
         'brand-bone': '#e8e4de',
-        'brand-muted': '#78716c',
+        'brand-muted': '#9c9690',
         'brand-blue': '#475569',
       },
       fontFamily: {

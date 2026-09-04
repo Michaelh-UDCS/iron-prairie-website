@@ -1,0 +1,280 @@
+{
+  "generatedAt": "2026-09-04T10:42:04.515Z",
+  "rateBumps": {
+    "304": 0.05,
+    "SA-36": 0.02,
+    "SA-516-70": 0.03,
+    "304L": 0.06,
+    "316L": 0.08,
+    "AL-6061": 0.1
+  },
+  "baselineSummary": {
+    "skuCount": 11880,
+    "rates": {
+      "304": 5.5,
+      "SA-36": 1.85,
+      "SA-516-70": 2.15,
+      "304L": 5.95,
+      "316L": 7.4,
+      "AL-6061": 5
+    },
+    "byMaterial": {
+      "304": {
+        "count": 1980,
+        "minWholesale": 36,
+        "maxWholesale": 8164,
+        "avgWholesale": 625.98
+      },
+      "SA-36": {
+        "count": 1980,
+        "minWholesale": 35,
+        "maxWholesale": 2667,
+        "avgWholesale": 227.9
+      },
+      "SA-516-70": {
+        "count": 1980,
+        "minWholesale": 35,
+        "maxWholesale": 3090,
+        "avgWholesale": 258.55
+      },
+      "304L": {
+        "count": 1980,
+        "minWholesale": 37,
+        "maxWholesale": 8828,
+        "avgWholesale": 674.01
+      },
+      "316L": {
+        "count": 1980,
+        "minWholesale": 37,
+        "maxWholesale": 11089,
+        "avgWholesale": 837.79
+      },
+      "AL-6061": {
+        "count": 1980,
+        "minWholesale": 35,
+        "maxWholesale": 2543,
+        "avgWholesale": 218.87
+      }
+    },
+    "spotChecks": [
+      {
+        "partNumber": "PBSA36-CX150T11GAS1/2",
+        "nps": "1/2\"",
+        "pressureClass": 150,
+        "material": "SA-36",
+        "thicknessLabel": "11 Gauge",
+        "thicknessIn": 0.1196,
+        "pricePerLb": 1.85,
+        "actualWeightLbs": 0.2,
+        "adjustedWeightLbs": 0.28,
+        "wholesalePrice": 35,
+        "listPrice": 39
+      },
+      {
+        "partNumber": "PBSA516-70-CX150T11GAS4",
+        "nps": "4\"",
+        "pressureClass": 150,
+        "material": "SA-516-70",
+        "thicknessLabel": "11 Gauge",
+        "thicknessIn": 0.1196,
+        "pricePerLb": 2.15,
+        "actualWeightLbs": 1.54,
+        "adjustedWeightLbs": 2.16,
+        "wholesalePrice": 39,
+        "listPrice": 43
+      },
+      {
+        "partNumber": "PB304L-CX300T1/2S8",
+        "nps": "8\"",
+        "pressureClass": 300,
+        "material": "304L",
+        "thicknessLabel": "1/2\"",
+        "thicknessIn": 0.5,
+        "pricePerLb": 5.95,
+        "actualWeightLbs": 20.53,
+        "adjustedWeightLbs": 28.74,
+        "wholesalePrice": 206,
+        "listPrice": 227
+      },
+      {
+        "partNumber": "PB316L-C1500T3S24",
+        "nps": "24\"",
+        "pressureClass": 1500,
+        "material": "316L",
+        "thicknessLabel": "3\"",
+        "thicknessIn": 3,
+        "pricePerLb": 7.4,
+        "actualWeightLbs": 1064.9,
+        "adjustedWeightLbs": 1490.86,
+        "wholesalePrice": 11089,
+        "listPrice": 12198
+      },
+      {
+        "partNumber": "PBAL6061-CX150T11GAS6",
+        "nps": "6\"",
+        "pressureClass": 150,
+        "material": "AL-6061",
+        "thicknessLabel": "11 Gauge",
+        "thicknessIn": 0.1196,
+        "pricePerLb": 5,
+        "actualWeightLbs": 0.87,
+        "adjustedWeightLbs": 1.22,
+        "wholesalePrice": 41,
+        "listPrice": 46
+      }
+    ]
+  },
+  "afterSummary": {
+    "skuCount": 11880,
+    "rates": {
+      "304": 5.55,
+      "SA-36": 1.87,
+      "SA-516-70": 2.18,
+      "304L": 6.01,
+      "316L": 7.48,
+      "AL-6061": 5.1
+    },
+    "byMaterial": {
+      "304": {
+        "count": 1980,
+        "minWholesale": 36,
+        "maxWholesale": 8238,
+        "avgWholesale": 631.32
+      },
+      "SA-36": {
+        "count": 1980,
+        "minWholesale": 35,
+        "maxWholesale": 2695,
+        "avgWholesale": 229.94
+      },
+      "SA-516-70": {
+        "count": 1980,
+        "minWholesale": 35,
+        "maxWholesale": 3133,
+        "avgWholesale": 261.62
+      },
+      "304L": {
+        "count": 1980,
+        "minWholesale": 37,
+        "maxWholesale": 8916,
+        "avgWholesale": 680.42
+      },
+      "316L": {
+        "count": 1980,
+        "minWholesale": 37,
+        "maxWholesale": 11208,
+        "avgWholesale": 846.41
+      },
+      "AL-6061": {
+        "count": 1980,
+        "minWholesale": 35,
+        "maxWholesale": 2592,
+        "avgWholesale": 222.49
+      }
+    },
+    "spotChecks": [
+      {
+        "partNumber": "PBSA36-CX150T11GAS1/2",
+        "nps": "1/2\"",
+        "pressureClass": 150,
+        "material": "SA-36",
+        "thicknessLabel": "11 Gauge",
+        "thicknessIn": 0.1196,
+        "pricePerLb": 1.87,
+        "actualWeightLbs": 0.2,
+        "adjustedWeightLbs": 0.28,
+        "wholesalePrice": 35,
+        "listPrice": 39
+      },
+      {
+        "partNumber": "PBSA516-70-CX150T11GAS4",
+        "nps": "4\"",
+        "pressureClass": 150,
+        "material": "SA-516-70",
+        "thicknessLabel": "11 Gauge",
+        "thicknessIn": 0.1196,
+        "pricePerLb": 2.18,
+        "actualWeightLbs": 1.54,
+        "adjustedWeightLbs": 2.16,
+        "wholesalePrice": 40,
+        "listPrice": 44
+      },
+      {
+        "partNumber": "PB304L-CX300T1/2S8",
+        "nps": "8\"",
+        "pressureClass": 300,
+        "material": "304L",
+        "thicknessLabel": "1/2\"",
+        "thicknessIn": 0.5,
+        "pricePerLb": 6.01,
+        "actualWeightLbs": 20.53,
+        "adjustedWeightLbs": 28.74,
+        "wholesalePrice": 208,
+        "listPrice": 229
+      },
+      {
+        "partNumber": "PB316L-C1500T3S24",
+        "nps": "24\"",
+        "pressureClass": 1500,
+        "material": "316L",
+        "thicknessLabel": "3\"",
+        "thicknessIn": 3,
+        "pricePerLb": 7.48,
+        "actualWeightLbs": 1064.9,
+        "adjustedWeightLbs": 1490.86,
+        "wholesalePrice": 11208,
+        "listPrice": 12329
+      },
+      {
+        "partNumber": "PBAL6061-CX150T11GAS6",
+        "nps": "6\"",
+        "pressureClass": 150,
+        "material": "AL-6061",
+        "thicknessLabel": "11 Gauge",
+        "thicknessIn": 0.1196,
+        "pricePerLb": 5.1,
+        "actualWeightLbs": 0.87,
+        "adjustedWeightLbs": 1.22,
+        "wholesalePrice": 41,
+        "listPrice": 46
+      }
+    ]
+  },
+  "deltaMeta": {
+    "stamp": "2026-09-04",
+    "rateBumps": {
+      "304": 0.05,
+      "SA-36": 0.02,
+      "SA-516-70": 0.03,
+      "304L": 0.06,
+      "316L": 0.08,
+      "AL-6061": 0.1
+    },
+    "baselineRates": {
+      "304": 5.5,
+      "SA-36": 1.85,
+      "SA-516-70": 2.15,
+      "304L": 5.95,
+      "316L": 7.4,
+      "AL-6061": 5
+    },
+    "newRates": {
+      "304": 5.55,
+      "SA-36": 1.87,
+      "SA-516-70": 2.18,
+      "304L": 6.01,
+      "316L": 7.48,
+      "AL-6061": 5.1
+    },
+    "skuCount": 11880,
+    "skusUnchangedWholesale": 4044,
+    "skusRaisedWholesale": 7836,
+    "pctUnchanged": 34,
+    "totalWholesaleDeltaAcrossMatrix": 57617,
+    "avgWholesaleDeltaWhenChanged": 7.35,
+    "maxWholesaleDelta": {
+      "partNumber": "PB316L-C1500T3S24",
+      "delta": 119
+    }
+  }
+}

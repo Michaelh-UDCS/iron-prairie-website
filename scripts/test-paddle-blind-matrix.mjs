@@ -36,12 +36,12 @@ const THICKNESS_OPTIONS = [
 ];
 
 const MATERIALS = {
-  'SA-36': { density1InchSqFt: 40.84, defaultPricePerLb: 1.85 },
-  'SA-516-70': { density1InchSqFt: 40.84, defaultPricePerLb: 2.15 },
-  '304': { density1InchSqFt: 42.665, defaultPricePerLb: 5.50 },
-  '304L': { density1InchSqFt: 42.665, defaultPricePerLb: 5.95 },
-  '316L': { density1InchSqFt: 43.15, defaultPricePerLb: 7.40 },
-  'AL-6061': { density1InchSqFt: 14.39, defaultPricePerLb: 5.00 },
+  'SA-36': { density1InchSqFt: 40.84, defaultPricePerLb: 1.87 },
+  'SA-516-70': { density1InchSqFt: 40.84, defaultPricePerLb: 2.18 },
+  '304': { density1InchSqFt: 42.665, defaultPricePerLb: 5.55 },
+  '304L': { density1InchSqFt: 42.665, defaultPricePerLb: 6.01 },
+  '316L': { density1InchSqFt: 43.15, defaultPricePerLb: 7.48 },
+  'AL-6061': { density1InchSqFt: 14.39, defaultPricePerLb: 5.10 },
 };
 
 const MASTER_GEOMETRY = {

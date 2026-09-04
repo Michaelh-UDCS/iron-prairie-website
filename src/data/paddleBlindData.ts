@@ -21,7 +21,7 @@ export const MATERIALS: Record<MaterialId, MaterialInfo> = {
     name: 'ASTM A516 Gr. 70 Carbon Steel',
     code: 'A516',
     astmSpec: 'ASTM A516 Grade 70 / A36 Dual Certified',
-    ratePerLb: 2.00,
+    ratePerLb: 2.03,
     densityLbPerCuIn: 0.28361, // 40.84 lbs/ft² for 1"
     densityLbPerSqFt1In: 40.84,
     category: 'Carbon Steel',
@@ -34,7 +34,7 @@ export const MATERIALS: Record<MaterialId, MaterialInfo> = {
     name: '304 / 304L Stainless Steel',
     code: '304L',
     astmSpec: 'ASTM A240 Gr. 304/304L Dual Grade',
-    ratePerLb: 6.00,
+    ratePerLb: 6.06,
     densityLbPerCuIn: 0.29628, // 42.665 lbs/ft² for 1"
     densityLbPerSqFt1In: 42.665,
     category: 'Stainless Steel',
@@ -47,7 +47,7 @@ export const MATERIALS: Record<MaterialId, MaterialInfo> = {
     name: '316 / 316L Stainless Steel',
     code: '316L',
     astmSpec: 'ASTM A240 Gr. 316/316L Acid/Chloride Resistant',
-    ratePerLb: 6.00,
+    ratePerLb: 6.08,
     densityLbPerCuIn: 0.29628, // 42.665 lbs/ft² for 1"
     densityLbPerSqFt1In: 42.665,
     category: 'Stainless Steel',
@@ -60,7 +60,7 @@ export const MATERIALS: Record<MaterialId, MaterialInfo> = {
     name: '6061-T6 Aluminum',
     code: '6061',
     astmSpec: 'ASTM B209 6061-T6 Structural Alloy',
-    ratePerLb: 5.00,
+    ratePerLb: 5.10,
     densityLbPerCuIn: 0.09993, // 14.39 lbs/ft² for 1"
     densityLbPerSqFt1In: 14.39,
     category: 'Aluminum',

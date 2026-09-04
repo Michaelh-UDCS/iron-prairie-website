@@ -1,0 +1,116 @@
+{
+  "generatedAt": "2026-09-04T10:58:50.833Z",
+  "sealedAt": "2026-09-04T11:01:00.000Z",
+  "localTimestamp": "2026-09-04T06:01:00-05:00",
+  "performedBy": "MCH",
+  "performedByFull": "Michael Huerta (MCH)",
+  "type": "micro_gradual_catalog_bump",
+  "note": "Internal-only. Gradual $/lb bump $0.02→$0.06 cheapest→most expensive. Timestamps and MCH attribution live only under logs/ — never displayed on the live website.",
+  "visibility": "internal_files_only",
+  "websiteUi": false,
+  "displayTimestampsOnWebsite": false,
+  "bumpRangeUsdPerLb": {
+    "min": 0.02,
+    "max": 0.06
+  },
+  "gradeOrderLeastToMost": [
+    "SA-36",
+    "SA-516-70",
+    "AL-6061",
+    "304",
+    "304L",
+    "316L"
+  ],
+  "bumps": {
+    "SA-36": 0.02,
+    "SA-516-70": 0.03,
+    "AL-6061": 0.03,
+    "304": 0.04,
+    "304L": 0.05,
+    "316L": 0.06
+  },
+  "ratesBefore": {
+    "SA-36": 1.87,
+    "SA-516-70": 2.18,
+    "AL-6061": 5.1,
+    "304": 5.55,
+    "304L": 6.01,
+    "316L": 7.48
+  },
+  "ratesAfter": {
+    "SA-36": 1.89,
+    "SA-516-70": 2.21,
+    "AL-6061": 5.13,
+    "304": 5.59,
+    "304L": 6.06,
+    "316L": 7.54
+  },
+  "sampleBlinds": [
+    {
+      "nps": "4\"",
+      "mat": "SA-516-70",
+      "thk": 0.1196,
+      "label": "4\" 150# 11ga SA-516-70 (common utility)",
+      "adjustedLbs": 2.16,
+      "wholesaleBefore": 40,
+      "wholesaleAfter": 40,
+      "delta": 0,
+      "rateBefore": 2.18,
+      "rateAfter": 2.21,
+      "bumpPerLb": 0.03
+    },
+    {
+      "nps": "2\"",
+      "mat": "SA-36",
+      "thk": 0.1196,
+      "label": "2\" 150# 11ga SA-36",
+      "adjustedLbs": 0.8,
+      "wholesaleBefore": 36,
+      "wholesaleAfter": 36,
+      "delta": 0,
+      "rateBefore": 1.87,
+      "rateAfter": 1.89,
+      "bumpPerLb": 0.02
+    },
+    {
+      "nps": "6\"",
+      "mat": "304L",
+      "thk": 0.1196,
+      "label": "6\" 150# 11ga 304L",
+      "adjustedLbs": 3.61,
+      "wholesaleBefore": 57,
+      "wholesaleAfter": 57,
+      "delta": 0,
+      "rateBefore": 6.01,
+      "rateAfter": 6.06,
+      "bumpPerLb": 0.05
+    },
+    {
+      "nps": "4\"",
+      "mat": "316L",
+      "thk": 0.1196,
+      "label": "4\" 150# 11ga 316L",
+      "adjustedLbs": 2.27,
+      "wholesaleBefore": 52,
+      "wholesaleAfter": 52,
+      "delta": 0,
+      "rateBefore": 7.48,
+      "rateAfter": 7.54,
+      "bumpPerLb": 0.06
+    }
+  ],
+  "exampleIfWas45": {
+    "blind": "4\" 150# 1/4\" SA-516-70",
+    "adjustedLbs": 4.49,
+    "rateBefore": 2.18,
+    "rateAfter": 2.21,
+    "bumpPerLb": 0.03,
+    "materialCostDeltaUsd": 0.13,
+    "subtotalBefore": 44.14,
+    "subtotalAfter": 44.27,
+    "wholesaleBefore": 45,
+    "wholesaleAfter": 45,
+    "note": "True cost rose ~$0.13; wholesale stays $45 because pricing Math.ceil() only ticks when subtotal crosses the next whole dollar."
+  },
+  "auditRef": "logs/paddle-blind-prices/audit-2026-09-04-MCH.json"
+}
