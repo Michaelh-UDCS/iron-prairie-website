@@ -787,7 +787,7 @@ export const RapidMatrixOrderGrid: React.FC<RapidMatrixOrderGridProps> = ({
 
                     {/* Bolt Circle */}
                     <td className="py-2.5 px-2.5 text-slate-700">
-                      {row.geom.boltCircle.toFixed(3)}" <span className="text-slate-400 text-[9px]">({row.geom.boltSize}")</span>
+                      {row.geom.boltCircle.toFixed(3)}" <span className="text-slate-600 text-[9px]">({row.geom.boltSize}")</span>
                     </td>
 
                     {/* Thickness */}

@@ -31,7 +31,7 @@ export default function Home() {
         <div className="home-hero__content">
           <div className="max-w-xl xl:max-w-2xl space-y-5">
             <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-brown-light font-mono">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-bone font-mono">
                 Iron Prairie Fabrication Group LLC
               </p>
               <h1 className="home-hero__brand">
