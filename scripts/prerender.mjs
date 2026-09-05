@@ -335,7 +335,7 @@ function buildJsonLd(route) {
       "priceRange": "$$",
       "currenciesAccepted": "USD",
       "paymentAccepted": "Cash, Credit Card, ACH, Purchase Order, Net 30",
-      "hasMap": "https://maps.app.goo.gl/ipFsC9qtHyKwZZS39",
+      "hasMap": "https://www.google.com/maps?cid=12180860875323553231",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "200 County Rd 170",
@@ -346,8 +346,8 @@ function buildJsonLd(route) {
       },
       "geo": {
         "@type": "GeoCoordinates",
-        "latitude": 28.9828,
-        "longitude": -95.9694
+        "latitude": 28.9227707,
+        "longitude": -95.8318058
       },
       "openingHoursSpecification": [
         { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], "opens": "07:00", "closes": "18:00" },
@@ -496,6 +496,7 @@ function buildJsonLd(route) {
         ]
       },
       "sameAs": [
+        "https://www.google.com/maps?cid=12180860875323553231",
         "https://maps.app.goo.gl/ipFsC9qtHyKwZZS39",
         "https://www.facebook.com/ironprairiefabrication",
         "https://www.linkedin.com/company/iron-prairie-fabrication-group",
@@ -587,7 +588,7 @@ function buildStaticBody(route) {
       </section>
       ` : ''}
       <h1 style="font-size:2.2rem;font-weight:800;color:#241d1a;margin-bottom:1rem;line-height:1.2;">${route.title}</h1>
-      <p style="font-size:1.15rem;line-height:1.6;color:#334155;max-width:850px;margin-bottom:1.5rem;">${route.description}</p>
+      <p class="geo" style="font-size:1.15rem;line-height:1.6;color:#334155;max-width:850px;margin-bottom:1.5rem;">${route.description}</p>
       
       <nav aria-label="Quick links" style="margin-bottom:2rem;padding:0.85rem 1.2rem;background:#f1f5f9;border-radius:12px;display:flex;flex-wrap:wrap;gap:0.75rem;font-size:0.9rem;">
         <strong style="color:#0f172a;">Quick Navigation:</strong>

@@ -32,14 +32,6 @@
       {
         "source": "/api/csp-report",
         "function": "cspReport"
-      },
-      {
-        "source": "/googlef0aac9a4843c12ca.html",
-        "destination": "/googlef0aac9a4843c12ca.html"
-      },
-      {
-        "source": "**",
-        "destination": "/index.html"
       }
     ],
     "headers": [
@@ -80,7 +72,7 @@
           },
           {
             "key": "Content-Security-Policy",
-            "value": "default-src 'self'; script-src 'self' 'sha256-1nf14DfbkWWSuo1pNXylcMWrVuI/ta9U6pBiHQY9YcY=' 'sha256-CyVlsEIcIfSHd7MZZoZ1r1wsLb5yr6cbUusnVRfUt2E=' 'sha256-KwF1w3alHJ9oHI28CeUCt98OY6BtsLi1RtF6iS1eRdk=' 'sha256-Zhuz0Tv4MjYFuEErsgG5xA7Ds514oQeOS0BC5EfgrmE=' 'sha256-bDOZGskCgpm05zcTM/w2m96IePL1Ik9eq0vWruCrIQg=' 'sha256-fE0TQ/QHur2IJHkAJmRtdL6zin3N7J5o/36lDOGdj/8=' 'sha256-fJIhxum5oaCcdvTP2G48/Cp//fYMFO6fz8rfo8T1YmY=' 'sha256-fR/qwlvR4cwPuSb5RL4JtvTwgjpanGWOaT08FWfqK8c=' 'sha256-hayfT9C8Q16BFtsx151NMKz4kKIuHCydwmJnVym/G1M=' 'sha256-mnrfLJvj7gooPzqvpCs7Vsy+k0yGcH6WIAq3DL4FDn8=' 'sha256-pVU7A9Fc9yssYd/YKEILdofIr7DIcfln0gZgf993e7g=' 'sha256-u/ebuv0CBcE+UrYIMZQBysphSMYzNcd+WHXDh7l6VC0=' https://js.stripe.com https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://*.firebaseio.com https://*.googleapis.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https: https://*.google-analytics.com https://*.googletagmanager.com; connect-src 'self' https://api.stripe.com https://*.googleapis.com https://*.firebaseio.com https://*.cloudfunctions.net https://api.indexnow.org https://www.google.com https://www.gstatic.com https://content-firebaseappcheck.googleapis.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com https://www.google.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; object-src 'none'; report-to csp-endpoint; report-uri https://ironprairiefabrication.com/api/csp-report"
+            "value": "default-src 'self'; script-src 'self' 'sha256-L4Q0Xzc9/DHDbaTbOWgagIU+Fml8VyO1ehn03D0pE98=' 'sha256-V1CSxY/c9Q/1oaflmDhuKLc9JnH72bGD+CvKPc4YZWg=' 'sha256-YXBofHs0/LkzL6z1Uygk5VFpo3YSktf66o4HSRvW7hI=' 'sha256-b/suMLgGUv0pDi8tf3X1LE594+E3wCjS9r+90a2IVVM=' 'sha256-hjbyXVePLBY7NzLlumhHiJQJ69p8I2RdXGN4EebE4vo=' 'sha256-lH5zSbScW04my/5KnPXeGQPvUl0nYXZqSGga86sJS/Y=' 'sha256-sRiS3ye8HIORiNKM2WU2FJBmNaluoBKNVkEeCfiWqzs=' 'sha256-saqvs5FkuDM/6eKDj/CGtg167qeaYLcuORKICFk6M80=' 'sha256-stqoUsixMnradvTUYevY+7yj5yYFTV9MG+0xg+n21gA=' 'sha256-u/ebuv0CBcE+UrYIMZQBysphSMYzNcd+WHXDh7l6VC0=' 'sha256-wZAt2OM0YTyVNRwpiPCFXEN0pPJZ3LZ4Xs4qxG7ukgA=' 'sha256-yNAaGu0iXyGZFZFV273uc/wmgct928SbLS7N8Szg7JU=' https://js.stripe.com https://www.googletagmanager.com https://www.google.com https://www.gstatic.com https://*.firebaseio.com https://*.googleapis.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https: https://*.google-analytics.com https://*.googletagmanager.com; connect-src 'self' https://api.stripe.com https://*.googleapis.com https://*.firebaseio.com https://*.cloudfunctions.net https://api.indexnow.org https://www.google.com https://www.gstatic.com https://content-firebaseappcheck.googleapis.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com https://www.google.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; object-src 'none'; report-to csp-endpoint; report-uri https://ironprairiefabrication.com/api/csp-report"
           }
         ]
       },

@@ -19,9 +19,12 @@ export const siteConfig = {
   state: 'TX',
   zip: '77414',
   county: 'Matagorda County',
-  latitude: 28.9828,
-  longitude: -95.9694,
-  googleMapsUrl: 'https://maps.app.goo.gl/ipFsC9qtHyKwZZS39',
+  latitude: 28.9227707,
+  longitude: -95.8318058,
+  googleCid: '12180860875323553231',
+  googleKgMid: '/g/11ys96k9kl',
+  googleMapsUrl: 'https://www.google.com/maps?cid=12180860875323553231',
+  googleMapsShortUrl: 'https://maps.app.goo.gl/ipFsC9qtHyKwZZS39',
   serviceAreas: [
     'Bay City',
     'Matagorda County',
@@ -57,10 +60,17 @@ export const siteConfig = {
     bingPlaces: 'https://ironprairiefabrication.com/?utm_source=bing_places&utm_medium=organic'
   },
 
+  // Big 3 Off-Page Identity Status: Google Claimed (CID 12180860875323553231); Apple In Review (Location ID 1545151277392992454, Org 996979639062); Bing In Progress (BizID c8b0d161-6b1a-4888-bbdc-f3e441146c56)
+  applePlaceId: '1545151277392992454',
+  appleOrgId: '996979639062',
+  bingBizId: 'c8b0d161-6b1a-4888-bbdc-f3e441146c56',
+  bingYpid: null as string | null,
+
   schemaType: 'HomeAndConstructionBusiness',
   samUei: 'XX7XCMGN9XD5',
 
   sameAs: [
+    'https://www.google.com/maps?cid=12180860875323553231',
     'https://maps.app.goo.gl/ipFsC9qtHyKwZZS39',
     'https://www.facebook.com/ironprairiefabrication',
     'https://www.linkedin.com/company/iron-prairie-fabrication-group',
